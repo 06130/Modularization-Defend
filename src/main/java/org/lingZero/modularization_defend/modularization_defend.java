@@ -5,11 +5,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -24,7 +22,6 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -49,12 +46,9 @@ public class modularization_defend {
     public static final DeferredBlock<Block> EXAMPLE_BLOCK = BLOCKS.registerSimpleBlock("example_block", BlockBehaviour.Properties.of().mapColor(MapColor.STONE));
     // 创建一个新方块物品，ID 为 "modularization_defend:example_block"，结合命名空间和路径
     public static final DeferredItem<BlockItem> EXAMPLE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("example_block", EXAMPLE_BLOCK);
-    // 创建一个新的食物物品，ID 为 "modularization_defend:example_id"，营养价值 1，饱和度 2
-    public static final DeferredItem<Item> EXAMPLE_ITEM = ITEMS.registerSimpleItem("example_item", new Item.Properties().food(new FoodProperties.Builder().alwaysEdible().nutrition(1).saturationModifier(2f).build()));
-
     // 创建一个创造模式标签，ID 为 "modularization_defend:example_tab"，用于示例物品，放置在战斗标签之后
-    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> EXAMPLE_TAB = CREATIVE_MODE_TABS.register("example_tab", () -> CreativeModeTab.builder().title(Component.translatable("itemGroup.modularization_defend")).withTabsBefore(CreativeModeTabs.COMBAT).icon(() -> EXAMPLE_ITEM.get().getDefaultInstance()).displayItems((parameters, output) -> {
-        output.accept(EXAMPLE_ITEM.get()); // 将示例物品添加到标签中。对于你自己的标签，这种方法比事件更受青睐
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> EXAMPLE_TAB = CREATIVE_MODE_TABS.register("example_tab", () -> CreativeModeTab.builder().title(Component.translatable("itemGroup.modularization_defend")).withTabsBefore(CreativeModeTabs.COMBAT).icon(() -> EXAMPLE_BLOCK_ITEM.get().getDefaultInstance()).displayItems((parameters, output) -> {
+        output.accept(EXAMPLE_BLOCK_ITEM.get()); // 将示例物品添加到标签中。对于你自己的标签，这种方法比事件更受青睐
     }).build());
 
     // 模组类的构造函数是模组加载时运行的第一段代码。
@@ -75,9 +69,6 @@ public class modularization_defend {
         // 如果此类中没有 @SubscribeEvent 注解的方法（如下面的 onServerStarting()），则不要添加此行。
         NeoForge.EVENT_BUS.register(this);
 
-        // 将物品注册到创造模式标签
-        modEventBus.addListener(this::addCreative);
-
         // 注册我们的模组的 ModConfigSpec，以便 FML 可以为我们创建和加载配置文件
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
@@ -94,9 +85,6 @@ public class modularization_defend {
     }
 
     // 将示例方块物品添加到建筑方块标签
-    private void addCreative(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) event.accept(EXAMPLE_BLOCK_ITEM);
-    }
 
     // 你可以使用 SubscribeEvent 让事件总线发现要调用的方法
     @SubscribeEvent
