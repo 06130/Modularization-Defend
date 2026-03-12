@@ -8,6 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -42,13 +43,11 @@ public class modularization_defend {
     // 创建一个延迟注册表来持有创造模式标签，所有标签都将在 "modularization_defend" 命名空间下注册
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
-    // 创建一个新方块，ID 为 "modularization_defend:example_block"，结合命名空间和路径
-    public static final DeferredBlock<Block> EXAMPLE_BLOCK = BLOCKS.registerSimpleBlock("example_block", BlockBehaviour.Properties.of().mapColor(MapColor.STONE));
-    // 创建一个新方块物品，ID 为 "modularization_defend:example_block"，结合命名空间和路径
-    public static final DeferredItem<BlockItem> EXAMPLE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("example_block", EXAMPLE_BLOCK);
-    // 创建一个创造模式标签，ID 为 "modularization_defend:example_tab"，用于示例物品，放置在战斗标签之后
-    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> EXAMPLE_TAB = CREATIVE_MODE_TABS.register("example_tab", () -> CreativeModeTab.builder().title(Component.translatable("itemGroup.modularization_defend")).withTabsBefore(CreativeModeTabs.COMBAT).icon(() -> EXAMPLE_BLOCK_ITEM.get().getDefaultInstance()).displayItems((parameters, output) -> {
-        output.accept(EXAMPLE_BLOCK_ITEM.get()); // 将示例物品添加到标签中。对于你自己的标签，这种方法比事件更受青睐
+    public static final DeferredItem<Item> ICON_ITEM = ITEMS.registerSimpleItem("icon_item", new Item.Properties());
+
+    // 创建一个创造模式标签
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> modularization_defend_tab = CREATIVE_MODE_TABS.register("modularization_defend_tab", () -> CreativeModeTab.builder().title(Component.translatable("itemGroup.modularization_defend")).withTabsBefore(CreativeModeTabs.COMBAT).icon(() -> ICON_ITEM.get().getDefaultInstance()).displayItems((parameters, output) -> {
+        output.accept(ICON_ITEM.get());
     }).build());
 
     // 模组类的构造函数是模组加载时运行的第一段代码。
@@ -83,8 +82,6 @@ public class modularization_defend {
 
         Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
     }
-
-    // 将示例方块物品添加到建筑方块标签
 
     // 你可以使用 SubscribeEvent 让事件总线发现要调用的方法
     @SubscribeEvent
