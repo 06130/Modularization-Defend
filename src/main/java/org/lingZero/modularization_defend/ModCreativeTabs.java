@@ -9,7 +9,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Supplier;
 
-import static org.lingZero.modularization_defend.items.example_item.EXAMPLE_ITEM;
+import static org.lingZero.modularization_defend.register.items.ModItems.EXAMPLE_ITEM;
 import static org.lingZero.modularization_defend.modularization_defend.MODID;
 
 public class ModCreativeTabs {
@@ -26,7 +26,4 @@ public class ModCreativeTabs {
                             }
                     )
                     .build());
-    public static void register(IEventBus eventBus) {
-        CREATIVE_TABS.register(eventBus);
-    }
 }

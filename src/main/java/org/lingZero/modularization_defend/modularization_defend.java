@@ -5,7 +5,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -17,26 +16,21 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.lingZero.modularization_defend.register.items.ModItems;
 import org.slf4j.Logger;
 
 import static org.lingZero.modularization_defend.ModCreativeTabs.CREATIVE_TABS;
-import static org.lingZero.modularization_defend.items.example_item.EXAMPLE_ITEM;
 
 @Mod(modularization_defend.MODID)
 public class modularization_defend {
     public static final String MODID = "modularization_defend";
-    // 直接引用 slf4j 日志器
     private static final Logger LOGGER = LogUtils.getLogger();
-    // 创建一个延迟注册表来持有方块，所有方块都将在 "modularization_defend" 命名空间下注册
+    // 创建一个方块延迟注册表
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
-    // 创建一个延迟注册表来持有物品，所有物品都将在 "modularization_defend" 命名空间下注册
-    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
-    // 创建一个延迟注册表来持有创造模式标签，所有标签都将在 "modularization_defend" 命名空间下注册
+    // 创建一个创造模式标签延迟注册表
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
-
     // 模组类的构造函数是模组加载时运行的第一段代码。
     // FML 会自动识别某些参数类型（如 IEventBus 或 ModContainer）并自动传入它们
     public modularization_defend(IEventBus modEventBus, ModContainer modContainer) {
@@ -45,41 +39,30 @@ public class modularization_defend {
 
         // 将延迟注册表注册到模组事件总线
         BLOCKS.register(modEventBus);
-        ITEMS.register(modEventBus);
+        ModItems.ITEMS.register(modEventBus);
         CREATIVE_TABS.register(modEventBus);
+
         // 将我们自己注册到服务器和其他我们感兴趣的游戏事件中。
         // 注意，只有当我们希望*这个*类（modularization_defend）直接响应事件时才有必要这样做。
         // 如果此类中没有 @SubscribeEvent 注解的方法（如下面的 onServerStarting()），则不要添加此行。
         NeoForge.EVENT_BUS.register(this);
-        // 将物品注册到创造模式标签
-        modEventBus.addListener(this::addCreative);
 
         // 注册我们的模组的 ModConfigSpec，以便 FML 可以为我们创建和加载配置文件
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
-    // 将物品添加到创造模式标签
-    private void addCreative(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS)
-            event.accept(EXAMPLE_ITEM.get());
-    }
     private void commonSetup(final FMLCommonSetupEvent event) {
         // 一些通用设置代码
         LOGGER.info("HELLO FROM COMMON SETUP");
-
         if (Config.logDirtBlock) LOGGER.info("DIRT BLOCK >> {}", BuiltInRegistries.BLOCK.getKey(Blocks.DIRT));
-
         LOGGER.info(Config.magicNumberIntroduction + Config.magicNumber);
-
         Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
     }
-
     // 你可以使用 SubscribeEvent 让事件总线发现要调用的方法
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
         // 服务器启动时执行某些操作
         LOGGER.info("HELLO from server starting");
     }
-
     // 你可以使用 EventBusSubscriber 自动注册此类中所有用 @SubscribeEvent 注解的静态方法
     @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
