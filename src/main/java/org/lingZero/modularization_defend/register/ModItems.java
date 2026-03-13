@@ -13,7 +13,7 @@ public class ModItems {
             DeferredRegister.createItems(modularization_defend.MODID);
 
     public static final DeferredItem<BlockItem> ELECTRICITY_REPEATER_ITEM =
-            ITEMS.registerSimpleBlockItem("electricity_repeater", ModBlocks.ELECTRICITY_REPEATER);
+            ITEMS.registerSimpleBlockItem("electricity_repeater", ModBlocks.ELECTRICITY_REPEATER_BLOCK);
 
     public static final Supplier<Item> EXAMPLE_ITEM =
             ITEMS.registerSimpleItem("example_item", new Item.Properties());
