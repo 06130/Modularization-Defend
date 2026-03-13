@@ -14,7 +14,7 @@ public class ModBlocks {
             DeferredRegister.createBlocks(modularization_defend.MODID);
 
     public static final DeferredBlock<ElectricityRepeaterEntityBlock> ELECTRICITY_REPEATER_BLOCK =
-            BLOCKS.register("ElectricityRepeaterBlock", () -> new ElectricityRepeaterEntityBlock (BlockBehaviour.Properties.of()
+            BLOCKS.register("electricity_repeater_block", () -> new ElectricityRepeaterEntityBlock (BlockBehaviour.Properties.of()
                     .strength(3.0f, 6.0f)      // 硬度等级与抗爆等级
                     .sound(SoundType.STONE)                                // 挖掘时的声音类型
 
