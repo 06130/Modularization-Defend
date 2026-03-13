@@ -3,8 +3,6 @@ package org.lingZero.modularization_defend;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -17,19 +15,17 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import net.neoforged.neoforge.registries.DeferredRegister;
-import org.lingZero.modularization_defend.register.items.ModItems;
+import org.lingZero.modularization_defend.register.ModBlockEntities;
+import org.lingZero.modularization_defend.register.ModBlocks;
+import org.lingZero.modularization_defend.register.ModCreativeTabs;
+import org.lingZero.modularization_defend.register.ModItems;
 import org.slf4j.Logger;
-
-import static org.lingZero.modularization_defend.ModCreativeTabs.CREATIVE_TABS;
-import static org.lingZero.modularization_defend.register.blocks.BlocksRegister.BLOCKS;
 
 @Mod(modularization_defend.MODID)
 public class modularization_defend {
     public static final String MODID = "modularization_defend";
     private static final Logger LOGGER = LogUtils.getLogger();
-    // 创建一个创造模式标签延迟注册表
-    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
+
     // 模组类的构造函数是模组加载时运行的第一段代码。
     // FML 会自动识别某些参数类型（如 IEventBus 或 ModContainer）并自动传入它们
     public modularization_defend(IEventBus modEventBus, ModContainer modContainer) {
@@ -37,9 +33,10 @@ public class modularization_defend {
         modEventBus.addListener(this::commonSetup);
 
         // 将延迟注册表注册到模组事件总线
-        BLOCKS.register(modEventBus);
+        ModBlocks.BLOCKS.register(modEventBus);
+        ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
-        CREATIVE_TABS.register(modEventBus);
+        ModCreativeTabs.CREATIVE_TABS.register(modEventBus);
 
         // 将我们自己注册到服务器和其他我们感兴趣的游戏事件中。
         // 注意，只有当我们希望*这个*类（modularization_defend）直接响应事件时才有必要这样做。

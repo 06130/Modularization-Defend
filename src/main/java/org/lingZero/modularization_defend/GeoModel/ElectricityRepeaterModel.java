@@ -1,4 +1,4 @@
-package org.lingZero.modularization_defend.register.blocks.GeoModel;
+package org.lingZero.modularization_defend.GeoModel;
 
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.animatable.GeoAnimatable;
