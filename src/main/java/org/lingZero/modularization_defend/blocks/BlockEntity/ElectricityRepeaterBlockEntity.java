@@ -30,7 +30,7 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity  {
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, ElectricityRepeaterBlockEntity blockEntity) {
-        // Whatever you want to do during ticking.
-        // For example, you could change a crafting progress value or consume power here.
+        // 在每次tick中执行的操作。
+        // 例如，你可以在这里改变制作进度值或消耗电力。
     }
 }
