@@ -4,12 +4,12 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Supplier;
 
-import static org.lingZero.modularization_defend.register.items.ModItems.EXAMPLE_ITEM;
+import static org.lingZero.modularization_defend.register.blocks.ElectricityRepeater.ELECTRICITY_REPEATER_ITEM;
+import static org.lingZero.modularization_defend.register.items.EXAMPLE_ITEM.EXAMPLE_ITEM;
 import static org.lingZero.modularization_defend.modularization_defend.MODID;
 
 public class ModCreativeTabs {
@@ -23,6 +23,7 @@ public class ModCreativeTabs {
                     .displayItems(
                             (parameters, output) -> {
                                 output.accept(EXAMPLE_ITEM.get());
+                                output.accept(ELECTRICITY_REPEATER_ITEM.get());
                             }
                     )
                     .build());

@@ -22,13 +22,12 @@ import org.lingZero.modularization_defend.register.items.ModItems;
 import org.slf4j.Logger;
 
 import static org.lingZero.modularization_defend.ModCreativeTabs.CREATIVE_TABS;
+import static org.lingZero.modularization_defend.register.blocks.BlocksRegister.BLOCKS;
 
 @Mod(modularization_defend.MODID)
 public class modularization_defend {
     public static final String MODID = "modularization_defend";
     private static final Logger LOGGER = LogUtils.getLogger();
-    // 创建一个方块延迟注册表
-    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
     // 创建一个创造模式标签延迟注册表
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
     // 模组类的构造函数是模组加载时运行的第一段代码。
