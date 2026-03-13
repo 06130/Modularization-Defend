@@ -3,6 +3,7 @@ package org.lingZero.modularization_defend.blocks.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -15,8 +16,6 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity  {
         super(Electricity_Repeater_BLOCK_ENTITY.get(), pos, state);
     }
 
-
-
     @Override
     public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
@@ -28,5 +27,10 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity  {
     public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putInt("value", this.value);
+    }
+
+    public static void tick(Level level, BlockPos pos, BlockState state, ElectricityRepeaterBlockEntity blockEntity) {
+        // Whatever you want to do during ticking.
+        // For example, you could change a crafting progress value or consume power here.
     }
 }

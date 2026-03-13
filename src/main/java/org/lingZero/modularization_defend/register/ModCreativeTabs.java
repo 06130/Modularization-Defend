@@ -22,6 +22,7 @@ public class ModCreativeTabs {
                             (parameters, output) -> {
                                 output.accept(EXAMPLE_ITEM.get());
                                 output.accept(ELECTRICITY_REPEATER_ITEM.get());
+                                output.accept(TERMINAL_ITEM.get());
                             }
                     )
                     .build());

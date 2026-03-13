@@ -13,9 +13,12 @@ public class ModItems {
             DeferredRegister.createItems(modularization_defend.MODID);
 
     public static final DeferredItem<BlockItem> ELECTRICITY_REPEATER_ITEM =
-            ITEMS.registerSimpleBlockItem("electricity_repeater", ModBlocks.ELECTRICITY_REPEATER_BLOCK);
+            ITEMS.registerSimpleBlockItem("electricity_repeater_item", ModBlocks.ELECTRICITY_REPEATER_BLOCK);
 
     public static final Supplier<Item> EXAMPLE_ITEM =
             ITEMS.registerSimpleItem("example_item", new Item.Properties());
 
+    public static final Supplier<Item> TERMINAL_ITEM =
+            ITEMS.registerItem("terminal_item", Item::new, new Item.Properties()
+    );
 }
