@@ -4,6 +4,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.lingZero.modularization_defend.items.terminal_item;
 import org.lingZero.modularization_defend.modularization_defend;
 
 import java.util.function.Supplier;
@@ -19,6 +20,6 @@ public class ModItems {
             ITEMS.registerSimpleItem("example_item", new Item.Properties());
 
     public static final Supplier<Item> TERMINAL_ITEM =
-            ITEMS.registerItem("terminal_item", Item::new, new Item.Properties()
+            ITEMS.registerItem("terminal_item", terminal_item::new, new Item.Properties()
     );
 }
