@@ -20,10 +20,4 @@ public class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS =
             DeferredRegister.createBlocks(modularization_defend.MODID);
 
-    public static final DeferredBlock<ElectricityRepeaterEntityBlock> Electricity_Repeater =
-            BLOCKS.register("ElectricityRepeater", () -> new ElectricityRepeaterEntityBlock(
-                    BlockBehaviour.Properties.of()
-                            .strength(3.0f, 6.0f)      // 硬度等级与抗爆等级
-                            .sound(SoundType.STONE)    // 挖掘时的声音类型
-            ));
 }
