@@ -13,8 +13,11 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.util.TriState;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import org.lingZero.modularization_defend.Data.ModBlockTagsProvider;
 import org.lingZero.modularization_defend.Register.ModBlockEntities;
 import org.lingZero.modularization_defend.Register.ModBlocks;
 import org.lingZero.modularization_defend.Register.ModCreativeTabs;
@@ -31,6 +34,9 @@ public class ModularizationDefend {
     public ModularizationDefend(IEventBus modEventBus, ModContainer modContainer) {
         // 注册通用设置方法以供模组加载时调用
         modEventBus.addListener(this::commonSetup);
+        
+        // 注册数据生成器
+        modEventBus.addListener(this::gatherData);
 
         // 注册延迟注册表
         ModBlocks.BLOCKS.register(modEventBus);
@@ -50,6 +56,16 @@ public class ModularizationDefend {
         // 一些通用设置代码
         LOGGER.info("Max connection distance: {}", Config.maxConnectionDistance);
     }
+    
+    private void gatherData(final GatherDataEvent event) {
+        var gen = event.getGenerator();
+        var packOutput = gen.getPackOutput();
+        var lookupProvider = event.getLookupProvider();
+        var existingFileHelper = event.getExistingFileHelper();
+        
+        // 注册方块标签数据生成器
+        gen.addProvider(event.includeServer(), new ModBlockTagsProvider(packOutput, lookupProvider, existingFileHelper));
+    }
     // 你可以使用 SubscribeEvent 让事件总线发现要调用的方法
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
@@ -65,41 +81,45 @@ public class ModularizationDefend {
         if (event.getLevel().isClientSide()) {
             return;
         }
-        
+            
         // 只处理玩家手持 ElectricityRepeater 的情况
         var itemStack = event.getItemStack();
         if (itemStack.getItem() == ModBlocks.ELECTRICITY_REPEATER_BLOCK.get().asItem()) {
             BlockPos pos = event.getPos();
             net.minecraft.world.level.Level level = (net.minecraft.world.level.Level) event.getLevel();
             net.minecraft.world.entity.player.Player player = event.getEntity();
-            
+                
             // 获取点击的面
             net.minecraft.core.Direction face = event.getFace();
             if (face == null) {
                 return;
             }
-            
+                
             // 计算实际放置位置（在点击方块的旁边）
             BlockPos controllerPos = pos.relative(face);
-            
+                
             // 检查以放置位置为底座的 2x2x6 区域是否有阻挡
             if (!canFormMultiblock(level, controllerPos)) {
                 // 有阻挡，阻止放置并显示提示
+                // 完全取消事件，原版不会消耗物品
                 event.setCanceled(true);
                 event.setCancellationResult(net.minecraft.world.InteractionResult.FAIL);
-                    
+                        
                 String message = "§c无法放置：结构区域内有其他方块阻挡！";
                 player.displayClientMessage(net.minecraft.network.chat.Component.literal(message), true);
+                    
+                // 重要：手动同步物品栏到客户端
+                player.containerMenu.sendAllDataToRemote();
             } else {
                 // 检测通过！取消原版放置逻辑，手动一次性放置所有方块
                 event.setCanceled(true);
                 event.setCancellationResult(net.minecraft.world.InteractionResult.SUCCESS);
-                
+                    
                 // 消耗一个物品
                 if (!player.isCreative()) {
                     itemStack.shrink(1);
                 }
-                
+                    
                 // 一次性放置 2x2x6 的所有方块（包括主方块）
                 placeEntireMultiblock(level, controllerPos);
             }
@@ -116,9 +136,9 @@ public class ModularizationDefend {
                 for (int z = 0; z < 2; z++) {
                     BlockPos checkPos = controllerPos.offset(x, y, z);
                     
-                    // 放置方块（使用 flags=3 避免触发 onPlace）
+                    // 放置方块（使用 UPDATE_ALL 确保客户端同步）
                     BlockState stateToPlace = ModBlocks.ELECTRICITY_REPEATER_BLOCK.get().defaultBlockState();
-                    level.setBlock(checkPos, stateToPlace, 3);
+                    level.setBlock(checkPos, stateToPlace, net.minecraft.world.level.block.Block.UPDATE_ALL);
                     
                     // 设置控制器标志
                     net.minecraft.world.level.block.entity.BlockEntity blockEntity = level.getBlockEntity(checkPos);

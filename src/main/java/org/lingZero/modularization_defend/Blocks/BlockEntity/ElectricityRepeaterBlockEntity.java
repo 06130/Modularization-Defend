@@ -194,11 +194,11 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity {
             // 获取所有组成方块的位置
             java.util.Set<BlockPos> blocks = dataToBreak.getBlocks();
             
-            // 遍历并破坏所有方块
+            // 遍历并破坏所有方块（不掉落物品）
             for (BlockPos blockPos : blocks) {
                 if (!blockPos.equals(worldPosition)) { // 跳过当前正在被破坏的方块
-                    // 破坏方块（会掉落物品）
-                    level.destroyBlock(blockPos, true);
+                    // 破坏方块但不掉落物品（flags=2 只发送客户端更新）
+                    level.setBlock(blockPos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 2);
                 }
             }
             
