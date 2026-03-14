@@ -7,7 +7,8 @@
   "item.modularization_defend.terminal_item": "模块化终端",
   "item.modularization_defend.energy_network_configuration_tool_item": "电网工具",
 
-  "message.modularization_defend.first_click": "第一次点击坐标：X=%d, Y=%d, Z=%d",
-  "message.modularization_defend.block_distance": "第一次点击：X=%d, Y=%d, Z=%d | 第二次点击：X=%d, Y=%d, Z=%d | 直线距离：%.2f 格",
+  "message.modularization_defend.first_click": "§b节点坐标：[%d, %d, %d]",
+  "message.modularization_defend.player_distance": "§e距离：%.2f 格 | §7玩家：[%d, %d, %d] -> §b节点：[%d, %d, %d]",
+  "message.modularization_defend.block_distance": "§a第二次点击：[%d, %d, %d] | §e直线距离：%.2f 格",
   "message.modularization_defend.connection_broken": "连接断开"
 }

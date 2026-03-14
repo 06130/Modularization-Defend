@@ -22,17 +22,16 @@ public class EnergyNetworkConfigurationToolItem extends Item {
      * @param secondPos 第二次点击的方块坐标，如果为 null 则只显示第一次点击
      */
     public void onLeftClick(Player player, InteractionHand hand, net.minecraft.core.BlockPos firstPos, net.minecraft.core.BlockPos secondPos) {
-        if (!player.level().isClientSide()) {
-            return; // 仅在服务端执行
+        if (!player.level().isClientSide) {
+            return;
         }
         
         if (firstPos != null) {
             if (secondPos != null) {
-                // 两次点击，计算距离
+                // 两次点击，计算距离并显示第二次坐标
                 double distance = calculateDistance(firstPos, secondPos);
                 net.minecraft.network.chat.Component message = net.minecraft.network.chat.Component.translatable(
                     "message.modularization_defend.block_distance",
-                    firstPos.getX(), firstPos.getY(), firstPos.getZ(),
                     secondPos.getX(), secondPos.getY(), secondPos.getZ(),
                     String.format("%.2f", distance)
                 );
