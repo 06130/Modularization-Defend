@@ -13,6 +13,7 @@ import org.lingZero.modularization_defend.Items.EnergyNetworkConfigurationToolIt
 import org.lingZero.modularization_defend.ModularizationDefend;
 import org.lingZero.modularization_defend.Register.ModBlocks;
 import org.lingZero.modularization_defend.Register.ModItems;
+import org.lingZero.modularization_defend.Config;
 
 
 @EventBusSubscriber(modid = ModularizationDefend.MODID, value = Dist.CLIENT)
@@ -42,25 +43,28 @@ public class EnergyNetworkConfigurationToolLinkEvents {
 
         ItemStack mainHandItem = player.getMainHandItem();
         ItemStack offHandItem = player.getOffhandItem();
-
-        // 检查连接完整性：已有第一次点击但不再持有工具
-        if (hasIncompleteConnection() && !isHoldingTool(mainHandItem, offHandItem)) {
-            clearClickedPositions();
-            lastDisplayedPlayerPos = null;
-            sendSystemMessage(player, "message.modularization_defend.connection_broken");
-            return;
+                
+        // 检查是否手持电网配置工具
+        if (isHoldingTool(mainHandItem, offHandItem)) {
+            // 如果已存在未完成连接且点击的不是中继塔方块，清除连接
+            if (hasIncompleteConnection() && !isRepeaterBlock(event.getLevel().getBlockState(event.getPos()))) {
+                clearClickedPositions();
+                lastDisplayedPlayerPos = null;
+                sendSystemMessage(player, "message.modularization_defend.connection_broken");
+                return;
+            }
         }
 
         // 必须手持电网配置工具
         if (!isHoldingTool(mainHandItem, offHandItem)) {
             return;
         }
-
+                
         // 必须点击中继塔方块
         if (!isRepeaterBlock(event.getLevel().getBlockState(event.getPos()))) {
             return;
         }
-
+        
         // 防抖处理：鼠标已按下则忽略
         if (isMouseDown) {
             return;
@@ -77,6 +81,14 @@ public class EnergyNetworkConfigurationToolLinkEvents {
             sendActionBarMessage(player, "message.modularization_defend.first_click",
                 firstClickedBlockPos.getX(), firstClickedBlockPos.getY(), firstClickedBlockPos.getZ());
         } else {
+            // 第二次点击：检查距离是否超出限制
+            double distance = calculateDistance(firstClickedBlockPos, currentPos);
+            if (distance > Config.maxConnectionDistance) {
+                sendSystemMessage(player, "message.modularization_defend.too_far",
+                    String.format("%.2f", distance), 
+                    String.format("%.2f", Config.maxConnectionDistance));
+                return;
+            }
             secondClickedBlockPos = currentPos;
         }
 
@@ -117,14 +129,22 @@ public class EnergyNetworkConfigurationToolLinkEvents {
 
         // 获取玩家当前位置（取整到方块坐标）
         BlockPos playerPos = player.blockPosition();
-
+                
+        // 计算玩家到第一次点击方块的距离
+        double distance = calculateDistance(playerPos, firstClickedBlockPos);
+                
+        // 如果距离超出配置范围，不显示并提示
+        if (distance > Config.maxConnectionDistance) {
+            sendActionBarMessage(player, "message.modularization_defend.out_of_range",
+                String.format("%.2f", distance),
+                String.format("%.2f", Config.maxConnectionDistance));
+            return;
+        }
+                
         // 如果位置没有变化，不更新（减少聊天框刷屏）
         if (lastDisplayedPlayerPos != null && lastDisplayedPlayerPos.equals(playerPos)) {
             return;
         }
-
-        // 计算玩家到第一次点击方块的距离
-        double distance = calculateDistance(playerPos, firstClickedBlockPos);
                 
         // 在动作栏显示距离消息
         sendActionBarMessage(player, "message.modularization_defend.player_distance",
