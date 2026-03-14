@@ -20,25 +20,46 @@ public class ElectricityRepeaterEntityBlock extends Block implements EntityBlock
     public ElectricityRepeaterEntityBlock(BlockBehaviour.Properties properties) {
         super(properties);
     }
+    
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new ElectricityRepeaterBlockEntity(pos, state);
     }
-
-    // 其他内容在此
-    // 由于泛型转换，我们在这里使用第二个方法
-    // 如果继承 `BaseEntityBlock`，该方法在那里也可作为受保护的静态方法使用
+    
+    @Override
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
+        // 方块被放置后，标记为控制器
+        if (!level.isClientSide) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof ElectricityRepeaterBlockEntity repeater) {
+                // 确保第一个放置的是控制器
+                repeater.setController(true);
+                // 注意：不在这里形成多方块，因为会触发其他方块的 onPlace 导致无限循环
+            }
+        }
+        super.onPlace(state, level, pos, oldState, isMoving);
+    }
+    
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+        // 当方块被破坏时，通知 BlockEntity 破坏多方块结构
+        if (!state.is(newState.getBlock())) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof ElectricityRepeaterBlockEntity repeater) {
+                repeater.breakMultiblock();
+            }
+        }
+        super.onRemove(state, level, pos, newState, isMoving);
+    }
+    
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return level.isClientSide ? null : createTickerHelper(type, Electricity_Repeater_BLOCK_ENTITY.get(), ElectricityRepeaterBlockEntity::tick);
+    }
+    
     private static <E extends BlockEntity, A extends BlockEntity> @Nullable BlockEntityTicker<A> createTickerHelper(
             BlockEntityType<A> type, BlockEntityType<E> checkedType, BlockEntityTicker<? super E> ticker
     ) {
         return checkedType == type ? (BlockEntityTicker<A>) ticker : null;
-    }
-
-    @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        // 你可以在此根据不同的因素返回不同的 tickers。一个常见的用例是
-        // 在客户端或服务器端返回不同的 tickers，仅在一侧开始 tick，
-        // 或者仅为某些 blockstates 返回 ticker（例如使用"我的机器正在工作"的 blockstate 属性时）。
-        return createTickerHelper(type, Electricity_Repeater_BLOCK_ENTITY.get(), ElectricityRepeaterBlockEntity::tick);
     }
 }
