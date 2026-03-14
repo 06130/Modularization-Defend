@@ -1,4 +1,4 @@
-package org.lingZero.modularization_defend.items;
+package org.lingZero.modularization_defend.Items;
 
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -12,11 +12,11 @@ import com.sighs.apricityui.instance.ApricityContainerScreen;
 import net.minecraft.client.Minecraft;
 
 /**
- * 终端物品 - 右键时打开 ApricityUI Screen 界面
+ * 终端 - 右键时打开 ApricityUI Screen 界面
  */
-public class terminal_item extends Item {
+public class TerminalItem extends Item {
 
-    public terminal_item(Properties properties) {
+    public TerminalItem(Properties properties) {
         super(properties);
     }
 
@@ -42,7 +42,7 @@ public class terminal_item extends Item {
 
     /**
      * 打开终端 Screen 界面
-     * 使用 ApricityContainerScreen 创建真正的 Minecraft Screen
+     * 使用 ApricityContainerScreen 创建Screen
      */
     @OnlyIn(Dist.CLIENT)
     private void openTerminalScreen() {

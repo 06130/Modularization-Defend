@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 // 一个示例配置类。这不是必需的，但拥有一个配置类可以让你的配置更有条理。
 // 展示了如何使用 Neo 的配置 API
-@EventBusSubscriber(modid = modularization_defend.MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = ModularizationDefend.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class Config {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 

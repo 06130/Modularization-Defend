@@ -1,13 +1,13 @@
-package org.lingZero.modularization_defend.register;
+package org.lingZero.modularization_defend.Register;
 
 
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import org.lingZero.modularization_defend.blocks.BlockEntity.ElectricityRepeaterBlockEntity;
+import org.lingZero.modularization_defend.Blocks.BlockEntity.ElectricityRepeaterBlockEntity;
 
 
-import static org.lingZero.modularization_defend.modularization_defend.MODID;
+import static org.lingZero.modularization_defend.ModularizationDefend.MODID;
 
 public class ModBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
@@ -17,10 +17,14 @@ public class ModBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ElectricityRepeaterBlockEntity>> Electricity_Repeater_BLOCK_ENTITY = BLOCK_ENTITIES.register(
             "electricity_repeater_block_entity",
-            () -> BlockEntityType.Builder.of(
-                            ElectricityRepeaterBlockEntity::new,
-                            ModBlocks.ELECTRICITY_REPEATER_BLOCK.get()
-                    )
-                    .build(null)
+            () -> {
+                // 延迟获取方块，避免类加载时的循环依赖
+                var block = ModBlocks.ELECTRICITY_REPEATER_BLOCK.get();
+                return BlockEntityType.Builder.of(
+                                ElectricityRepeaterBlockEntity::new,
+                                block
+                        )
+                        .build(null);
+            }
     );
 }

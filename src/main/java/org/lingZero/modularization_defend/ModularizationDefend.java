@@ -15,27 +15,34 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import org.lingZero.modularization_defend.register.ModBlockEntities;
-import org.lingZero.modularization_defend.register.ModBlocks;
-import org.lingZero.modularization_defend.register.ModCreativeTabs;
-import org.lingZero.modularization_defend.register.ModItems;
+import org.lingZero.modularization_defend.Register.ModBlockEntities;
+import org.lingZero.modularization_defend.Register.ModBlocks;
+import org.lingZero.modularization_defend.Register.ModCreativeTabs;
+import org.lingZero.modularization_defend.Register.ModItems;
 import org.slf4j.Logger;
 
-@Mod(modularization_defend.MODID)
-public class modularization_defend {
+@Mod(ModularizationDefend.MODID)
+public class ModularizationDefend {
     public static final String MODID = "modularization_defend";
     private static final Logger LOGGER = LogUtils.getLogger();
 
     // 模组类的构造函数是模组加载时运行的第一段代码。
     // FML 会自动识别某些参数类型（如 IEventBus 或 ModContainer）并自动传入它们
-    public modularization_defend(IEventBus modEventBus, ModContainer modContainer) {
+    public ModularizationDefend(IEventBus modEventBus, ModContainer modContainer) {
         // 注册通用设置方法以供模组加载时调用
         modEventBus.addListener(this::commonSetup);
 
-        // 将延迟注册表注册到模组事件总线
+        // 按正确顺序注册延迟注册表
+        // 1. 先注册 Blocks（因为其他注册表可能依赖它）
         ModBlocks.BLOCKS.register(modEventBus);
-        ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
+        
+        // 2. 注册 Items
         ModItems.ITEMS.register(modEventBus);
+        
+        // 3. 注册 BlockEntities（可能依赖 Blocks）
+        ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
+        
+        // 4. 注册 CreativeTabs（依赖 Items 和 Blocks）
         ModCreativeTabs.CREATIVE_TABS.register(modEventBus);
 
         // 将我们自己注册到服务器和其他我们感兴趣的游戏事件中。
@@ -60,7 +67,7 @@ public class modularization_defend {
         LOGGER.info("HELLO from server starting");
     }
     // 你可以使用 EventBusSubscriber 自动注册此类中所有用 @SubscribeEvent 注解的静态方法
-    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @EventBusSubscriber(modid = MODID, value = Dist.CLIENT)
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {

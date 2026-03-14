@@ -1,4 +1,4 @@
-package org.lingZero.modularization_defend.blocks.BlockEntity;
+package org.lingZero.modularization_defend.Blocks.BlockEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -7,7 +7,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-import static org.lingZero.modularization_defend.register.ModBlockEntities.Electricity_Repeater_BLOCK_ENTITY;
+import static org.lingZero.modularization_defend.Register.ModBlockEntities.Electricity_Repeater_BLOCK_ENTITY;
 
 
 public class ElectricityRepeaterBlockEntity extends BlockEntity  {

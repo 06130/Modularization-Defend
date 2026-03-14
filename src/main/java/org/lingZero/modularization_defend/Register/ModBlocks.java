@@ -1,17 +1,17 @@
-package org.lingZero.modularization_defend.register;
+package org.lingZero.modularization_defend.Register;
 
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import org.lingZero.modularization_defend.blocks.EntityBlock.ElectricityRepeaterEntityBlock;
-import org.lingZero.modularization_defend.modularization_defend;
+import org.lingZero.modularization_defend.Blocks.EntityBlock.ElectricityRepeaterEntityBlock;
+import org.lingZero.modularization_defend.ModularizationDefend;
 
 
 public class ModBlocks {
     // 创建延迟注册表
     public static final DeferredRegister.Blocks BLOCKS =
-            DeferredRegister.createBlocks(modularization_defend.MODID);
+            DeferredRegister.createBlocks(ModularizationDefend.MODID);
 
     public static final DeferredBlock<ElectricityRepeaterEntityBlock> ELECTRICITY_REPEATER_BLOCK =
             BLOCKS.register("electricity_repeater_block", () -> new ElectricityRepeaterEntityBlock (BlockBehaviour.Properties.of()

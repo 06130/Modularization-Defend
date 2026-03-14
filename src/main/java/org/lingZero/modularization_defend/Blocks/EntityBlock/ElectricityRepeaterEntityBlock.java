@@ -1,4 +1,4 @@
-package org.lingZero.modularization_defend.blocks.EntityBlock;
+package org.lingZero.modularization_defend.Blocks.EntityBlock;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -9,11 +9,11 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import org.lingZero.modularization_defend.blocks.BlockEntity.ElectricityRepeaterBlockEntity;
+import org.lingZero.modularization_defend.Blocks.BlockEntity.ElectricityRepeaterBlockEntity;
 
 import javax.annotation.Nullable;
 
-import static org.lingZero.modularization_defend.register.ModBlockEntities.Electricity_Repeater_BLOCK_ENTITY;
+import static org.lingZero.modularization_defend.Register.ModBlockEntities.Electricity_Repeater_BLOCK_ENTITY;
 
 public class ElectricityRepeaterEntityBlock extends Block implements EntityBlock {
     // 构造函数，委托给父类
