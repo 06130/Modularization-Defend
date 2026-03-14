@@ -6,6 +6,8 @@ import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import org.lingZero.modularization_defend.Blocks.Multiblock.ElectricityRepeaterConfig;
+import org.lingZero.modularization_defend.Blocks.Multiblock.IMultiblockConfig;
 import org.lingZero.modularization_defend.Blocks.Multiblock.MultiblockPlacer;
 import org.lingZero.modularization_defend.ModularizationDefend;
 import org.lingZero.modularization_defend.Register.ModBlocks;
@@ -16,6 +18,9 @@ import org.lingZero.modularization_defend.Register.ModBlocks;
  */
 @EventBusSubscriber(modid = ModularizationDefend.MODID)
 public class MultiblockEvents {
+    
+    // 电力中继器的配置实例
+    private static final IMultiblockConfig ELECTRICITY_REPEATER_CONFIG = new ElectricityRepeaterConfig();
     
     /**
      * 监听玩家右键点击方块事件 - 在放置前检测多方块结构
@@ -44,7 +49,7 @@ public class MultiblockEvents {
             BlockPos controllerPos = pos.relative(face);
                 
             // 检查以放置位置为底座的 2x2x6 区域是否有阻挡
-            if (!MultiblockPlacer.canFormMultiblock(level, controllerPos)) {
+            if (!MultiblockPlacer.canFormMultiblock(level, controllerPos, ELECTRICITY_REPEATER_CONFIG)) {
                 // 有阻挡，阻止放置并显示提示
                 // 完全取消事件，原版不会消耗物品
                 event.setCanceled(true);
@@ -61,7 +66,7 @@ public class MultiblockEvents {
                 event.setCancellationResult(net.minecraft.world.InteractionResult.SUCCESS);
                     
                 // 使用工具类放置多方块结构
-                MultiblockPlacer.placeEntireMultiblock(level, controllerPos);
+                MultiblockPlacer.placeEntireMultiblock(level, controllerPos, ELECTRICITY_REPEATER_CONFIG);
                     
                 // 消耗一个物品
                 if (!player.isCreative()) {

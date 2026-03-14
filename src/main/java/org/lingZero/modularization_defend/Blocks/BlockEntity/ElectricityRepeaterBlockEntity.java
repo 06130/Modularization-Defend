@@ -191,7 +191,7 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity {
         }
         
         if (dataToBreak != null && dataToBreak.isFormed()) {
-            // 获取所有组成方块的位置
+            // 获取所有组成方块的位置（使用配置类）
             java.util.Set<BlockPos> blocks = dataToBreak.getBlocks();
             
             // 遍历并破坏所有方块（不掉落物品）
