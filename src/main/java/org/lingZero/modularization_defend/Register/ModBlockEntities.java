@@ -4,7 +4,7 @@ package org.lingZero.modularization_defend.Register;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import org.lingZero.modularization_defend.Blocks.BlockEntity.ElectricityRepeaterBlockEntity;
+import org.lingZero.modularization_defend.Blocks.ElectricityRepeater.ElectricityRepeaterBlockEntity;
 
 
 import static org.lingZero.modularization_defend.ModularizationDefend.MODID;

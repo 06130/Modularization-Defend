@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * 多方块组件接口
- * 表示一个多方块结构的基本组件
+ * 表示一个多方块结构的基本组件（通常由 BlockEntity 实现）
  */
 public interface IMultiblockComponent {
     

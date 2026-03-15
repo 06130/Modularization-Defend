@@ -1,4 +1,4 @@
-package org.lingZero.modularization_defend.Blocks.BlockEntity;
+package org.lingZero.modularization_defend.Blocks.ElectricityRepeater;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -7,21 +7,21 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import org.lingZero.modularization_defend.Blocks.Multiblock.ElectricityRepeaterConfig;
+import org.lingZero.modularization_defend.Blocks.Multiblock.ElectricityRepeaterHandler;
 import org.lingZero.modularization_defend.Blocks.Multiblock.IMultiblockComponent;
-import org.lingZero.modularization_defend.Blocks.Multiblock.IMultiblockConfig;
 import org.lingZero.modularization_defend.Blocks.Multiblock.MultiblockData;
-import org.lingZero.modularization_defend.Blocks.Multiblock.MultiblockFormation;
 
 import static org.lingZero.modularization_defend.Register.ModBlockEntities.Electricity_Repeater_BLOCK_ENTITY;
 
-
+/**
+ * 电力中继器方块实体
+ * 负责存储数据和状态管理
+ */
 public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMultiblockComponent {
     private int value;
     private MultiblockData multiblockData;
     private boolean isController = false; // 初始不是控制器，由 onPlace 设置
-    private boolean isFormingMultiblock = false; // 防止递归调用的标志
-    private static final IMultiblockConfig CONFIG = new ElectricityRepeaterConfig();
+    private static final ElectricityRepeaterHandler HANDLER = new ElectricityRepeaterHandler();
     
     public ElectricityRepeaterBlockEntity(BlockPos pos, BlockState state) {
         super(Electricity_Repeater_BLOCK_ENTITY.get(), pos, state);
@@ -59,46 +59,24 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
      * @return 是否成功形成
      */
     public boolean tryFormMultiblock(Player player) {
-        if (level == null || level.isClientSide || !isController() || isFormingMultiblock) {
+        if (level == null || level.isClientSide || !isController()) {
             return false;
         }
         
-        isFormingMultiblock = true;
-        try {
-            // 使用 MultiblockFormation 来处理成型逻辑
-            MultiblockFormation formation = new MultiblockFormation(level, worldPosition, CONFIG);
-            return formation.tryForm(player);
-        } finally {
-            isFormingMultiblock = false;
-        }
+        // 委托给处理器处理
+        return HANDLER.tryFormMultiblock(level, worldPosition, player);
     }
     
     /**
      * 形成多方块结构（包括自动填充缺失的方块）
      */
     public void formMultiblockWithPlacement() {
-        if (level == null || level.isClientSide || isFormingMultiblock) {
+        if (level == null || level.isClientSide) {
             return;
         }
         
-        // 设置标志，防止递归调用
-        isFormingMultiblock = true;
-        
-        try {
-            // 使用 MultiblockFormation 来填充缺失的方块
-            MultiblockFormation formation = new MultiblockFormation(level, worldPosition, CONFIG);
-            formation.fillMissingBlocks(
-                org.lingZero.modularization_defend.Register.ModBlocks.ELECTRICITY_REPEATER_BLOCK.get(),
-                (be, isController) -> {
-                    if (be instanceof ElectricityRepeaterBlockEntity repeater) {
-                        repeater.setController(isController);
-                    }
-                }
-            );
-        } finally {
-            // 重置标志
-            isFormingMultiblock = false;
-        }
+        // 委托给处理器处理
+        HANDLER.formMultiblockWithPlacement(level, worldPosition);
     }
     
     /**
@@ -109,8 +87,8 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
             return;
         }
         
-        // 使用 MultiblockFormation 来破坏结构，传入当前方块位置
-        MultiblockFormation.breakMultiblock(level, worldPosition, multiblockData);
+        // 委托给处理器处理
+        HANDLER.breakMultiblock(level, worldPosition, multiblockData);
         setChanged();
     }
     
@@ -163,12 +141,6 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
     public static void tick(Level level, BlockPos pos, BlockState state, ElectricityRepeaterBlockEntity blockEntity) {
         // 在每次 tick 中执行的操作
         if (!level.isClientSide) {
-            // 服务器端：定期检查多方块结构（使用 level 的 gameTime）
-            // 注释掉，因为现在使用右键点击来形成多方块
-            // if (level.getGameTime() % 20 == 0) { // 每 20 tick (1 秒) 检查一次
-            //     blockEntity.checkAndFormMultiblock();
-            // }
-            
             // 在这里添加其他逻辑，例如能量传输等
         }
     }

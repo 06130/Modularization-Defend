@@ -7,20 +7,20 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.lingZero.modularization_defend.Register.ModBlocks;
-import org.lingZero.modularization_defend.Blocks.BlockEntity.ElectricityRepeaterBlockEntity;
+import org.lingZero.modularization_defend.Blocks.ElectricityRepeater.ElectricityRepeaterBlockEntity;
 
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * 电力中继器多方块配置
- * 定义 2x2x6 的标准矩形结构
+ * 定义 2x2x10 的标准矩形结构
  */
 public class ElectricityRepeaterConfig implements IMultiblockConfig {
     
     // 多方块尺寸
     public static final int SIZE_X = 2;
-    public static final int SIZE_Y = 6;
+    public static final int SIZE_Y = 10;
     public static final int SIZE_Z = 2;
     
     @Override
@@ -30,7 +30,7 @@ public class ElectricityRepeaterConfig implements IMultiblockConfig {
     
     @Override
     public boolean canForm(LevelAccessor level, BlockPos controllerPos) {
-        // 遍历 2x2x6 的所有位置
+        // 遍历所有位置
         for (int y = 0; y < SIZE_Y; y++) {
             for (int x = 0; x < SIZE_X; x++) {
                 for (int z = 0; z < SIZE_Z; z++) {
@@ -51,7 +51,7 @@ public class ElectricityRepeaterConfig implements IMultiblockConfig {
     
     @Override
     public void place(Level level, BlockPos controllerPos) {
-        // 遍历 2x2x6 的所有位置
+        // 遍历所有位置
         for (int y = 0; y < SIZE_Y; y++) {
             for (int x = 0; x < SIZE_X; x++) {
                 for (int z = 0; z < SIZE_Z; z++) {

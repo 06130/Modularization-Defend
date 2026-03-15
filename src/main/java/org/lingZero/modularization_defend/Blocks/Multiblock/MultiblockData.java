@@ -18,8 +18,8 @@ public class MultiblockData {
     protected final BlockPos controllerPos;
     protected final Set<BlockPos> blocks;
     private boolean isFormed = false;
-    private int width = 2;  // 2x2 底座
-    private int height = 6; // 6 格高
+    private int width = 2;   // 默认宽度
+    private int height = 10; // 默认高度（从 ElectricityRepeaterConfig 获取）
 
     public MultiblockData(Level level, BlockPos controllerPos) {
         this.level = level;
@@ -37,8 +37,8 @@ public class MultiblockData {
 
         blocks.clear();
         
-        // 检查 2x2x6 的结构是否完整
-        // 以控制器位置为基准，检测 2x2 底座向上 6 格的空间
+        // 使用当前配置的高度进行检查
+        // 注意：这里应该使用配置中的尺寸，但现在先使用默认值
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 for (int z = 0; z < width; z++) {

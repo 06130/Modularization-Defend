@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import org.lingZero.modularization_defend.Blocks.EntityBlock.ElectricityRepeaterEntityBlock;
+import org.lingZero.modularization_defend.Blocks.ElectricityRepeater.ElectricityRepeaterMultiblock;
 import org.lingZero.modularization_defend.ModularizationDefend;
 
 
@@ -19,8 +19,8 @@ public class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS =
             DeferredRegister.createBlocks(ModularizationDefend.MODID);
 
-    public static final DeferredBlock<ElectricityRepeaterEntityBlock> ELECTRICITY_REPEATER_BLOCK =
-            BLOCKS.register("electricity_repeater_block", () -> new ElectricityRepeaterEntityBlock (BlockBehaviour.Properties.of()
+    public static final DeferredBlock<ElectricityRepeaterMultiblock> ELECTRICITY_REPEATER_BLOCK =
+            BLOCKS.register("electricity_repeater_block", () -> new ElectricityRepeaterMultiblock(BlockBehaviour.Properties.of()
                     .strength(3.0f, 6.0f)      // 硬度等级与抗爆等级
                     .sound(SoundType.STONE)                                // 挖掘时的声音类型
                     .requiresCorrectToolForDrops()                        // 需要正确的工具（镐）破坏并掉落物品
