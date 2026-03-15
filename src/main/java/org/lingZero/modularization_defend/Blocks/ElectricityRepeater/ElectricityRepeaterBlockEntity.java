@@ -46,6 +46,30 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
     }
     
     /**
+     * 当方块被移除时调用
+     */
+    public void blockRemoved() {
+        if (level != null && !level.isClientSide && isMultiblockFormed()) {
+            // 标记多方块需要重新检查（虽然即将被破坏，但为了安全起见）
+            if (multiblockData != null) {
+                multiblockData.setNeedsRecheck();
+            }
+        }
+    }
+    
+    /**
+     * 当邻居方块发生变化时调用
+     */
+    public void onNeighborChange(BlockPos neighborPos) {
+        if (level != null && !level.isClientSide && multiblockData != null && multiblockData.isFormed()) {
+            // 如果变化的位置不是结构的一部分，则需要重新验证
+            if (!multiblockData.containsBlock(neighborPos)) {
+                multiblockData.setNeedsRecheck();
+            }
+        }
+    }
+    
+    /**
      * 初始化多方块数据（只验证，不放置方块）
      */
     @Override
@@ -58,6 +82,10 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
                 this.multiblockData = data;
                 setChanged();
                 level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+            } else {
+                // 验证失败，清除旧数据（防止重启后数据不一致）
+                this.multiblockData = null;
+                setChanged();
             }
         }
     }
@@ -149,10 +177,8 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
         super.loadAdditional(tag, registries);
         this.value = tag.getInt("value");
         this.isController = tag.getBoolean("isController");
-        // 重新加载后重新检查多方块结构
-        if (level != null && isController) {
-            initializeMultiblock();
-        }
+        // 重新加载后不立即初始化，而是在下一个 tick 再验证
+        // 这样可以确保世界和管理器都已经完全加载
     }
 
     @Override
@@ -196,8 +222,25 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
     public static void tick(Level level, BlockPos pos, BlockState state, ElectricityRepeaterBlockEntity blockEntity) {
         // 在每次 tick 中执行的操作
         if (!level.isClientSide) {
-            // 在这里添加其他逻辑，例如能量传输等
+            // 如果是控制器且没有多方块数据，尝试初始化（用于重启后恢复）
+            if (blockEntity.isController() && blockEntity.multiblockData == null) {
+                blockEntity.initializeMultiblock();
+            }
+            
+            // 处理延迟的重新验证（Mekanism 风格）
+            if (blockEntity.multiblockData != null && blockEntity.multiblockData.needsRecheck()) {
+                blockEntity.multiblockData.needsRecheck = false; // 重置标志
+                // 重新验证结构
+                blockEntity.initializeMultiblock();
+            }
         }
+    }
+    
+    /**
+     * 当区块加载完成时调用，用于恢复多方块结构
+     */
+    public void onChunkLoaded() {
+        // 不需要特殊处理，tick 方法会自动检测并初始化
     }
     
     // ==================== GeoBlockEntity 实现 ====================

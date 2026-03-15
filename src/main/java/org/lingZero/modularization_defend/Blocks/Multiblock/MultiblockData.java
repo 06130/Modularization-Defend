@@ -20,6 +20,10 @@ public class MultiblockData {
     private boolean isFormed = false;
     private int width = 2;   // 默认宽度
     private int height = 10; // 默认高度（从 ElectricityRepeaterConfig 获取）
+    /**
+     * 标记是否需要重新检查结构（Mekanism 风格）
+     */
+    public boolean needsRecheck = false;
 
     public MultiblockData(Level level, BlockPos controllerPos) {
         this.level = level;
@@ -45,13 +49,25 @@ public class MultiblockData {
                     BlockPos checkPos = controllerPos.offset(x, y, z);
                     BlockState state = level.getBlockState(checkPos);
                     
-                    // 检查是否为有效的多方块方块
+                    // 检查该位置是否为有效的多方块方块
                     if (MultiblockUtils.isValidMultiblockBlock(state)) {
+                        // 验证该位置的 BlockEntity 是否正确设置了 isController
+                        var blockEntity = level.getBlockEntity(checkPos);
+                        if (blockEntity instanceof IMultiblockComponent component) {
+                            // 确保控制器标志正确
+                            boolean shouldBeController = checkPos.equals(controllerPos);
+                            if (component.isControllerViaComponent() != shouldBeController) {
+                                component.setController(shouldBeController);
+                            }
+                        }
                         blocks.add(checkPos);
                     } else {
                         // 如果任何位置无效，结构不完整
+                        // 这可能是因为重启后部分方块被破坏或替换
                         blocks.clear();
                         isFormed = false;
+                        // 从管理器中移除无效的记录
+                        MultiblockManager.removeMultiblock(controllerPos);
                         return false;
                     }
                 }
@@ -85,6 +101,20 @@ public class MultiblockData {
         blocks.clear();
         // 从管理器中移除
         MultiblockManager.removeMultiblock(controllerPos);
+    }
+    
+    /**
+     * 设置需要重新检查结构
+     */
+    public void setNeedsRecheck() {
+        needsRecheck = true;
+    }
+    
+    /**
+     * 检查是否需要重新验证结构
+     */
+    public boolean needsRecheck() {
+        return needsRecheck;
     }
 
     /**

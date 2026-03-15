@@ -39,10 +39,23 @@ public class ElectricityRepeaterMultiblock extends Block implements EntityBlock 
         if (!state.is(newState.getBlock())) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof ElectricityRepeaterBlockEntity repeater) {
+                // 先调用 blockRemoved 标记需要重新检查
+                repeater.blockRemoved();
+                // 然后破坏多方块
                 repeater.breakMultiblock();
             }
         }
         super.onRemove(state, level, pos, newState, isMoving);
+    }
+    
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, BlockState neighborState, BlockPos neighborPos, boolean isMoving) {
+        super.neighborChanged(state, level, pos, neighborState.getBlock(), neighborPos, isMoving);
+        if (!level.isClientSide) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof ElectricityRepeaterBlockEntity repeater) {
+                repeater.onNeighborChange(neighborPos);
+            }
+        }
     }
     
     @Override

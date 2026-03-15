@@ -20,6 +20,7 @@ import org.lingZero.modularization_defend.Register.ModBlockEntities;
 import org.lingZero.modularization_defend.Register.ModBlocks;
 import org.lingZero.modularization_defend.Register.ModCreativeTabs;
 import org.lingZero.modularization_defend.Register.ModItems;
+import org.lingZero.modularization_defend.Blocks.Multiblock.MultiblockManager;
 import org.lingZero.modularization_defend.Renderer.ElectricityRepeaterRenderer;
 import org.slf4j.Logger;
 
@@ -69,7 +70,9 @@ public class ModularizationDefend {
     // 你可以使用 SubscribeEvent 让事件总线发现要调用的方法
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
-            
+        // 从持久化数据加载所有多方块结构
+        MultiblockManager.loadFromPersistent(event.getServer().overworld());
+        LOGGER.info("Loaded multiblock data from persistent storage");
     }
     
     // 你可以使用 EventBusSubscriber 自动注册此类中所有用 @SubscribeEvent 注解的静态方法

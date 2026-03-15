@@ -13,6 +13,7 @@ import java.util.UUID;
  * 用于管理世界中的所有多方块结构
  */
 public class MultiblockManager {
+    // 运行时缓存（内存中的快速访问）
     private static final Map<UUID, MultiblockData> MULTIBLOCK_MAP = new HashMap<>();
     
     /**
@@ -23,6 +24,9 @@ public class MultiblockManager {
             // 使用控制器位置生成 UUID 作为键
             UUID key = generateKey(data.getControllerPos());
             MULTIBLOCK_MAP.put(key, data);
+            
+            // 同时保存到持久化数据
+            saveToPersistent(data, key);
         }
     }
     
@@ -33,6 +37,9 @@ public class MultiblockManager {
         if (controllerPos != null) {
             UUID key = generateKey(controllerPos);
             MULTIBLOCK_MAP.remove(key);
+            
+            // 同时从持久化数据中移除
+            removeFromPersistent(key);
         }
     }
     
@@ -74,6 +81,70 @@ public class MultiblockManager {
     }
     
     /**
+     * 从持久化数据加载所有多方块到内存
+     */
+    public static void loadFromPersistent(Level level) {
+        if (level == null || level.isClientSide) {
+            return;
+        }
+        
+        try {
+            MultiblockSavedData savedData = MultiblockSavedData.getOrCreate();
+            
+            // 遍历所有保存的多方块数据并重新验证
+            for (Map.Entry<UUID, MultiblockSavedData.MultiblockDataEntry> entry : 
+                 savedData.multiblockEntries.entrySet()) {
+                
+                UUID controllerUUID = entry.getKey();
+                
+                // 从 UUID 恢复控制器位置（与 generateKey 相反的操作）
+                long mostSig = controllerUUID.getMostSignificantBits();
+                long leastSig = controllerUUID.getLeastSignificantBits();
+                
+                int x = (int)(mostSig >>> 32);
+                int z = (int)(mostSig & 0xFFFFFFFFL);
+                int y = (int)(leastSig >>> 32);
+                
+                BlockPos controllerPos = new BlockPos(x, y, z);
+                
+                // 创建新的 MultiblockData 并尝试验证
+                MultiblockData data = new MultiblockData(level, controllerPos);
+                if (data.tryForm()) {
+                    // 验证成功，添加到内存缓存
+                    UUID key = generateKey(controllerPos);
+                    MULTIBLOCK_MAP.put(key, data);
+                }
+            }
+        } catch (Exception e) {
+            // 如果加载失败，忽略错误（可能是存档损坏或不存在）
+        }
+    }
+    
+    /**
+     * 保存到持久化数据
+     */
+    private static void saveToPersistent(MultiblockData data, UUID key) {
+        try {
+            MultiblockSavedData savedData = MultiblockSavedData.getOrCreate();
+            savedData.registerMultiblock(key, data);
+        } catch (Exception e) {
+            // 忽略保存错误
+        }
+    }
+    
+    /**
+     * 从持久化数据移除
+     */
+    private static void removeFromPersistent(UUID key) {
+        try {
+            MultiblockSavedData savedData = MultiblockSavedData.getOrCreate();
+            savedData.removeMultiblock(key);
+        } catch (Exception e) {
+            // 忽略移除错误
+        }
+    }
+    
+    /**
      * 清理无效的多方块结构
      */
     public static void cleanupInvalidMultiblocks() {
@@ -86,9 +157,10 @@ public class MultiblockManager {
      * 生成唯一的键值
      */
     private static UUID generateKey(BlockPos pos) {
-        // 使用位置和维度信息生成唯一键
-        long seed = pos.asLong();
-        return new UUID(seed, seed);
+        // 使用位置信息生成唯一键（简化版本，不考虑维度）
+        long mostSig = (long)pos.getX() << 32 | (pos.getZ() & 0xFFFFFFFFL);
+        long leastSig = (long)pos.getY() << 32 | (pos.hashCode() & 0xFFFFFFFFL);
+        return new UUID(mostSig, leastSig);
     }
     
     /**

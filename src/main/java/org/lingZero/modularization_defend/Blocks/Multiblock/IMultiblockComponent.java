@@ -28,6 +28,14 @@ public interface IMultiblockComponent {
     boolean isController();
     
     /**
+     * 通过数据组件检查是否为控制器
+     * 用于在多方块验证时读取控制器状态
+     */
+    default boolean isControllerViaComponent() {
+        return isController();
+    }
+    
+    /**
      * 设置是否为控制器
      */
     void setController(boolean controller);
