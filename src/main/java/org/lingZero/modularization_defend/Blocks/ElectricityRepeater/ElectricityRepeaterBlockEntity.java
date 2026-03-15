@@ -175,6 +175,23 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
         // 返回数据包以同步到客户端
         return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
     }
+    
+    /**
+     * 扩展渲染边界框以覆盖整个多方块结构
+     * 这样只要结构中任意一个方块在视野内，整个结构都会渲染
+     */
+    public net.minecraft.world.phys.AABB getRenderBoundingBox() {
+        // 创建一个非常大的边界框，确保覆盖整个视野范围
+        // 使用 64 个方块的距离，这应该足够覆盖大多数情况
+        return new net.minecraft.world.phys.AABB(
+            worldPosition.getX() - 64,
+            worldPosition.getY() - 64,
+            worldPosition.getZ() - 64,
+            worldPosition.getX() + 66,  // 2 + 64
+            worldPosition.getY() + 74,  // 10 + 64
+            worldPosition.getZ() + 66   // 2 + 64
+        );
+    }
 
     public static void tick(Level level, BlockPos pos, BlockState state, ElectricityRepeaterBlockEntity blockEntity) {
         // 在每次 tick 中执行的操作

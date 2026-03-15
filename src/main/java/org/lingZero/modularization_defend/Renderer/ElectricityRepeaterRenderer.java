@@ -37,6 +37,49 @@ public class ElectricityRepeaterRenderer extends GeoBlockRenderer<ElectricityRep
     }
     
     /**
+     * 允许离屏渲染，这样即使主方块不在视野内也能渲染
+     * 参考 Mekanism 的多方块渲染实现
+     */
+    @Override
+    public boolean shouldRenderOffScreen(ElectricityRepeaterBlockEntity pBlockEntity) {
+        return true;
+    }
+    
+    /**
+     * 自定义渲染判断逻辑，只要多方块成型就始终渲染
+     * 参考 Mekanism 的多方块渲染实现
+     */
+    @Override
+    public boolean shouldRender(ElectricityRepeaterBlockEntity pBlockEntity, net.minecraft.world.phys.Vec3 pCamera) {
+        // 如果是控制器且多方块已成型，就渲染
+        if (pBlockEntity.isController() && pBlockEntity.isMultiblockFormed()) {
+            return true;
+        }
+        // 否则使用默认判断逻辑
+        return super.shouldRender(pBlockEntity, pCamera);
+    }
+    
+    /**
+     * 获取渲染边界框，覆盖整个多方块结构
+     * 参考 Mekanism 的多方块渲染实现
+     */
+    @Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox(ElectricityRepeaterBlockEntity pBlockEntity) {
+        if (pBlockEntity.isController()) {
+            // 创建一个覆盖整个 2x2x10 结构的边界框
+            return new net.minecraft.world.phys.AABB(
+                pBlockEntity.getBlockPos().getX() - 64,
+                pBlockEntity.getBlockPos().getY() - 64,
+                pBlockEntity.getBlockPos().getZ() - 64,
+                pBlockEntity.getBlockPos().getX() + 66,  // 2 + 64
+                pBlockEntity.getBlockPos().getY() + 74,  // 10 + 64
+                pBlockEntity.getBlockPos().getZ() + 66   // 2 + 64
+            );
+        }
+        return super.getRenderBoundingBox(pBlockEntity);
+    }
+    
+    /**
      * 渲染前处理，设置光照
      */
     @Override
