@@ -12,5 +12,7 @@
   "message.modularization_defend.block_distance": "§a第二次点击：[%d, %d, %d] | §e直线距离：%.2f 格",
   "message.modularization_defend.too_far": "§c距离过远！当前：%.2f 格，最大允许：%.2f 格",
   "message.modularization_defend.out_of_range": "§c超出范围！距离：%.2f 格 > %.2f 格",
-  "message.modularization_defend.connection_broken": "连接断开"
+  "message.modularization_defend.connection_broken": "连接断开",
+
+  "message.modularization_defend.multiblock_blocked": "§c无法放置：结构区域内有其他方块阻挡！"
 }

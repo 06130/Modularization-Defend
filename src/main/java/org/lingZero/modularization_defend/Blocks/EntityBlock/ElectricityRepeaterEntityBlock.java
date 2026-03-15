@@ -34,7 +34,6 @@ public class ElectricityRepeaterEntityBlock extends Block implements EntityBlock
             if (blockEntity instanceof ElectricityRepeaterBlockEntity repeater) {
                 // 确保第一个放置的是控制器
                 repeater.setController(true);
-                // 注意：不在这里形成多方块，因为会触发其他方块的 onPlace 导致无限循环
             }
         }
         super.onPlace(state, level, pos, oldState, isMoving);

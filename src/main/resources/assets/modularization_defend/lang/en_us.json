@@ -1,0 +1,17 @@
+{
+  "itemGroup.modularization_defend": "Modularization Defend",
+
+  "block.modularization_defend.electricity_repeater_block": "Electricity Repeater",
+
+  "item.modularization_defend.example_item": "Example Item",
+  "item.modularization_defend.terminal_item": "Modular Terminal",
+  "item.modularization_defend.energy_network_configuration_tool_item": "Energy Network Tool",
+
+  "message.modularization_defend.first_click": "§b Node Coordinates: [%d, %d, %d]",
+  "message.modularization_defend.player_distance": "§eDistance: %.2f blocks | §7Player: [%d, %d, %d] -> §bNode: [%d, %d, %d]",
+  "message.modularization_defend.block_distance": "§aSecond Click: [%d, %d, %d] | §eStraight Distance: %.2f blocks",
+  "message.modularization_defend.too_far": "§cToo far! Current: %.2f blocks, Max allowed: %.2f blocks",
+  "message.modularization_defend.out_of_range": "§cOut of range! Distance: %.2f blocks > %.2f blocks",
+  "message.modularization_defend.connection_broken": "Connection broken",
+  "message.modularization_defend.multiblock_blocked": "§cCannot place: Structure area is blocked!"
+}

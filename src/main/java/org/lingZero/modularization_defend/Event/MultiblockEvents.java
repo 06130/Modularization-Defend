@@ -1,6 +1,7 @@
 package org.lingZero.modularization_defend.Event;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -55,8 +56,9 @@ public class MultiblockEvents {
                 event.setCanceled(true);
                 event.setCancellationResult(net.minecraft.world.InteractionResult.FAIL);
                         
-                String message = "§c无法放置：结构区域内有其他方块阻挡！";
-                player.displayClientMessage(net.minecraft.network.chat.Component.literal(message), true);
+                String messageKey = "message." + ModularizationDefend.MODID + ".multiblock_blocked";
+                Component message = Component.translatable(messageKey);
+                player.displayClientMessage(message, true);
                     
                 // 重要：手动同步物品栏到客户端
                 player.containerMenu.sendAllDataToRemote();
