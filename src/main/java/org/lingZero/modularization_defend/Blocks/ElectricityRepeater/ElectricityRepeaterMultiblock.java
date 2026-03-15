@@ -1,14 +1,18 @@
 package org.lingZero.modularization_defend.Blocks.ElectricityRepeater;
 
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 import static org.lingZero.modularization_defend.Register.ModBlockEntities.Electricity_Repeater_BLOCK_ENTITY;
 
@@ -29,14 +33,7 @@ public class ElectricityRepeaterMultiblock extends Block implements EntityBlock 
     
     @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
-        // 方块被放置后，标记为控制器
-        if (!level.isClientSide) {
-            BlockEntity blockEntity = level.getBlockEntity(pos);
-            if (blockEntity instanceof ElectricityRepeaterBlockEntity repeater) {
-                // 确保第一个放置的是控制器
-                repeater.setController(true);
-            }
-        }
+        // 不在这里设置控制器标志，由 place() 方法统一处理
         super.onPlace(state, level, pos, oldState, isMoving);
     }
     
@@ -64,5 +61,31 @@ public class ElectricityRepeaterMultiblock extends Block implements EntityBlock 
                 // 空实现，tick 逻辑在 BlockEntity 内部处理
             }
         };
+    }
+    
+    /**
+     * 返回方块的渲染形状
+     * 使用 GeckoLib 渲染时需要返回 ENTITYBLOCK_ANIMATED
+     */
+    @Override
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.ENTITYBLOCK_ANIMATED;
+    }
+    
+    /**
+     * 获取方块的着色颜色
+     * 非控制器方块将变得透明
+     */
+    public float getShadeBrightness(BlockState state, BlockAndTintGetter level, BlockPos pos) {
+        if (level instanceof Level actualLevel) {
+            BlockEntity blockEntity = actualLevel.getBlockEntity(pos);
+            if (blockEntity instanceof ElectricityRepeaterBlockEntity repeater) {
+                // 如果不是控制器，增加亮度使其看起来更透明
+                if (!repeater.isController()) {
+                    return 1.0f; // 最大亮度，使其看起来更淡
+                }
+            }
+        }
+        return super.getShadeBrightness(state, level, pos);
     }
 }

@@ -10,6 +10,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.lingZero.modularization_defend.Blocks.Multiblock.ElectricityRepeaterHandler;
 import org.lingZero.modularization_defend.Blocks.Multiblock.IMultiblockComponent;
 import org.lingZero.modularization_defend.Blocks.Multiblock.MultiblockData;
+import software.bernie.geckolib.animatable.GeoBlockEntity;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.util.GeckoLibUtil;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 
 import static org.lingZero.modularization_defend.Register.ModBlockEntities.Electricity_Repeater_BLOCK_ENTITY;
 
@@ -17,11 +24,14 @@ import static org.lingZero.modularization_defend.Register.ModBlockEntities.Elect
  * 电力中继器方块实体
  * 负责存储数据和状态管理
  */
-public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMultiblockComponent {
+public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMultiblockComponent, GeoBlockEntity {
     private int value;
     private MultiblockData multiblockData;
     private boolean isController = false; // 初始不是控制器，由 onPlace 设置
     private static final ElectricityRepeaterHandler HANDLER = new ElectricityRepeaterHandler();
+    
+    // GeckoLib 动画缓存
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     
     public ElectricityRepeaterBlockEntity(BlockPos pos, BlockState state) {
         super(Electricity_Repeater_BLOCK_ENTITY.get(), pos, state);
@@ -111,6 +121,18 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
      */
     public void setController(boolean controller) {
         isController = controller;
+        // 只在需要时保存数据，避免频繁调用 setChanged
+        if (level != null && !level.isClientSide) {
+            // 标记为需要保存
+            setChanged();
+        }
+    }
+    
+    /**
+     * 通过数据组件检查是否为控制器
+     */
+    public boolean isControllerViaComponent() {
+        return isController; // 直接使用内部字段，因为数据组件方案有问题
     }
     
     /**
@@ -145,5 +167,21 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
         }
     }
     
-
+    // ==================== GeoBlockEntity 实现 ====================
+    
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        // 暂无动画，添加空控制器
+        controllers.add(new AnimationController<>(this, this::idleController));
+    }
+    
+    protected <E extends ElectricityRepeaterBlockEntity> PlayState idleController(final AnimationState<E> state) {
+        // 返回空闲状态（无动画）
+        return PlayState.STOP;
+    }
+    
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.cache;
+    }
 }

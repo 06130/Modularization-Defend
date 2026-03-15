@@ -1,6 +1,7 @@
 package org.lingZero.modularization_defend;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -10,6 +11,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
@@ -18,6 +20,7 @@ import org.lingZero.modularization_defend.Register.ModBlockEntities;
 import org.lingZero.modularization_defend.Register.ModBlocks;
 import org.lingZero.modularization_defend.Register.ModCreativeTabs;
 import org.lingZero.modularization_defend.Register.ModItems;
+import org.lingZero.modularization_defend.Renderer.ElectricityRepeaterRenderer;
 import org.slf4j.Logger;
 
 @Mod(ModularizationDefend.MODID)
@@ -74,6 +77,15 @@ public class ModularizationDefend {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
+        }
+        
+        /**
+         * 注册方块实体渲染器
+         */
+        @SubscribeEvent
+        public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+            // 注册电力中继器渲染器
+            event.registerBlockEntityRenderer(ModBlockEntities.Electricity_Repeater_BLOCK_ENTITY.get(), ElectricityRepeaterRenderer::new);
         }
     }
 }

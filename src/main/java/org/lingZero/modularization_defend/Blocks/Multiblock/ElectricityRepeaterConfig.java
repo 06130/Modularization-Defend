@@ -51,7 +51,7 @@ public class ElectricityRepeaterConfig implements IMultiblockConfig {
     
     @Override
     public void place(Level level, BlockPos controllerPos) {
-        // 遍历所有位置
+        // 遍历所有位置（包括控制器位置）
         for (int y = 0; y < SIZE_Y; y++) {
             for (int x = 0; x < SIZE_X; x++) {
                 for (int z = 0; z < SIZE_Z; z++) {
@@ -65,7 +65,8 @@ public class ElectricityRepeaterConfig implements IMultiblockConfig {
                     BlockEntity blockEntity = level.getBlockEntity(checkPos);
                     if (blockEntity instanceof ElectricityRepeaterBlockEntity repeater) {
                         // 第一个位置是控制器，其余不是
-                        repeater.setController(x == 0 && y == 0 && z == 0);
+                        boolean isController = (x == 0 && y == 0 && z == 0);
+                        repeater.setController(isController);
                     }
                 }
             }

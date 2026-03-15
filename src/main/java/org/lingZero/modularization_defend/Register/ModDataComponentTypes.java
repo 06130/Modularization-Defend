@@ -5,10 +5,9 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import org.lingZero.modularization_defend.ModularizationDefend;
 
 /**
- * 数据组件类型注册
+ * 数据组件类型注册（暂未使用）
  */
 public class ModDataComponentTypes {
     public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENT_TYPES =
             DeferredRegister.create(net.minecraft.core.registries.BuiltInRegistries.DATA_COMPONENT_TYPE, ModularizationDefend.MODID);
-
 }
