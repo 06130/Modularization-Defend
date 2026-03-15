@@ -57,16 +57,18 @@ public class ElectricityRepeaterConfig implements IMultiblockConfig {
                 for (int z = 0; z < SIZE_Z; z++) {
                     BlockPos checkPos = controllerPos.offset(x, y, z);
                     
-                    // 放置方块（使用 UPDATE_ALL 确保客户端同步）
+                    // 是否是控制器位置
+                    boolean isController = (x == 0 && y == 0 && z == 0);
+                    
+                    // 放置方块（使用 UPDATE_CLIENTS 确保客户端同步，但不触发 onPlace）
                     BlockState stateToPlace = ModBlocks.ELECTRICITY_REPEATER_BLOCK.get().defaultBlockState();
-                    level.setBlock(checkPos, stateToPlace, Block.UPDATE_ALL);
+                    level.setBlock(checkPos, stateToPlace, Block.UPDATE_CLIENTS); // flags=1
                     
                     // 设置控制器标志
                     BlockEntity blockEntity = level.getBlockEntity(checkPos);
                     if (blockEntity instanceof ElectricityRepeaterBlockEntity repeater) {
-                        // 第一个位置是控制器，其余不是
-                        boolean isController = (x == 0 && y == 0 && z == 0);
                         repeater.setController(isController);
+                        System.out.println("[ElectricityRepeaterConfig] Set " + checkPos + " isController=" + isController);
                     }
                 }
             }

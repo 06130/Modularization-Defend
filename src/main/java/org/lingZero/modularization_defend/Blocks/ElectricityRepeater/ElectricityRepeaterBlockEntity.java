@@ -125,6 +125,8 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
         if (level != null && !level.isClientSide) {
             // 标记为需要保存
             setChanged();
+            // 通知世界更新这个方块，以便同步到客户端
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         }
     }
     
@@ -158,6 +160,20 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
         super.saveAdditional(tag, registries);
         tag.putInt("value", this.value);
         tag.putBoolean("isController", this.isController);
+    }
+    
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        // 确保更新标签包含 isController 数据
+        CompoundTag tag = super.getUpdateTag(registries);
+        tag.putBoolean("isController", this.isController);
+        return tag;
+    }
+    
+    @Override
+    public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket() {
+        // 返回数据包以同步到客户端
+        return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, ElectricityRepeaterBlockEntity blockEntity) {

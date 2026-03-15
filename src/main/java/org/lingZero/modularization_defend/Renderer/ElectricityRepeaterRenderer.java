@@ -28,9 +28,7 @@ public class ElectricityRepeaterRenderer extends GeoBlockRenderer<ElectricityRep
     public void render(ElectricityRepeaterBlockEntity blockEntity, float partialTick, PoseStack poseStack,
                        MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         // 检查是否为控制器，只有控制器才渲染模型
-        boolean isController = blockEntity.isControllerViaComponent();
-        
-        if (!isController) {
+        if (!blockEntity.isController()) {
             return;
         }
         

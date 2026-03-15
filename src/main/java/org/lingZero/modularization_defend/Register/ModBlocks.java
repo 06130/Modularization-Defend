@@ -24,6 +24,7 @@ public class ModBlocks {
                     .strength(3.0f, 6.0f)      // 硬度等级与抗爆等级
                     .sound(SoundType.STONE)                                // 挖掘时的声音类型
                     .requiresCorrectToolForDrops()                        // 需要正确的工具（镐）破坏并掉落物品
+                    .noOcclusion()                                        // 不遮挡光线和相邻方块的面
 
             ));
     
