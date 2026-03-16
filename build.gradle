@@ -9,6 +9,7 @@ version = mod_version
 group = mod_group_id
 
 repositories {
+    mavenCentral()
     mavenLocal()
     maven {
         name = 'GeckoLib'
@@ -30,10 +31,8 @@ repositories {
             includeGroup "curse.maven"
         }
     }
-    maven {
-        url "https://maven.sighs.cc/repository/maven-public/"
-    }
-
+    // LDLib2
+    maven { url = "https://maven.firstdark.dev/snapshots" }
 }
 
 base {
@@ -142,7 +141,10 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
     implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
-    implementation "curse.maven:apricityui-1470115:7715291"
+    //implementation "curse.maven:apricityui-1470115:7715291"
+    compileOnly "org.appliedenergistics:guideme:${guideme_version}:api"
+    runtimeOnly "org.appliedenergistics:guideme:${guideme_version}"
+    implementation("com.lowdragmc.ldlib2:ldlib2-neoforge-${minecraft_version}:${ldlib2_version}:all")
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
