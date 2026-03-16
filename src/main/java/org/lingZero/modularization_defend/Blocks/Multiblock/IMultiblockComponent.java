@@ -41,6 +41,13 @@ public interface IMultiblockComponent {
     void setController(boolean controller);
     
     /**
+     * 获取主方块坐标
+     * @return 主方块坐标，如果不是结构的一部分则返回 null
+     */
+    @Nullable
+    BlockPos getControllerPos();
+    
+    /**
      * 初始化多方块数据（由 BlockEntity 实现）
      */
     void initializeMultiblock();

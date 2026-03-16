@@ -1,6 +1,9 @@
 package org.lingZero.modularization_defend.Blocks.ElectricityRepeater;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -11,6 +14,9 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 
 /**
  * 电力中继器多方块方块
@@ -70,6 +76,21 @@ public class ElectricityRepeaterMultiblock extends Block implements EntityBlock 
                 // 空实现，tick 逻辑在 BlockEntity 内部处理
             }
         };
+    }
+    
+    /**
+     * 当玩家右键点击方块时调用
+     */
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        if (!level.isClientSide) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof ElectricityRepeaterBlockEntity repeater) {
+                // 调用 BlockEntity 的 use 方法，让它自己判断是否重定向到主方块
+                return repeater.use(player, InteractionHand.MAIN_HAND);
+            }
+        }
+        return InteractionResult.SUCCESS;
     }
     
     /**

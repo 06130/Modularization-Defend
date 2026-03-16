@@ -6,6 +6,8 @@
   "item.modularization_defend.example_item": "Example Item",
   "item.modularization_defend.terminal_item": "模块化终端",
   "item.modularization_defend.energy_network_configuration_tool_item": "电网工具",
+  
+  "gui.modularization_defend.electricity_repeater": "电力中继器",
 
   "message.modularization_defend.first_click": "§b开始电力连接，节点坐标：[%d, %d, %d]",
   "message.modularization_defend.player_distance": "§e距离：%.2f 格 | §7玩家：[%d, %d, %d] -> §b节点：[%d, %d, %d]",

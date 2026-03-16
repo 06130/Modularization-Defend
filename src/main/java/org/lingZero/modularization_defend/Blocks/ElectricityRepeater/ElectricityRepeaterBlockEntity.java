@@ -3,7 +3,12 @@ package org.lingZero.modularization_defend.Blocks.ElectricityRepeater;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -11,12 +16,12 @@ import org.lingZero.modularization_defend.Blocks.Multiblock.ElectricityRepeaterH
 import org.lingZero.modularization_defend.Blocks.Multiblock.IMultiblockComponent;
 import org.lingZero.modularization_defend.Blocks.Multiblock.MultiblockData;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 
 import static org.lingZero.modularization_defend.Register.ModBlockEntities.Electricity_Repeater_BLOCK_ENTITY;
 
@@ -30,11 +35,22 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
     private boolean isController = false; // 初始不是控制器，由 onPlace 设置
     private static final ElectricityRepeaterHandler HANDLER = new ElectricityRepeaterHandler();
     
+    // GUI 数据
+    private final ContainerData data = new SimpleContainerData(4);
+    
+    // 存储的主方块坐标（从 NBT 读取，用于重启后恢复）
+    private BlockPos storedControllerPos = null;
+    
     // GeckoLib 动画缓存
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     
     public ElectricityRepeaterBlockEntity(BlockPos pos, BlockState state) {
         super(Electricity_Repeater_BLOCK_ENTITY.get(), pos, state);
+        // 初始化 GUI 数据
+        data.set(0, 0);      // 当前能量
+        data.set(1, 10000);  // 最大能量
+        data.set(2, 0);      // 电网状态（预留）
+        data.set(3, 0);      // 升级状态（预留）
     }
     
     /**
@@ -58,7 +74,7 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
     }
     
     /**
-     * 当邻居方块发生变化时调用
+     * 当邻居方块发生变化时调用S
      */
     public void onNeighborChange(BlockPos neighborPos) {
         if (level != null && !level.isClientSide && multiblockData != null && multiblockData.isFormed()) {
@@ -82,11 +98,46 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
                 this.multiblockData = data;
                 setChanged();
                 level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+                
+                // 将主方块坐标同步到所有结构方块
+                syncControllerPosToAllBlocks(worldPosition);
             } else {
                 // 验证失败，清除旧数据（防止重启后数据不一致）
                 this.multiblockData = null;
                 setChanged();
             }
+        }
+    }
+    
+    /**
+     * 将主方块坐标同步到所有结构方块
+     * @param controllerPos 主方块坐标
+     */
+    private void syncControllerPosToAllBlocks(BlockPos controllerPos) {
+        if (level == null || multiblockData == null) {
+            return;
+        }
+        
+        // 遍历所有结构方块
+        for (BlockPos pos : multiblockData.getBlocks()) {
+            if (level.getBlockEntity(pos) instanceof ElectricityRepeaterBlockEntity blockEntity) {
+                // 设置主方块坐标（通过 NBT）
+                blockEntity.setControllerPosFromNBT(controllerPos);
+            }
+        }
+    }
+    
+    /**
+     * 从 NBT 设置主方块坐标（用于同步）
+     * @param controllerPos 主方块坐标
+     */
+    public void setControllerPosFromNBT(BlockPos controllerPos) {
+        this.storedControllerPos = controllerPos;
+        // 标记为需要保存
+        setChanged();
+        // 通知客户端更新
+        if (level != null && !level.isClientSide) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         }
     }
     
@@ -138,6 +189,19 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
     }
     
     /**
+     * 获取主方块坐标
+     */
+    @Override
+    public BlockPos getControllerPos() {
+        // 优先从 multiblockData 获取
+        if (multiblockData != null && multiblockData.isFormed()) {
+            return multiblockData.getControllerPos();
+        }
+        // 如果 multiblockData 为空，使用存储的坐标（重启后）
+        return storedControllerPos;
+    }
+    
+    /**
      * 检查是否为控制器
      */
     public boolean isController() {
@@ -166,17 +230,105 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
     }
     
     /**
+     * 当玩家右键点击方块时打开 GUI
+     * 如果右键的不是主方块，会重定向到主方块
+     */
+    public InteractionResult use(Player player, InteractionHand hand) {
+        if (level != null && !level.isClientSide) {
+            // 获取主方块坐标
+            BlockPos controllerPos = getControllerPos();
+            
+            if (controllerPos != null) {
+                // 如果有主方块且不是当前方块，重定向到主方块
+                if (!controllerPos.equals(worldPosition)) {
+                    // 获取主方块实体
+                    BlockEntity controllerBlockEntity = level.getBlockEntity(controllerPos);
+                    if (controllerBlockEntity instanceof ElectricityRepeaterBlockEntity controller) {
+                        // 打开主方块的 GUI（使用主方块的位置和数据）
+                        MenuProvider provider = controller.createMenuProviderAt(controllerPos);
+                        player.openMenu(provider);
+                        return InteractionResult.SUCCESS;
+                    }
+                }
+            }
+            
+            // 如果是主方块或没有主方块，打开当前 GUI
+            if (isController()) {
+                MenuProvider provider = createMenuProvider();
+                player.openMenu(provider);
+                return InteractionResult.SUCCESS;
+            }
+        }
+        return InteractionResult.SUCCESS;
+    }
+    
+    /**
+     * 创建 GUI 菜单提供者
+     */
+    private MenuProvider createMenuProvider() {
+        return createMenuProviderAt(worldPosition);
+    }
+    
+    /**
+     * 在指定位置创建 GUI 菜单提供者
+     * @param pos 方块位置
+     */
+    private MenuProvider createMenuProviderAt(BlockPos pos) {
+        return new MenuProvider() {
+            @Override
+            public ElectricityRepeaterMenu createMenu(int containerId, net.minecraft.world.entity.player.Inventory playerInventory, net.minecraft.world.entity.player.Player player) {
+                return new ElectricityRepeaterMenu(containerId, playerInventory, pos, data);
+            }
+            
+            @Override
+            public net.minecraft.network.chat.Component getDisplayName() {
+                return net.minecraft.network.chat.Component.translatable("gui.modularization_defend.electricity_repeater");
+            }
+        };
+    }
+    
+    /**
+     * 获取 GUI 数据
+     */
+    public ContainerData getGuiData() {
+        return data;
+    }
+    
+    /**
+     * 更新 GUI 数据（每 tick 调用）
+     */
+    public void updateGuiData() {
+        if (level != null && !level.isClientSide) {
+            // TODO: 从电网系统获取实际能量值
+            // 当前使用示例值
+            int currentEnergy = data.get(0);
+            if (currentEnergy < data.get(1)) {
+                data.set(0, currentEnergy + 10); // 示例：每 tick 增加 10 FE
+            }
+        }
+    }
+
+    /**
      * 检查多方块是否已成型
      */
     public boolean isMultiblockFormed() {
         return multiblockData != null && multiblockData.isFormed();
     }
-
+    
     @Override
     public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         this.value = tag.getInt("value");
         this.isController = tag.getBoolean("isController");
+        // 读取存储的主方块坐标
+        if (tag.contains("ControllerPos", 10)) { // 10 = CompoundTag
+            CompoundTag controllerPosTag = tag.getCompound("ControllerPos");
+            this.storedControllerPos = new BlockPos(
+                controllerPosTag.getInt("X"),
+                controllerPosTag.getInt("Y"),
+                controllerPosTag.getInt("Z")
+            );
+        }
         // 重新加载后不立即初始化，而是在下一个 tick 再验证
         // 这样可以确保世界和管理器都已经完全加载
     }
@@ -186,13 +338,28 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
         super.saveAdditional(tag, registries);
         tag.putInt("value", this.value);
         tag.putBoolean("isController", this.isController);
+        // 保存存储的主方块坐标
+        if (storedControllerPos != null) {
+            CompoundTag controllerPosTag = new CompoundTag();
+            controllerPosTag.putInt("X", storedControllerPos.getX());
+            controllerPosTag.putInt("Y", storedControllerPos.getY());
+            controllerPosTag.putInt("Z", storedControllerPos.getZ());
+            tag.put("ControllerPos", controllerPosTag);
+        }
     }
     
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        // 确保更新标签包含 isController 数据
+        // 确保更新标签包含 isController 和 ControllerPos 数据
         CompoundTag tag = super.getUpdateTag(registries);
         tag.putBoolean("isController", this.isController);
+        if (storedControllerPos != null) {
+            CompoundTag controllerPosTag = new CompoundTag();
+            controllerPosTag.putInt("X", storedControllerPos.getX());
+            controllerPosTag.putInt("Y", storedControllerPos.getY());
+            controllerPosTag.putInt("Z", storedControllerPos.getZ());
+            tag.put("ControllerPos", controllerPosTag);
+        }
         return tag;
     }
     
@@ -233,6 +400,9 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
                 // 重新验证结构
                 blockEntity.initializeMultiblock();
             }
+            
+            // 更新 GUI 数据
+            blockEntity.updateGuiData();
         }
     }
     

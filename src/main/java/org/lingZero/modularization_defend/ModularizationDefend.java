@@ -12,6 +12,7 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
@@ -20,8 +21,10 @@ import org.lingZero.modularization_defend.Register.ModBlockEntities;
 import org.lingZero.modularization_defend.Register.ModBlocks;
 import org.lingZero.modularization_defend.Register.ModCreativeTabs;
 import org.lingZero.modularization_defend.Register.ModItems;
+import org.lingZero.modularization_defend.Register.ModMenuTypes;
 import org.lingZero.modularization_defend.Blocks.Multiblock.MultiblockManager;
 import org.lingZero.modularization_defend.Renderer.ElectricityRepeaterRenderer;
+import org.lingZero.modularization_defend.Blocks.ElectricityRepeater.ElectricityRepeaterScreen;
 import org.slf4j.Logger;
 
 @Mod(ModularizationDefend.MODID)
@@ -43,6 +46,7 @@ public class ModularizationDefend {
         ModItems.ITEMS.register(modEventBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModCreativeTabs.CREATIVE_TABS.register(modEventBus);
+        ModMenuTypes.MENUS.register(modEventBus);
 
         // 将我们自己注册到服务器和其他我们感兴趣的游戏事件中。
         // 注意，只有当我们希望*这个*类（modularization_defend）直接响应事件时才有必要这样做。
@@ -76,8 +80,15 @@ public class ModularizationDefend {
     // 你可以使用 EventBusSubscriber 自动注册此类中所有用 @SubscribeEvent 注解的静态方法
     @EventBusSubscriber(modid = MODID, value = Dist.CLIENT)
     public static class ClientModEvents {
+        /**
+         * 注册 GUI Screen
+         */
         @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event) {
+        public static void registerMenuScreens(RegisterMenuScreensEvent event) {
+            event.register(
+                ModMenuTypes.ELECTRICITY_REPEATER_MENU.get(),
+                ElectricityRepeaterScreen::new
+            );
         }
         
         /**
@@ -87,6 +98,11 @@ public class ModularizationDefend {
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
             // 注册电力中继器渲染器
             event.registerBlockEntityRenderer(ModBlockEntities.Electricity_Repeater_BLOCK_ENTITY.get(), ElectricityRepeaterRenderer::new);
+        }
+        
+        @SubscribeEvent
+        public static void onClientSetup(FMLClientSetupEvent event) {
+            // 客户端初始化逻辑
         }
     }
 }
