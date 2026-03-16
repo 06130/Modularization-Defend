@@ -54,7 +54,6 @@ public class ModularizationDefend {
     }
     private void commonSetup(final FMLCommonSetupEvent event) {
         // 一些通用设置代码
-        LOGGER.info("Max connection distance: {}", Config.maxConnectionDistance);
     }
     
     private void gatherData(final GatherDataEvent event) {
@@ -72,7 +71,6 @@ public class ModularizationDefend {
     public void onServerStarting(ServerStartingEvent event) {
         // 从持久化数据加载所有多方块结构
         MultiblockManager.loadFromPersistent(event.getServer().overworld());
-        LOGGER.info("Loaded multiblock data from persistent storage");
     }
     
     // 你可以使用 EventBusSubscriber 自动注册此类中所有用 @SubscribeEvent 注解的静态方法
