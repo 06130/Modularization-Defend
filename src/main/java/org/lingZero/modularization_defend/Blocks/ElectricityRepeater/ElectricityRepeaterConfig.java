@@ -1,4 +1,4 @@
-package org.lingZero.modularization_defend.Blocks.Multiblock;
+package org.lingZero.modularization_defend.Blocks.ElectricityRepeater;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -6,8 +6,8 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.lingZero.modularization_defend.Blocks.Multiblock.IMultiblockConfig;
 import org.lingZero.modularization_defend.Register.ModBlocks;
-import org.lingZero.modularization_defend.Blocks.ElectricityRepeater.ElectricityRepeaterBlockEntity;
 
 import java.util.HashSet;
 import java.util.Set;

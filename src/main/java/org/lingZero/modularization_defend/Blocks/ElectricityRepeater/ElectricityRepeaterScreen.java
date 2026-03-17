@@ -1,15 +1,18 @@
 package org.lingZero.modularization_defend.Blocks.ElectricityRepeater;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import org.lingZero.modularization_defend.Config;
 
 /**
  * 电力中继器 GUI 屏幕
  * 使用 MCreator 生成的纹理实现 Mekanism 风格
  */
+//TODO : 添加 功率曲线
 public class ElectricityRepeaterScreen extends AbstractContainerScreen<ElectricityRepeaterMenu> {
     
     // GUI 纹理
@@ -20,18 +23,18 @@ public class ElectricityRepeaterScreen extends AbstractContainerScreen<Electrici
     private static final int GUI_HEIGHT = 166;
     
     // 纹理图片实际尺寸（用于 UV 映射）
-    private static final int TEXTURE_WIDTH = 176;
-    private static final int TEXTURE_HEIGHT = 166;
+    private static final int TEXTURE_WIDTH = GUI_WIDTH;
+    private static final int TEXTURE_HEIGHT = GUI_HEIGHT;
     
     // 能量槽位置（基于纹理）
-    private static final int ENERGY_BAR_X = 175;
-    private static final int ENERGY_BAR_Y = 15;
+    private static final int ENERGY_BAR_X = 110;
+    private static final int ENERGY_BAR_Y = 8;
     private static final int ENERGY_BAR_WIDTH = 4;
     private static final int ENERGY_BAR_HEIGHT = 52;
     
     // 信息面板位置
-    private static final int INFO_PANEL_X = 55;
-    private static final int INFO_PANEL_Y = 20;
+    private static final int INFO_PANEL_X = 115;//45
+    private static final int INFO_PANEL_Y = 10;
     
     // 状态显示位置
     private static final int STATUS_X = 18;
@@ -48,8 +51,11 @@ public class ElectricityRepeaterScreen extends AbstractContainerScreen<Electrici
     // 颜色
     private static final int ENERGY_FILLED_COLOR = 0x00FFAA; // 青绿色
     private static final int ENERGY_EMPTY_COLOR = 0x000000;   // 黑色
-    private static final int TEXT_GREEN = 0x00FF00;           // 绿色文字
+    private static final int TEXT_GREEN = Config.textColour;           // 绿色文字
     private static final int STATUS_GREEN = 0x00AA00;         // 状态绿
+    
+    // 信息面板缩放比例 (0.9 = 90%)
+    private static final float INFO_TEXT_SCALE = 0.7f;
     
     public ElectricityRepeaterScreen(ElectricityRepeaterMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
@@ -58,11 +64,10 @@ public class ElectricityRepeaterScreen extends AbstractContainerScreen<Electrici
         // 调整物品栏标签位置
         this.inventoryLabelY = this.imageHeight - 94;
     }
-    
     @Override
     protected void init() {
         super.init();
-        this.titleLabelX = (this.imageWidth - this.font.width(this.title)) / 2;
+        this.titleLabelX = 8;
         this.titleLabelY = 4;
     }
     
@@ -91,7 +96,7 @@ public class ElectricityRepeaterScreen extends AbstractContainerScreen<Electrici
         guiGraphics.drawString(font, title, titleLabelX, titleLabelY, 0x404040, false);
         
         // 渲染物品栏标签
-        guiGraphics.drawString(font, playerInventoryTitle, 8, inventoryLabelY, 0x404040, false);
+        guiGraphics.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY + 2, 0x404040, false);
         
         // 渲染信息面板文本
         renderInfoText(guiGraphics);
@@ -122,26 +127,56 @@ public class ElectricityRepeaterScreen extends AbstractContainerScreen<Electrici
                     ENERGY_FILLED_COLOR);
         }
     }
-    
+
     /**
      * 渲染信息面板文本
      */
     private void renderInfoText(GuiGraphics guiGraphics) {
-        int energy = menu.getEnergy();
-        int maxEnergy = menu.getMaxEnergy();
-        String energyText = String.format("%d/%d FE", energy, maxEnergy);
-        guiGraphics.drawString(font, energyText, INFO_PANEL_X, INFO_PANEL_Y, TEXT_GREEN, false);
-        
-        // 渲染功率信息（预留）
-        String powerText = "功率：0 FE/t";
-        guiGraphics.drawString(font, powerText, INFO_PANEL_X, INFO_PANEL_Y + 10, TEXT_GREEN, false);
-        
-        // 渲染输出信息（预留）
-        String outputText = "输出：0 FE/t";
-        guiGraphics.drawString(font, outputText, INFO_PANEL_X, INFO_PANEL_Y + 20, TEXT_GREEN, false);
-        
-        // 渲染电网状态（预留）
-        String gridStatus = "电网：未连接";
-        guiGraphics.drawString(font, gridStatus, INFO_PANEL_X, INFO_PANEL_Y + 30, TEXT_GREEN, false);
+        PoseStack poseStack = guiGraphics.pose();
+            
+        // 保存当前的变换矩阵
+        poseStack.pushPose();
+            
+        // 应用缩放
+        poseStack.scale(INFO_TEXT_SCALE, INFO_TEXT_SCALE, 0.7f);
+            
+        // 计算缩放后的偏移量，确保文本从正确位置开始渲染
+        int scaledX = (int) (INFO_PANEL_X / INFO_TEXT_SCALE);
+        int scaledY = (int) (INFO_PANEL_Y / INFO_TEXT_SCALE);
+        int lineHeight = (int) (7 / INFO_TEXT_SCALE); // 行距也按比例缩放
+            
+        // 使用翻译键显示本地化文本
+        guiGraphics.drawString(font,
+                Component.translatable("gui.modularization_defend.electricity_repeater.messageText").getString()
+                        , scaledX, scaledY, TEXT_GREEN, false);
+            
+        guiGraphics.drawString(font,
+                Component.translatable("gui.modularization_defend.electricity_repeater.powerText").getString()
+                        + "0" + "Wh", scaledX, scaledY + lineHeight, TEXT_GREEN, false);
+            
+        guiGraphics.drawString(font,
+                Component.translatable("gui.modularization_defend.electricity_repeater.timeRemaining").getString()
+                        + "0 s", scaledX, scaledY + lineHeight * 2, TEXT_GREEN, false);
+            
+        guiGraphics.drawString(font,
+                Component.translatable("gui.modularization_defend.electricity_repeater.limitText").getString()
+                        + "0 Wh", scaledX, scaledY + lineHeight * 3, TEXT_GREEN, false);
+            
+        guiGraphics.drawString(font,
+                Component.translatable("gui.modularization_defend.electricity_repeater.onlinePower").getString()
+                        + "0 W", scaledX, scaledY + lineHeight * 4, TEXT_GREEN, false);
+            
+        guiGraphics.drawString(font,
+                Component.translatable("gui.modularization_defend.electricity_repeater.loadPower").getString()
+                        + "0 W", scaledX, scaledY + lineHeight * 5, TEXT_GREEN, false);
+            
+        // 协议网络状态（暂时显示未连接，将来会根据实际连接状态动态显示）
+        guiGraphics.drawString(font, Component.translatable("gui.modularization_defend.electricity_repeater.agreementNetwork1").getString() + 
+            Component.translatable("gui.modularization_defend.electricity_repeater.agreementNetwork1_1").getString(), 
+            scaledX, scaledY + lineHeight * 6, TEXT_GREEN, false);
+            
+        // 恢复变换矩阵
+        poseStack.popPose();
     }
 }
+

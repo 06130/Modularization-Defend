@@ -7,7 +7,8 @@ import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import org.lingZero.modularization_defend.Blocks.Multiblock.ElectricityRepeaterConfig;
+import org.lingZero.modularization_defend.Blocks.ElectricityRepeater.ElectricityRepeaterConfig;
+import org.lingZero.modularization_defend.Blocks.AgreementCore.AgreementCoreConfig;
 import org.lingZero.modularization_defend.Blocks.Multiblock.IMultiblockConfig;
 import org.lingZero.modularization_defend.Blocks.Multiblock.MultiblockPlacer;
 import org.lingZero.modularization_defend.ModularizationDefend;
@@ -23,6 +24,9 @@ public class MultiblockEvents {
     // 电力中继器的配置实例
     private static final IMultiblockConfig ELECTRICITY_REPEATER_CONFIG = new ElectricityRepeaterConfig();
     
+    // 协议核心的配置实例
+    private static final IMultiblockConfig AGREEMENT_CORE_CONFIG = new AgreementCoreConfig();
+    
     /**
      * 监听玩家右键点击方块事件 - 在放置前检测多方块结构
      */
@@ -33,8 +37,10 @@ public class MultiblockEvents {
             return;
         }
             
-        // 只处理玩家手持 ElectricityRepeater 的情况
+        // 检查玩家手持的物品
         var itemStack = event.getItemStack();
+        
+        // 电力中继器
         if (itemStack.getItem() == ModBlocks.ELECTRICITY_REPEATER_BLOCK.get().asItem()) {
             BlockPos pos = event.getPos();
             Level level = (Level) event.getLevel();
@@ -69,6 +75,48 @@ public class MultiblockEvents {
                     
                 // 使用工具类放置多方块结构
                 MultiblockPlacer.placeEntireMultiblock(level, controllerPos, ELECTRICITY_REPEATER_CONFIG);
+                    
+                // 消耗一个物品
+                if (!player.isCreative()) {
+                    itemStack.shrink(1);
+                }
+            }
+        }
+        
+        // 协议核心
+        if (itemStack.getItem() == ModBlocks.AGREEMENT_CORE_BLOCK.get().asItem()) {
+            BlockPos pos = event.getPos();
+            Level level = (Level) event.getLevel();
+            Player player = event.getEntity();
+                
+            // 获取点击的面
+            var face = event.getFace();
+            if (face == null) {
+                return;
+            }
+                
+            // 计算实际放置位置（在点击方块的旁边，作为底座中央）
+            BlockPos controllerPos = pos.relative(face);
+                
+            // 检查结构区域是否有阻挡
+            if (!MultiblockPlacer.canFormMultiblock(level, controllerPos, AGREEMENT_CORE_CONFIG)) {
+                // 有阻挡，阻止放置并显示提示
+                event.setCanceled(true);
+                event.setCancellationResult(net.minecraft.world.InteractionResult.FAIL);
+                        
+                String messageKey = "message." + ModularizationDefend.MODID + ".multiblock_blocked";
+                Component message = Component.translatable(messageKey);
+                player.displayClientMessage(message, true);
+                    
+                // 手动同步物品栏到客户端
+                player.containerMenu.sendAllDataToRemote();
+            } else {
+                // 检测通过！取消原版放置逻辑，手动一次性放置所有方块
+                event.setCanceled(true);
+                event.setCancellationResult(net.minecraft.world.InteractionResult.SUCCESS);
+                    
+                // 使用工具类放置多方块结构
+                MultiblockPlacer.placeEntireMultiblock(level, controllerPos, AGREEMENT_CORE_CONFIG);
                     
                 // 消耗一个物品
                 if (!player.isCreative()) {

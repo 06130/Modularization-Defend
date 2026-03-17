@@ -1,5 +1,7 @@
-package org.lingZero.modularization_defend.Blocks.Multiblock;
+package org.lingZero.modularization_defend.Blocks.ElectricityRepeater;
 
+import org.lingZero.modularization_defend.Blocks.Multiblock.IMultiblockConfig;
+import org.lingZero.modularization_defend.Blocks.Multiblock.MultiblockHandler;
 import org.lingZero.modularization_defend.Register.ModBlocks;
 
 /**

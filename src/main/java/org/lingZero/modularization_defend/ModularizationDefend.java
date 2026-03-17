@@ -23,12 +23,15 @@ import org.lingZero.modularization_defend.Register.ModItems;
 import org.lingZero.modularization_defend.Register.ModMenuTypes;
 import org.lingZero.modularization_defend.Blocks.Multiblock.MultiblockManager;
 import org.lingZero.modularization_defend.Renderer.ElectricityRepeaterRenderer;
+import org.lingZero.modularization_defend.Renderer.AgreementCoreRenderer;
 import org.lingZero.modularization_defend.Blocks.ElectricityRepeater.ElectricityRepeaterScreen;
+import org.lingZero.modularization_defend.Blocks.AgreementCore.AgreementCoreScreen;
 import org.slf4j.Logger;
 
 @Mod(ModularizationDefend.MODID)
 public class ModularizationDefend {
     public static final String MODID = "modularization_defend";
+    public static final String MODVERSION = "§cA-0.1.2";
     private static final Logger LOGGER = LogUtils.getLogger();
 
     // 模组类的构造函数是模组加载时运行的第一段代码。
@@ -88,6 +91,11 @@ public class ModularizationDefend {
                 ModMenuTypes.ELECTRICITY_REPEATER_MENU.get(),
                 ElectricityRepeaterScreen::new
             );
+            // 注册协议核心 GUI Screen
+            event.register(
+                ModMenuTypes.AGREEMENT_CORE_MENU.get(),
+                AgreementCoreScreen::new
+            );
         }
         
         /**
@@ -97,6 +105,8 @@ public class ModularizationDefend {
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
             // 注册电力中继器渲染器
             event.registerBlockEntityRenderer(ModBlockEntities.Electricity_Repeater_BLOCK_ENTITY.get(), ElectricityRepeaterRenderer::new);
+            // 注册协议核心渲染器
+            event.registerBlockEntityRenderer(ModBlockEntities.AGREEMENT_CORE_BLOCK_ENTITY.get(), AgreementCoreRenderer::new);
         }
         
         @SubscribeEvent

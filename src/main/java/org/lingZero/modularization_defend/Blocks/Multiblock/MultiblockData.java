@@ -18,8 +18,6 @@ public class MultiblockData {
     protected final BlockPos controllerPos;
     protected final Set<BlockPos> blocks;
     private boolean isFormed = false;
-    private int width = 2;   // 默认宽度
-    private int height = 10; // 默认高度（从 ElectricityRepeaterConfig 获取）
     /**
      * 标记是否需要重新检查结构（Mekanism 风格）
      */
@@ -41,12 +39,20 @@ public class MultiblockData {
 
         blocks.clear();
         
-        // 使用当前配置的高度进行检查
-        // 注意：这里应该使用配置中的尺寸，但现在先使用默认值
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                for (int z = 0; z < width; z++) {
+        // 遍历所有预期的结构位置（由具体的多方块类型决定）
+        // 注意：这里不应该硬编码尺寸，应该由外部传入或使用配置
+        // 但由于 Mekanism 的 MultiblockData 设计，我们暂时保持这个模式
+        // 实际使用时应该在子类中覆盖此方法
+        for (int y = 0; y < 13; y++) { // 协议核心高度：1 (底座) + 12 (柱体)
+            for (int x = -2; x <= 2; x++) { // 协议核心底座宽度
+                for (int z = -2; z <= 2; z++) {
                     BlockPos checkPos = controllerPos.offset(x, y, z);
+                    
+                    // 检查该位置是否在结构范围内
+                    if (!isPositionInStructure(x, y, z)) {
+                        continue;
+                    }
+                    
                     BlockState state = level.getBlockState(checkPos);
                     
                     // 检查该位置是否为有效的多方块方块
@@ -82,6 +88,25 @@ public class MultiblockData {
         }
         
         return isFormed;
+    }
+    
+    /**
+     * 检查给定坐标是否在结构范围内
+     * @param x 相对 X 坐标
+     * @param y 相对 Y 坐标
+     * @param z 相对 Z 坐标
+     * @return 如果在结构内返回 true
+     * @implNote 默认实现适用于协议核心，子类可以覆盖以支持不同形状
+     */
+    protected boolean isPositionInStructure(int x, int y, int z) {
+        if (y == 0) {
+            // 底座层 (5x5x1)
+            return Math.abs(x) <= 2 && Math.abs(z) <= 2;
+        } else if (y >= 1 && y <= 12) {
+            // 柱体层 (3x3x12)
+            return Math.abs(x) <= 1 && Math.abs(z) <= 1;
+        }
+        return false;
     }
 
     /**
@@ -138,20 +163,6 @@ public class MultiblockData {
     @Nullable
     public BlockPos getControllerPos() {
         return controllerPos;
-    }
-
-    /**
-     * 获取结构的宽度
-     */
-    public int getWidth() {
-        return width;
-    }
-
-    /**
-     * 获取结构的高度
-     */
-    public int getHeight() {
-        return height;
     }
 
     /**

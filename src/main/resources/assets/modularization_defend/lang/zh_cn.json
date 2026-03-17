@@ -2,12 +2,28 @@
   "itemGroup.modularization_defend": "模块化防御",
 
   "block.modularization_defend.electricity_repeater_block": "中继塔",
+  "block.modularization_defend.agreement_core_block": "协议核心",
 
   "item.modularization_defend.example_item": "Example Item",
   "item.modularization_defend.terminal_item": "模块化终端",
   "item.modularization_defend.energy_network_configuration_tool_item": "电网工具",
-  
+  "item.modularization_defend.electricity_repeater_item": "中继塔（物品）",
+  "item.modularization_defend.agreement_core_item": "协议核心（物品）",
+
   "gui.modularization_defend.electricity_repeater": "电力中继器",
+  "gui.modularization_defend.agreement_core": "协议核心",
+
+  "gui.modularization_defend.electricity_repeater.messageText": "§a数据显示",
+  "gui.modularization_defend.electricity_repeater.agreementNetwork1": "§r协议网络：",
+  "gui.modularization_defend.electricity_repeater.agreementNetwork1_1": "§c未连接",
+  "gui.modularization_defend.electricity_repeater.agreementNetwork1_2": "§e已连接",
+
+  "gui.modularization_defend.electricity_repeater.onlinePower": "上网功率：",
+  "gui.modularization_defend.electricity_repeater.loadPower": "负载功率：",
+
+  "gui.modularization_defend.electricity_repeater.powerText": "当前电容：",
+  "gui.modularization_defend.electricity_repeater.timeRemaining": "剩余可用：",
+  "gui.modularization_defend.electricity_repeater.limitText": "电容上限：",
 
   "message.modularization_defend.first_click": "§b开始电力连接，节点坐标：[%d, %d, %d]",
   "message.modularization_defend.player_distance": "§e距离：%.2f 格 | §7玩家：[%d, %d, %d] -> §b节点：[%d, %d, %d]",

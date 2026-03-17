@@ -7,24 +7,23 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import org.jetbrains.annotations.Nullable;
-import org.lingZero.modularization_defend.Blocks.ElectricityRepeater.ElectricityRepeaterBlockEntity;
-import org.lingZero.modularization_defend.GeoModel.ElectricityRepeaterModel;
+import org.lingZero.modularization_defend.Blocks.AgreementCore.AgreementCoreBlockEntity;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoBlockRenderer;
 
 /**
- * 电力中继器方块渲染器
+ * 协议核心方块渲染器
  * 使用 GeckoLib 渲染 3D 模型
  * 只有主方块（控制器）会渲染模型，其他结构方块不渲染
  */
-public class ElectricityRepeaterRenderer extends GeoBlockRenderer<ElectricityRepeaterBlockEntity> {
-    public ElectricityRepeaterRenderer(BlockEntityRendererProvider.Context context) {
-        super(new ElectricityRepeaterModel());
+public class AgreementCoreRenderer extends GeoBlockRenderer<AgreementCoreBlockEntity> {
+    public AgreementCoreRenderer(BlockEntityRendererProvider.Context context) {
+        super(new org.lingZero.modularization_defend.GeoModel.AgreementCoreModel());
     }
     
     @Override
-    public void render(ElectricityRepeaterBlockEntity blockEntity, float partialTick, PoseStack poseStack,
+    public void render(AgreementCoreBlockEntity blockEntity, float partialTick, PoseStack poseStack,
                        MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         // 检查是否为控制器，只有控制器才渲染模型
         if (!blockEntity.isController()) {
@@ -40,7 +39,7 @@ public class ElectricityRepeaterRenderer extends GeoBlockRenderer<ElectricityRep
      * 参考 Mekanism 的多方块渲染实现
      */
     @Override
-    public boolean shouldRenderOffScreen(ElectricityRepeaterBlockEntity pBlockEntity) {
+    public boolean shouldRenderOffScreen(AgreementCoreBlockEntity pBlockEntity) {
         return true;
     }
     
@@ -49,7 +48,7 @@ public class ElectricityRepeaterRenderer extends GeoBlockRenderer<ElectricityRep
      * 参考 Mekanism 的多方块渲染实现
      */
     @Override
-    public boolean shouldRender(ElectricityRepeaterBlockEntity pBlockEntity, net.minecraft.world.phys.Vec3 pCamera) {
+    public boolean shouldRender(AgreementCoreBlockEntity pBlockEntity, net.minecraft.world.phys.Vec3 pCamera) {
         // 如果是控制器且多方块已成型，就渲染
         if (pBlockEntity.isController() && pBlockEntity.isMultiblockFormed()) {
             return true;
@@ -63,15 +62,15 @@ public class ElectricityRepeaterRenderer extends GeoBlockRenderer<ElectricityRep
      * 参考 Mekanism 的多方块渲染实现
      */
     @Override
-    public net.minecraft.world.phys.AABB getRenderBoundingBox(ElectricityRepeaterBlockEntity pBlockEntity) {
+    public net.minecraft.world.phys.AABB getRenderBoundingBox(AgreementCoreBlockEntity pBlockEntity) {
         if (pBlockEntity.isController()) {
-            // 创建一个覆盖整个 2x2x10 结构的边界框
+            // 创建一个覆盖整个 5x5x1 底座 + 3x3x12 柱体结构的边界框
             return new net.minecraft.world.phys.AABB(
                 pBlockEntity.getBlockPos().getX() - 64,
                 pBlockEntity.getBlockPos().getY() - 64,
                 pBlockEntity.getBlockPos().getZ() - 64,
                 pBlockEntity.getBlockPos().getX() + 66,  // 2 + 64
-                pBlockEntity.getBlockPos().getY() + 74,  // 10 + 64
+                pBlockEntity.getBlockPos().getY() + 77,  // 13 + 64
                 pBlockEntity.getBlockPos().getZ() + 66   // 2 + 64
             );
         }
@@ -82,7 +81,7 @@ public class ElectricityRepeaterRenderer extends GeoBlockRenderer<ElectricityRep
      * 渲染前处理，设置光照
      */
     @Override
-    public void preRender(PoseStack poseStack, ElectricityRepeaterBlockEntity animatable, BakedGeoModel model,
+    public void preRender(PoseStack poseStack, AgreementCoreBlockEntity animatable, BakedGeoModel model,
                           @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender,
                           float partialTick, int packedLight, int packedOverlay, int colour) {
         super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
@@ -92,7 +91,7 @@ public class ElectricityRepeaterRenderer extends GeoBlockRenderer<ElectricityRep
      * 实际渲染方法，处理光照和发光部件
      */
     @Override
-    public void actuallyRender(PoseStack poseStack, ElectricityRepeaterBlockEntity animatable, BakedGeoModel model,
+    public void actuallyRender(PoseStack poseStack, AgreementCoreBlockEntity animatable, BakedGeoModel model,
                                @Nullable RenderType renderType, MultiBufferSource bufferSource,
                                @Nullable VertexConsumer buffer, boolean isReRender, float partialTick,
                                int packedLight, int packedOverlay, int colour) {
@@ -105,7 +104,7 @@ public class ElectricityRepeaterRenderer extends GeoBlockRenderer<ElectricityRep
      * 递归渲染骨骼，处理发光部件
      */
     @Override
-    public void renderRecursively(PoseStack poseStack, ElectricityRepeaterBlockEntity animatable, GeoBone bone,
+    public void renderRecursively(PoseStack poseStack, AgreementCoreBlockEntity animatable, GeoBone bone,
                                   RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer,
                                   boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
         // 检查是否是发光部件

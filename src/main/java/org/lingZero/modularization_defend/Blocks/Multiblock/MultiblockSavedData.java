@@ -139,43 +139,25 @@ public class MultiblockSavedData extends SavedData {
      */
     public static class MultiblockDataEntry {
         private boolean isFormed;
-        private int width;
-        private int height;
         
         public MultiblockDataEntry() {
             this.isFormed = false;
-            this.width = 2;
-            this.height = 10;
         }
         
         public MultiblockDataEntry(MultiblockData data) {
             this.isFormed = data.isFormed();
-            this.width = data.getWidth();
-            this.height = data.getHeight();
         }
         
         public void load(CompoundTag nbt) {
             this.isFormed = nbt.getBoolean("IsFormed");
-            this.width = nbt.getInt("Width");
-            this.height = nbt.getInt("Height");
         }
         
         public void save(CompoundTag nbt) {
             nbt.putBoolean("IsFormed", this.isFormed);
-            nbt.putInt("Width", this.width);
-            nbt.putInt("Height", this.height);
         }
         
         public boolean isFormed() {
             return isFormed;
-        }
-        
-        public int getWidth() {
-            return width;
-        }
-        
-        public int getHeight() {
-            return height;
         }
     }
 }

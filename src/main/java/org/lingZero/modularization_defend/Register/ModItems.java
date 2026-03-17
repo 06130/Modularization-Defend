@@ -15,6 +15,9 @@ public class ModItems {
 
     public static final DeferredItem<BlockItem> ELECTRICITY_REPEATER_ITEM =
             ITEMS.registerSimpleBlockItem("electricity_repeater_item", ModBlocks.ELECTRICITY_REPEATER_BLOCK);
+    
+    public static final DeferredItem<BlockItem> AGREEMENT_CORE_ITEM =
+            ITEMS.registerSimpleBlockItem("agreement_core_item", ModBlocks.AGREEMENT_CORE_BLOCK);
 
     public static final Supplier<Item> EXAMPLE_ITEM =
             ITEMS.registerSimpleItem("example_item", new Item.Properties());

@@ -28,6 +28,18 @@ public class MultiblockHandler implements IMultiblockHandler {
         return formation.tryForm(player);
     }
     
+    /**
+     * 检测是否可以形成多方块结构
+     */
+    public boolean canFormMultiblock(Level level, BlockPos pos) {
+        if (level == null) {
+            return false;
+        }
+        
+        MultiblockFormation formation = new MultiblockFormation(level, pos, config);
+        return formation.canForm();
+    }
+    
     @Override
     public void formMultiblockWithPlacement(Level level, BlockPos pos) {
         if (level == null || level.isClientSide) {

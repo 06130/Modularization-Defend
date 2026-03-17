@@ -1,4 +1,4 @@
-package org.lingZero.modularization_defend.Blocks.ElectricityRepeater;
+package org.lingZero.modularization_defend.Blocks.AgreementCore;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -18,7 +18,6 @@ import org.lingZero.modularization_defend.Blocks.Multiblock.MultiblockData;
 import org.lingZero.modularization_defend.EnergyNetwork.*;
 
 import java.util.List;
-
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -27,18 +26,18 @@ import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-import static org.lingZero.modularization_defend.Register.ModBlockEntities.Electricity_Repeater_BLOCK_ENTITY;
+import static org.lingZero.modularization_defend.Register.ModBlockEntities.AGREEMENT_CORE_BLOCK_ENTITY;
 
 /**
- * 电力中继器方块实体
+ * 协议核心方块实体
  * 负责存储数据和状态管理
- * 实现 IEnergyNode 接口作为能源网络的中继节点
+ * 实现 IEnergyNode 接口作为能源网络的核心节点
  */
-public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMultiblockComponent, GeoBlockEntity, IEnergyNode {
+public class AgreementCoreBlockEntity extends BlockEntity implements IMultiblockComponent, GeoBlockEntity, IEnergyNode {
     private int value;
     private MultiblockData multiblockData;
     private boolean isController = false; // 初始不是控制器，由 onPlace 设置
-    private static final ElectricityRepeaterHandler HANDLER = new ElectricityRepeaterHandler();
+    private static final AgreementCoreHandler HANDLER = new AgreementCoreHandler();
     
     // GUI 数据
     private final ContainerData data = new SimpleContainerData(4);
@@ -51,13 +50,22 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
     
     // 能源网络相关
     private final EnergyBuffer energyBuffer;
+    private long lastScanTime = 0;
+    private static final long SCAN_INTERVAL = 5000L; // 5 秒扫描间隔
     
-    // NBT 持久化键（用于二级节点存储）
+    // NBT 持久化键
     private static final String NETWORK_NBT_KEY = "EnergyNetwork";
-    private static final String CHILD_NODES_KEY = "ChildNodes";
+    private static final String NETWORK_NODES_KEY = "Nodes";
+    private static final String NETWORK_CONNECTIONS_KEY = "Connections";
+    private static final String NODE_POSITION_KEY = "Pos";
+    private static final String NODE_TYPE_KEY = "Type";
     
-    public ElectricityRepeaterBlockEntity(BlockPos pos, BlockState state) {
-        super(Electricity_Repeater_BLOCK_ENTITY.get(), pos, state);
+    // 分级存储键
+    private static final String DIRECT_NODES_KEY = "DirectNodes";  // 一级节点（直接连接）
+    private static final String INDIRECT_NODES_KEY = "IndirectNodes";  // 二级节点（通过中继器连接）
+    
+    public AgreementCoreBlockEntity(BlockPos pos, BlockState state) {
+        super(AGREEMENT_CORE_BLOCK_ENTITY.get(), pos, state);
         // 初始化 GUI 数据
         data.set(0, 0);      // 当前能量
         data.set(1, 10000);  // 最大能量
@@ -65,7 +73,7 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
         data.set(3, 0);      // 升级状态（预留）
         
         // 初始化能源网络组件
-        this.energyBuffer = new EnergyBuffer(500_000L); // 500k FE 容量
+        this.energyBuffer = new EnergyBuffer(1_000_000L); // 1M FE 容量
     }
     
     /**
@@ -89,7 +97,7 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
     }
     
     /**
-     * 当邻居方块发生变化时调用S
+     * 当邻居方块发生变化时调用
      */
     public void onNeighborChange(BlockPos neighborPos) {
         if (level != null && !level.isClientSide && multiblockData != null && multiblockData.isFormed()) {
@@ -106,8 +114,8 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
     @Override
     public void initializeMultiblock() {
         if (level != null && isController) {
-            // 创建并验证多方块数据（使用电力中继器专用类）
-            MultiblockData data = new ElectricityRepeaterMultiblockData(level, worldPosition);
+            // 创建并验证多方块数据
+            MultiblockData data = new MultiblockData(level, worldPosition);
             if (data.tryForm()) {
                 // 验证成功，保存数据
                 this.multiblockData = data;
@@ -135,7 +143,7 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
         
         // 遍历所有结构方块
         for (BlockPos pos : multiblockData.getBlocks()) {
-            if (level.getBlockEntity(pos) instanceof ElectricityRepeaterBlockEntity blockEntity) {
+            if (level.getBlockEntity(pos) instanceof AgreementCoreBlockEntity blockEntity) {
                 // 设置主方块坐标（通过 NBT）
                 blockEntity.setControllerPosFromNBT(controllerPos);
             }
@@ -179,7 +187,13 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
             return;
         }
         
-        // 委托给处理器处理
+        // 先检测是否可以形成
+        if (!HANDLER.canFormMultiblock(level, worldPosition)) {
+            // 检测失败，不放置
+            return;
+        }
+        
+        // 检测通过，放置所有方块
         HANDLER.formMultiblockWithPlacement(level, worldPosition);
     }
     
@@ -190,8 +204,6 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
         if (level == null || level.isClientSide) {
             return;
         }
-        
-        // 委托给处理器处理
         HANDLER.breakMultiblock(level, worldPosition, multiblockData);
         setChanged();
     }
@@ -258,7 +270,7 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
                 if (!controllerPos.equals(worldPosition)) {
                     // 获取主方块实体
                     BlockEntity controllerBlockEntity = level.getBlockEntity(controllerPos);
-                    if (controllerBlockEntity instanceof ElectricityRepeaterBlockEntity controller) {
+                    if (controllerBlockEntity instanceof AgreementCoreBlockEntity controller) {
                         // 打开主方块的 GUI（使用主方块的位置和数据）
                         MenuProvider provider = controller.createMenuProviderAt(controllerPos);
                         player.openMenu(provider);
@@ -291,13 +303,13 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
     private MenuProvider createMenuProviderAt(BlockPos pos) {
         return new MenuProvider() {
             @Override
-            public ElectricityRepeaterMenu createMenu(int containerId, net.minecraft.world.entity.player.Inventory playerInventory, net.minecraft.world.entity.player.Player player) {
-                return new ElectricityRepeaterMenu(containerId, playerInventory, pos, data);
+            public AgreementCoreMenu createMenu(int containerId, net.minecraft.world.entity.player.Inventory playerInventory, net.minecraft.world.entity.player.Player player) {
+                return new AgreementCoreMenu(containerId, playerInventory, pos, data);
             }
             
             @Override
             public net.minecraft.network.chat.Component getDisplayName() {
-                return net.minecraft.network.chat.Component.translatable("gui.modularization_defend.electricity_repeater");
+                return net.minecraft.network.chat.Component.translatable("gui.modularization_defend.agreement_core");
             }
         };
     }
@@ -314,7 +326,7 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
      */
     public void updateGuiData() {
         if (level != null && !level.isClientSide) {
-            // TODO: 从电网系统获取实际能量值
+            // TODO: 从协议网络系统获取实际能量值
             // 当前使用示例值
             int currentEnergy = data.get(0);
             if (currentEnergy < data.get(1)) {
@@ -347,9 +359,9 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
         // 重新加载后不立即初始化，而是在下一个 tick 再验证
         // 这样可以确保世界和管理器都已经完全加载
         
-        // 加载二级节点数据（重启后恢复）
-        if (isController() && tag.contains(NETWORK_NBT_KEY, 10)) {
-            loadChildrenFromNBT(tag.getCompound(NETWORK_NBT_KEY));
+        // 加载能源网络数据（重启后恢复）
+        if (tag.contains(NETWORK_NBT_KEY, 10)) { // 10 = CompoundTag
+            loadNetworkFromNBT(tag.getCompound(NETWORK_NBT_KEY), registries);
         }
     }
 
@@ -367,15 +379,13 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
             tag.put("ControllerPos", controllerPosTag);
         }
         
-        // 保存二级节点数据（用于重启后恢复）
-        if (isController()) {
-            saveChildrenToNBT(tag);
-        }
+        // 保存能源网络数据（用于重启后恢复）
+        saveNetworkToNBT(tag, registries);
     }
     
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        // 确保更新标签包含 isController 和 ControllerPos 数据
+        // 确保更新标签包含 isController、ControllerPos 和网络数据
         CompoundTag tag = super.getUpdateTag(registries);
         tag.putBoolean("isController", this.isController);
         if (storedControllerPos != null) {
@@ -385,6 +395,9 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
             controllerPosTag.putInt("Z", storedControllerPos.getZ());
             tag.put("ControllerPos", controllerPosTag);
         }
+        
+        // 同步网络数据到客户端
+        saveNetworkToNBT(tag, registries);
         return tag;
     }
     
@@ -400,18 +413,18 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
      */
     public net.minecraft.world.phys.AABB getRenderBoundingBox() {
         // 创建一个非常大的边界框，确保覆盖整个视野范围
-        // 使用 64 个方块的距离，这应该足够覆盖大多数情况
+        // 协议核心结构：5x5x1 底座 + 3x3x12 柱体，总高度 13
         return new net.minecraft.world.phys.AABB(
             worldPosition.getX() - 64,
             worldPosition.getY() - 64,
             worldPosition.getZ() - 64,
             worldPosition.getX() + 66,  // 2 + 64
-            worldPosition.getY() + 74,  // 10 + 64
+            worldPosition.getY() + 77,  // 13 + 64
             worldPosition.getZ() + 66   // 2 + 64
         );
     }
 
-    public static void tick(Level level, BlockPos pos, BlockState state, ElectricityRepeaterBlockEntity blockEntity) {
+    public static void tick(Level level, BlockPos pos, BlockState state, AgreementCoreBlockEntity blockEntity) {
         // 在每次 tick 中执行的操作
         if (!level.isClientSide) {
             // 如果是控制器且没有多方块数据，尝试初始化（用于重启后恢复）
@@ -428,6 +441,9 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
             
             // 更新 GUI 数据
             blockEntity.updateGuiData();
+            
+            // 能源网络扫描（每 5 秒一次）
+            blockEntity.tryNetworkScan();
         }
     }
     
@@ -446,7 +462,7 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
         controllers.add(new AnimationController<>(this, this::idleController));
     }
     
-    protected <E extends ElectricityRepeaterBlockEntity> PlayState idleController(final AnimationState<E> state) {
+    protected <E extends AgreementCoreBlockEntity> PlayState idleController(final AnimationState<E> state) {
         // 返回空闲状态（无动画）
         return PlayState.STOP;
     }
@@ -457,6 +473,45 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
     }
     
     // ==================== IEnergyNode 实现 ====================
+    
+    /**
+     * 尝试执行网络扫描（每 5 秒一次）
+     */
+    private void tryNetworkScan() {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastScanTime >= SCAN_INTERVAL) {
+            performNetworkScan();
+            lastScanTime = currentTime;
+        }
+    }
+    
+    /**
+     * 执行网络扫描
+     */
+    private void performNetworkScan() {
+        if (!isController() || level == null) {
+            return;
+        }
+        
+        // 获取或创建网络
+        EnergyNetworkManager manager = EnergyNetworkManager.getInstance();
+        EnergyNetwork network = manager.getNetworkByPosition(worldPosition);
+        
+        if (network == null) {
+            // 创建新网络
+            network = manager.createNetwork(worldPosition);
+            network.setProtocolCore(this);
+            manager.registerNetwork(network);
+        }
+        
+        // 执行扫描
+        if (network.isValid()) {
+            network.scanNetwork();
+            
+            // 更新 GUI 数据
+            data.set(0, (int) Math.min(energyBuffer.getEnergy(), Integer.MAX_VALUE));
+        }
+    }
     
     @Override
     public BlockPos getNodePosition() {
@@ -485,8 +540,8 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
     
     @Override
     public long getEnergyDemand() {
-        // 中继器本身不消耗能量（或消耗很少）
-        return 10; // 10 FE/t
+        // 协议核心本身不消耗能量
+        return 0;
     }
     
     @Override
@@ -507,21 +562,21 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
     
     @Override
     public boolean isValid() {
-        return level != null && !level.isClientSide;
+        return level != null && !level.isClientSide && isController();
     }
     
     @Override
     public NodeType getNodeType() {
-        return NodeType.REPEATER;
+        return NodeType.PROTOCOL_CORE;
     }
     
-    // ==================== NBT 二级节点存储方法 ====================
+    // ==================== NBT 持久化方法 ====================
     
     /**
-     * 保存二级节点数据到 NBT
+     * 保存网络数据到 NBT（分级存储优化）
      */
-    private void saveChildrenToNBT(CompoundTag tag) {
-        if (level == null || level.isClientSide) {
+    private void saveNetworkToNBT(CompoundTag tag, HolderLookup.Provider registries) {
+        if (!isController() || level == null) {
             return;
         }
         
@@ -534,69 +589,104 @@ public class ElectricityRepeaterBlockEntity extends BlockEntity implements IMult
         
         CompoundTag networkTag = new CompoundTag();
         
-        // 保存此中继器直接连接的所有子节点（不包括协议核心）
-        ListTag childrenTag = new ListTag();
-        List<IEnergyNode> neighbors = network.getNeighbors(this);
-        
-        for (IEnergyNode node : neighbors) {
-            // 跳过协议核心（已经在父节点中保存）
-            if (node.getNodeType() == IEnergyNode.NodeType.PROTOCOL_CORE) {
-                continue;
+        // 只保存一级节点（直接连接到协议核心的节点）
+        ListTag directNodesTag = new ListTag();
+        IEnergyNode protocolCore = network.getProtocolCore();
+        if (protocolCore != null) {
+            List<IEnergyNode> directNeighbors = network.getNeighbors(protocolCore);
+            for (IEnergyNode node : directNeighbors) {
+                CompoundTag nodeTag = new CompoundTag();
+                BlockPos pos = node.getNodePosition();
+                nodeTag.putInt("X", pos.getX());
+                nodeTag.putInt("Y", pos.getY());
+                nodeTag.putInt("Z", pos.getZ());
+                nodeTag.putString("Type", node.getNodeType().name());
+                
+                // 保存能量缓冲区数据
+                EnergyBuffer buffer = node.getEnergyBuffer();
+                nodeTag.putLong("Energy", buffer.getEnergy());
+                
+                directNodesTag.add(nodeTag);
             }
-            
-            CompoundTag nodeTag = new CompoundTag();
-            BlockPos pos = node.getNodePosition();
-            nodeTag.putInt("X", pos.getX());
-            nodeTag.putInt("Y", pos.getY());
-            nodeTag.putInt("Z", pos.getZ());
-            nodeTag.putString("Type", node.getNodeType().name());
-            
-            // 保存能量缓冲区数据
-            EnergyBuffer buffer = node.getEnergyBuffer();
-            nodeTag.putLong("Energy", buffer.getEnergy());
-            
-            childrenTag.add(nodeTag);
         }
+        networkTag.put(DIRECT_NODES_KEY, directNodesTag);
         
-        networkTag.put(CHILD_NODES_KEY, childrenTag);
+        // 二级节点信息由一级节点自己保存（分布式存储）
+        // 这里只保存元数据
+        networkTag.putInt("TotalNodes", network.getNodeCount());
+        networkTag.putLong("LastScanTime", network.getLastScanTime());
+        
+        // 保存统计数据
+        networkTag.putLong("TotalEnergy", network.getTotalNetworkEnergy());
+        networkTag.putLong("TotalCapacity", network.getTotalNetworkCapacity());
+        
         tag.put(NETWORK_NBT_KEY, networkTag);
     }
     
     /**
-     * 从 NBT 加载二级节点数据
+     * 从 NBT 加载网络数据（分级恢复）
      */
-    private void loadChildrenFromNBT(CompoundTag networkTag) {
+    private void loadNetworkFromNBT(CompoundTag networkTag, HolderLookup.Provider registries) {
         if (level == null || level.isClientSide) {
             return;
         }
         
-        if (!networkTag.contains(CHILD_NODES_KEY, 9)) {
-            return;
-        }
+        EnergyNetworkManager manager = EnergyNetworkManager.getInstance();
+        EnergyNetwork network = manager.createNetwork(worldPosition);
         
-        ListTag childrenTag = networkTag.getList(CHILD_NODES_KEY, 10);
+        // 设置协议核心
+        network.setProtocolCore(this);
         
-        // 延迟加载：只记录需要恢复的节点，在实际访问时再重建
-        // 这样可以避免区块加载时的性能问题
-        for (int i = 0; i < childrenTag.size(); i++) {
-            CompoundTag nodeTag = childrenTag.getCompound(i);
-            BlockPos pos = new BlockPos(
-                nodeTag.getInt("X"),
-                nodeTag.getInt("Y"),
-                nodeTag.getInt("Z")
-            );
+        // 加载一级节点（直接连接的节点）
+        if (networkTag.contains(DIRECT_NODES_KEY, 9)) { // 9 = ListTag
+            ListTag directNodesTag = networkTag.getList(DIRECT_NODES_KEY, 10); // 10 = CompoundTag
             
-            // 标记该位置的节点需要恢复能量数据
-            // 实际的网络连接会在下次扫描时自动重建
-            if (level.isLoaded(pos)) {
-                BlockEntity blockEntity = level.getBlockEntity(pos);
-                if (blockEntity instanceof IEnergyNode node) {
-                    // 恢复能量缓冲区
-                    EnergyBuffer buffer = node.getEnergyBuffer();
-                    long savedEnergy = nodeTag.getLong("Energy");
-                    buffer.setEnergy(savedEnergy);
+            for (int i = 0; i < directNodesTag.size(); i++) {
+                CompoundTag nodeTag = directNodesTag.getCompound(i);
+                BlockPos pos = new BlockPos(
+                    nodeTag.getInt("X"),
+                    nodeTag.getInt("Y"),
+                    nodeTag.getInt("Z")
+                );
+                
+                // 跳过协议核心（已经设置）
+                if (pos.equals(worldPosition)) {
+                    continue;
+                }
+                
+                // 获取节点类型
+                String typeStr = nodeTag.getString("Type");
+                IEnergyNode.NodeType nodeType = IEnergyNode.NodeType.valueOf(typeStr);
+                
+                // 尝试找到该位置的方块实体
+                if (level.isLoaded(pos)) {
+                    BlockEntity blockEntity = level.getBlockEntity(pos);
+                    if (blockEntity instanceof IEnergyNode node) {
+                        // 验证节点类型
+                        if (node.getNodeType() == nodeType && node.isValid()) {
+                            network.addNode(node);
+                            network.connectNodes(this, node);
+                            network.connectNodes(node, this);
+                            
+                            // 恢复能量缓冲区
+                            EnergyBuffer buffer = node.getEnergyBuffer();
+                            long savedEnergy = nodeTag.getLong("Energy");
+                            buffer.setEnergy(savedEnergy);
+                        }
+                    }
                 }
             }
         }
+        
+        // 二级节点不需要在这里加载
+        // 它们会在网络扫描时通过一级节点自动发现和重建
+        
+        // 恢复统计数据
+        if (networkTag.contains("TotalEnergy")) {
+            // 暂时不恢复，会在下次扫描时重新计算
+        }
+        
+        // 注册网络
+        manager.registerNetwork(network);
     }
 }

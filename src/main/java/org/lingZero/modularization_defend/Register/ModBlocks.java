@@ -11,6 +11,7 @@ import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.lingZero.modularization_defend.Blocks.ElectricityRepeater.ElectricityRepeaterMultiblock;
+import org.lingZero.modularization_defend.Blocks.AgreementCore.AgreementCoreMultiblock;
 import org.lingZero.modularization_defend.ModularizationDefend;
 
 
@@ -25,6 +26,15 @@ public class ModBlocks {
                     .sound(SoundType.STONE)                                // 挖掘时的声音类型
                     .requiresCorrectToolForDrops()                        // 需要正确的工具（镐）破坏并掉落物品
                     .noOcclusion()                                        // 不遮挡光线和相邻方块的面
+
+            ));
+    
+    public static final DeferredBlock<AgreementCoreMultiblock> AGREEMENT_CORE_BLOCK =
+            BLOCKS.register("agreement_core_block", () -> new AgreementCoreMultiblock(BlockBehaviour.Properties.of()
+                    .strength(5.0f, 10.0f)     // 更高的硬度等级与抗爆等级
+                    .sound(SoundType.METAL)                            // 挖掘时的声音类型（金属）
+                    .requiresCorrectToolForDrops()                    // 需要正确的工具（镐）破坏并掉落物品
+                    .noOcclusion()                                    // 不遮挡光线和相邻方块的面
 
             ));
     
