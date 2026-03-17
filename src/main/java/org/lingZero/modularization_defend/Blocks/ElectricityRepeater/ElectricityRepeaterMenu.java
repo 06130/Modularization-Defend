@@ -1,7 +1,6 @@
 package org.lingZero.modularization_defend.Blocks.ElectricityRepeater;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -58,7 +57,6 @@ public class ElectricityRepeaterMenu extends AbstractContainerMenu {
     
     /**
      * 检查玩家是否可以使用此容器
-     * 注：由于区块加载机制，玩家必须能加载该方块才能打开 GUI，因此无需额外的距离检测
      */
     @Override
     public boolean stillValid(Player player) {

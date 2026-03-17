@@ -1,7 +1,6 @@
 package org.lingZero.modularization_defend;
 
 import com.mojang.logging.LogUtils;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
