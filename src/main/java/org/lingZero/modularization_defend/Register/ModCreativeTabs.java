@@ -23,7 +23,6 @@ public class ModCreativeTabs {
                                 output.accept(EXAMPLE_ITEM.get());
                                 output.accept(ELECTRICITY_REPEATER_ITEM.get());
                                 output.accept(TERMINAL_ITEM.get());
-                                output.accept(ENERGY_NETWORK_CONFIGURATION_TOOL_ITEM.get());
                                 output.accept(ModBlocks.AGREEMENT_CORE_BLOCK.get().asItem());
                                 output.accept(ModItems.AGREEMENT_CORE_ITEM.get());
                             }

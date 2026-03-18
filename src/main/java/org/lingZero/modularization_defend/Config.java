@@ -20,16 +20,22 @@ public class Config {
 
     // GUI 配置
     private static final ModConfigSpec.ConfigValue<String> TEXT_COLOUR = BUILDER
-            .comment("GUI主要文本字体颜色（十六进制格式，如 0x00AA00）")
+            .comment("GUI 主要文本字体颜色（十六进制格式，如 0x00AA00）")
             .define("textColour", "0xFFEE00");
-
+        
+    private static final ModConfigSpec.IntValue DEFAULT_HEARTBEAT_INTERVAL = BUILDER
+            .comment("协议网络默认心跳间隔。注：如果你不知道你在干什么，请不要修改。")
+            .defineInRange("AgreementCoreNetworkHeartbeatInterval", 40,1,65536);
     static final ModConfigSpec SPEC = BUILDER.build();
-
+    
     // 电网配置工具配置
     public static double maxConnectionDistance;
-
+    
     // GUI 配置
     public static int textColour;
+        
+    // 协议网络配置
+    public static int agreementCoreHeartbeatInterval;
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
@@ -37,6 +43,8 @@ public class Config {
         maxConnectionDistance = MAX_CONNECTION_DISTANCE.get();
         // 加载 GUI 颜色配置并解析为整数
         textColour = parseColor(TEXT_COLOUR.get());
+        // 加载协议网络心跳间隔配置
+        agreementCoreHeartbeatInterval = DEFAULT_HEARTBEAT_INTERVAL.get();
     }
 
     /**
@@ -66,5 +74,13 @@ public class Config {
                 player.sendSystemMessage(Component.literal("欢迎使用模块化防御，当前版本："+MODVERSION));
             }
         }
+    }
+    
+    /**
+     * 获取协议网络心跳间隔
+     * @return 心跳间隔（tick）
+     */
+    public static int getAgreementCoreHeartbeatInterval() {
+        return agreementCoreHeartbeatInterval;
     }
 }

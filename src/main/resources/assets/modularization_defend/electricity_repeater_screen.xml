@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ldlib2-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/Low-Drag-MC/LDLib2/refs/heads/1.21/ldlib2-ui.xsd">
+    <stylesheet location="ldlib2:lss/mc.lss"/>
+    <style>
+        .flex-1 {
+        flex: 1;
+        }
+    </style>
+    <root class="panel_bg" style="width: 185;height: 185">
+        <style>
+        .main-container {
+            width: 176;
+            height: 166;
+            background-color: #C6C6C6;
+            flex-direction: column;
+        }
+        .top-section {
+            width: 176;
+            height: 60;
+            flex-direction: row;
+            padding: 5;
+        }
+        .armor-panel {
+            width: 26;
+            height: 76;
+            background-color: #8B8B8B;
+            border: 2px solid #000000;
+            margin-right: 5;
+            flex-direction: column;
+            padding: 2;
+        }
+        .armor-slot {
+            width: 18;
+            height: 18;
+            background-color: #8B8B8B;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-bottom: 2px solid #555555;
+            border-right: 2px solid #555555;
+            margin-bottom: 2;
+        }
+        .info-panel {
+            flex: 1;
+            background-color: #000000;
+            border: 3px solid #555555;
+            padding: 5;
+            flex-direction: column;
+        }
+        .info-text {
+            color: #00FF00;
+            font-size: 10;
+            margin-bottom: 2;
+            adaptive-width: true;
+            adaptive-height: true;
+        }
+        .energy-section {
+            width: 20;
+            height: 60;
+            flex-direction: column;
+            align-items: center;
+        }
+        .energy-bar {
+            width: 4;
+            height: 52;
+            background-color: #000000;
+            border: 1px solid #555555;
+        }
+        .energy-fill {
+            width: 4;
+            height: 26;
+            background-color: #00FFAA;
+        }
+        .function-buttons {
+            width: 20;
+            flex-direction: column;
+            margin-left: 2;
+        }
+        .func-button {
+            width: 20;
+            height: 20;
+            background-color: #8B8B8B;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-bottom: 2px solid #555555;
+            border-right: 2px solid #555555;
+            margin-bottom: 2;
+            text-align: center;
+            color: #FFFFFF;
+        }
+        .inventory-section {
+            width: 176;
+            height: 106;
+            padding: 6;
+            margin-top: 10;
+        }
+        .inventory-label {
+            color: #404040;
+            font-size: 10;
+            margin-bottom: 3;
+            adaptive-width: true;
+            adaptive-height: true;
+        }
+        .inventory-grid {
+            width: 162;
+            height: 54;
+            background-color: #8B8B8B;
+            display: grid;
+            grid-template-columns: repeat(9, 18px);
+            grid-template-rows: repeat(3, 18px);
+            gap: 0;
+        }
+        .slot {
+            width: 18;
+            height: 18;
+            background-color: #8B8B8B;
+            border-top: 2px solid #FFFFFF;
+            border-left: 2px solid #FFFFFF;
+            border-bottom: 2px solid #555555;
+            border-right: 2px solid #555555;
+        }
+        .hotbar-grid {
+            width: 162;
+            height: 18;
+            background-color: #8B8B8B;
+            display: grid;
+            grid-template-columns: repeat(9, 18px);
+            margin-top: 4;
+        }
+
+        </style>
+    </root>
+    <root class="main-container">
+        <element class="top-section">
+            <element class="armor-panel">
+                <element class="armor-slot" id="armor_head"/>
+                <element class="armor-slot" id="armor_chest"/>
+                <element class="armor-slot" id="armor_legs"/>
+                <element class="armor-slot" id="armor_feet"/>
+            </element>
+            <element class="info-panel">
+
+                <label class="info-text" id="energy_text">0/10000 FE</label>
+                <label class="info-text" id="power_text">功率：0 FE/t</label>
+                <label class="info-text" id="output_text">输出：0 FE/t</label>
+                <label class="info-text" id="grid_status_text">电网：未连接</label>
+                <label class="info-text" id="grid_power_text">上网功率：0W</label>
+                <label class="info-text" id="consume_power_text">消耗功率：0W</label>
+            </element>
+            <element style="flex-direction: row;">
+                <element class="energy-section">
+                    <element class="energy-bar">
+                        <element class="energy-fill" id="energy_fill"/>
+                    </element>
+                </element>
+                <element class="function-buttons">
+                    <button class="func-button" id="upgrade_btn" text="↑"/>
+                    <button class="func-button" id="access_btn" text="🔒"/>
+                    <button class="func-button" id="signal_btn" text="⚡"/>
+                </element>
+            </element>
+        </element>
+        <element class="inventory-section">
+            <label class="inventory-label">物品栏</label>
+            <inventory-slots/>
+            <element class="inventory-grid">
+                <element class="slot" id="slot_0"/>
+                <element class="slot" id="slot_1"/>
+                <element class="slot" id="slot_2"/>
+                <element class="slot" id="slot_3"/>
+                <element class="slot" id="slot_4"/>
+                <element class="slot" id="slot_5"/>
+                <element class="slot" id="slot_6"/>
+                <element class="slot" id="slot_7"/>
+                <element class="slot" id="slot_8"/>
+                <element class="slot" id="slot_9"/>
+                <element class="slot" id="slot_10"/>
+                <element class="slot" id="slot_11"/>
+                <element class="slot" id="slot_12"/>
+                <element class="slot" id="slot_13"/>
+                <element class="slot" id="slot_14"/>
+                <element class="slot" id="slot_15"/>
+                <element class="slot" id="slot_16"/>
+                <element class="slot" id="slot_17"/>
+                <element class="slot" id="slot_18"/>
+                <element class="slot" id="slot_19"/>
+                <element class="slot" id="slot_20"/>
+                <element class="slot" id="slot_21"/>
+                <element class="slot" id="slot_22"/>
+                <element class="slot" id="slot_23"/>
+                <element class="slot" id="slot_24"/>
+                <element class="slot" id="slot_25"/>
+                <element class="slot" id="slot_26"/>
+            </element>
+            <element class="hotbar-grid">
+                <element class="slot" id="hotbar_0"/>
+                <element class="slot" id="hotbar_1"/>
+                <element class="slot" id="hotbar_2"/>
+                <element class="slot" id="hotbar_3"/>
+                <element class="slot" id="hotbar_4"/>
+                <element class="slot" id="hotbar_5"/>
+                <element class="slot" id="hotbar_6"/>
+                <element class="slot" id="hotbar_7"/>
+                <element class="slot" id="hotbar_8"/>
+            </element>
+        </element>
+    </root>
+</ldlib2-ui>

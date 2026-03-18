@@ -22,6 +22,7 @@ import org.lingZero.modularization_defend.Register.ModCreativeTabs;
 import org.lingZero.modularization_defend.Register.ModItems;
 import org.lingZero.modularization_defend.Register.ModMenuTypes;
 import org.lingZero.modularization_defend.Blocks.Multiblock.MultiblockManager;
+import org.lingZero.modularization_defend.AgreementCoreNetwork.NetworkDebugCommand;
 import org.lingZero.modularization_defend.Renderer.ElectricityRepeaterRenderer;
 import org.lingZero.modularization_defend.Renderer.AgreementCoreRenderer;
 import org.lingZero.modularization_defend.Blocks.ElectricityRepeater.ElectricityRepeaterScreen;
@@ -77,6 +78,9 @@ public class ModularizationDefend {
     public void onServerStarting(ServerStartingEvent event) {
         // 从持久化数据加载所有多方块结构
         MultiblockManager.loadFromPersistent(event.getServer().overworld());
+        
+        // 注册调试命令
+        NetworkDebugCommand.register(event.getServer().getCommands().getDispatcher());
     }
     
     // 你可以使用 EventBusSubscriber 自动注册此类中所有用 @SubscribeEvent 注解的静态方法

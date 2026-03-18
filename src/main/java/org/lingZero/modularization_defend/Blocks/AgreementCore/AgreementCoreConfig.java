@@ -4,8 +4,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.lingZero.modularization_defend.Blocks.Multiblock.IMultiblockConfig;
 import org.lingZero.modularization_defend.Register.ModBlocks;
 
@@ -34,6 +34,13 @@ public class AgreementCoreConfig implements IMultiblockConfig {
     
     // 总高度
     public static final int TOTAL_HEIGHT = BASE_SIZE_Y + COLUMN_SIZE_Y; // 13
+
+    // 心跳间隔范围
+    public static final int MIN_HEARTBEAT_INTERVAL = 1;
+    public static final int MAX_HEARTBEAT_INTERVAL = 65536;
+    
+    @Deprecated
+    public static final int DEFAULT_HEARTBEAT_INTERVAL = 20;
     
     @Override
     public String getId() {
@@ -91,11 +98,12 @@ public class AgreementCoreConfig implements IMultiblockConfig {
                 BlockState stateToPlace = ModBlocks.AGREEMENT_CORE_BLOCK.get().defaultBlockState();
                 level.setBlock(checkPos, stateToPlace, Block.UPDATE_ALL); // flags=3
                 
-                // 设置控制器标志和主方块坐标
+                // 设置控制器标志、主方块坐标和心跳间隔
                 BlockEntity blockEntity = level.getBlockEntity(checkPos);
                 if (blockEntity instanceof AgreementCoreBlockEntity core) {
                     core.setController(isController);
                     core.setControllerPosFromNBT(controllerPos);
+                    core.loadHeartbeatIntervalFromConfig();
                 }
             }
         }
@@ -110,11 +118,12 @@ public class AgreementCoreConfig implements IMultiblockConfig {
                     BlockState stateToPlace = ModBlocks.AGREEMENT_CORE_BLOCK.get().defaultBlockState();
                     level.setBlock(checkPos, stateToPlace, Block.UPDATE_ALL); // flags=3
                     
-                    // 设置控制器标志（都不是控制器）和主方块坐标
+                    // 设置控制器标志（都不是控制器）、主方块坐标和心跳间隔
                     BlockEntity blockEntity = level.getBlockEntity(checkPos);
                     if (blockEntity instanceof AgreementCoreBlockEntity core) {
                         core.setController(false);
                         core.setControllerPosFromNBT(controllerPos);
+                        core.loadHeartbeatIntervalFromConfig();
                     }
                 }
             }
