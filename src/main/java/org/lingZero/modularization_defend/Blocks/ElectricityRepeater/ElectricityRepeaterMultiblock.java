@@ -4,7 +4,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -14,15 +13,16 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 
 /**
  * 电力中继器多方块方块
  * 负责处理方块的放置、破坏等事件
+ * 使用新的 Multiblock 框架实现
  */
 public class ElectricityRepeaterMultiblock extends Block implements EntityBlock {
+    
+    private static final ElectricityRepeaterMultiblockDef MULTIBLOCK = new ElectricityRepeaterMultiblockDef();
     
     public ElectricityRepeaterMultiblock(BlockBehaviour.Properties properties) {
         super(properties);
@@ -35,21 +35,16 @@ public class ElectricityRepeaterMultiblock extends Block implements EntityBlock 
     
     @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
-        // 不在这里设置控制器标志，由 place() 方法统一处理
         super.onPlace(state, level, pos, oldState, isMoving);
+        // 使用框架的 onPlace 方法自动处理多方块放置
+        MULTIBLOCK.onPlace(level, pos, state);
     }
     
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-        // 当方块被破坏时，通知 BlockEntity 破坏多方块结构
+        // 当方块被破坏时，使用框架的 onRemove 方法自动处理多方块破坏
         if (!state.is(newState.getBlock())) {
-            BlockEntity blockEntity = level.getBlockEntity(pos);
-            if (blockEntity instanceof ElectricityRepeaterBlockEntity repeater) {
-                // 先调用 blockRemoved 标记需要重新检查
-                repeater.blockRemoved();
-                // 然后破坏多方块
-                repeater.breakMultiblock();
-            }
+            MULTIBLOCK.onRemove(level, pos, null);
         }
         super.onRemove(state, level, pos, newState, isMoving);
     }
@@ -80,6 +75,7 @@ public class ElectricityRepeaterMultiblock extends Block implements EntityBlock 
     
     /**
      * 当玩家右键点击方块时调用
+     * 使用新框架的 GUI 处理
      */
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
@@ -100,22 +96,5 @@ public class ElectricityRepeaterMultiblock extends Block implements EntityBlock 
     @Override
     public RenderShape getRenderShape(BlockState state) {
         return RenderShape.ENTITYBLOCK_ANIMATED;
-    }
-    
-    /**
-     * 获取方块的着色颜色
-     * 非控制器方块将变得透明
-     */
-    public float getShadeBrightness(BlockState state, BlockAndTintGetter level, BlockPos pos) {
-        if (level instanceof Level actualLevel) {
-            BlockEntity blockEntity = actualLevel.getBlockEntity(pos);
-            if (blockEntity instanceof ElectricityRepeaterBlockEntity repeater) {
-                // 如果不是控制器，增加亮度使其看起来更透明
-                if (!repeater.isController()) {
-                    return 1.0f; // 最大亮度，使其看起来更淡
-                }
-            }
-        }
-        return super.getShadeBrightness(state, level, pos);
     }
 }

@@ -21,12 +21,14 @@ import org.lingZero.modularization_defend.Register.ModBlocks;
 import org.lingZero.modularization_defend.Register.ModCreativeTabs;
 import org.lingZero.modularization_defend.Register.ModItems;
 import org.lingZero.modularization_defend.Register.ModMenuTypes;
-import org.lingZero.modularization_defend.Blocks.Multiblock.MultiblockManager;
-import org.lingZero.modularization_defend.AgreementCoreNetwork.NetworkDebugCommand;
-import org.lingZero.modularization_defend.Renderer.ElectricityRepeaterRenderer;
-import org.lingZero.modularization_defend.Renderer.AgreementCoreRenderer;
+import org.lingZero.modularization_defend.Register.ModMultiblockStructures;
+import org.lingZero.modularization_defend.GeoModel.Renderer.ElectricityRepeaterRenderer;
+import org.lingZero.modularization_defend.GeoModel.Renderer.AgreementCoreRenderer;
 import org.lingZero.modularization_defend.Blocks.ElectricityRepeater.ElectricityRepeaterScreen;
 import org.lingZero.modularization_defend.Blocks.AgreementCore.AgreementCoreScreen;
+import org.lingZero.modularization_defend.util.DebugLogger;
+import org.lingZero.modularization_defend.Event.MultiblockEvents;
+import org.lingZero.modularization_defend.Blocks.AgreementCore.AgreementCoreMultiblockDef;
 import org.slf4j.Logger;
 
 @Mod(ModularizationDefend.MODID)
@@ -38,6 +40,10 @@ public class ModularizationDefend {
     // 模组类的构造函数是模组加载时运行的第一段代码。
     // FML 会自动识别某些参数类型（如 IEventBus 或 ModContainer）并自动传入它们
     public ModularizationDefend(IEventBus modEventBus, ModContainer modContainer) {
+        // 初始化调试日志系统
+        DebugLogger.init();
+        DebugLogger.info("===== ModularizationDefend 模组初始化开始 =====");
+        
         // 注册通用设置方法以供模组加载时调用
         modEventBus.addListener(this::commonSetup);
         
@@ -50,14 +56,24 @@ public class ModularizationDefend {
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModCreativeTabs.CREATIVE_TABS.register(modEventBus);
         ModMenuTypes.MENUS.register(modEventBus);
-
+        // 注册多方块结构注册表（使用 DeferredRegister 机制，避免重复解析）
+        ModMultiblockStructures.register(modEventBus);
+            
+        DebugLogger.info("所有注册表完成，准备注册事件总线");
+    
         // 将我们自己注册到服务器和其他我们感兴趣的游戏事件中。
         // 注意，只有当我们希望*这个*类（modularization_defend）直接响应事件时才有必要这样做。
         // 如果此类中没有 @SubscribeEvent 注解的方法（如下面的 onServerStarting()），则不要添加此行。
         NeoForge.EVENT_BUS.register(this);
-
-        // 注册ModConfigSpec
+        
+        // 注册多方块到事件处理器
+        MultiblockEvents.registerMultiblock(AgreementCoreMultiblockDef.getInstance());
+        DebugLogger.info("多方块事件注册完成");
+    
+        // 注册 ModConfigSpec
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        DebugLogger.info("配置注册完成");
+        DebugLogger.info("===== ModularizationDefend 模组初始化完成 =====");
     }
     private void commonSetup(final FMLCommonSetupEvent event) {
         // 一些通用设置代码
@@ -76,11 +92,8 @@ public class ModularizationDefend {
     // 你可以使用 SubscribeEvent 让事件总线发现要调用的方法
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
-        // 从持久化数据加载所有多方块结构
-        MultiblockManager.loadFromPersistent(event.getServer().overworld());
-        
-        // 注册调试命令
-        NetworkDebugCommand.register(event.getServer().getCommands().getDispatcher());
+        // 服务器启动时的初始化逻辑
+        // 注意：新框架不需要 MultiblockManager，结构数据由 BlockEntity 自己管理
     }
     
     // 你可以使用 EventBusSubscriber 自动注册此类中所有用 @SubscribeEvent 注解的静态方法
