@@ -50,32 +50,38 @@ public class MultiblockBreaker {
             return false;
         }
         
-        CompoundTag tag = be.saveWithoutMetadata(level.registryAccess());
-        if (tag == null) {
-            DebugLogger.debug("NBT 标签为空，返回 false");
+        // 强制转换为 AbstractMultiblockBlockEntity，直接使用 isController 字段
+        if (!(be instanceof AbstractMultiblockBlockEntity multiblockBE)) {
+            DebugLogger.error("BlockEntity 不是 AbstractMultiblockBlockEntity 类型：" + be.getClass().getName());
             return false;
         }
         
-        DebugLogger.debug("NBT 标签：" + tag);
-        DebugLogger.debug("是否为主方块：" + IMultiblockBlockEntity.isMaster(tag));
+        boolean isMaster = multiblockBE.isController();
+        BlockPos masterPosFromBe = multiblockBE.getControllerPos();
         
-        if (!IMultiblockBlockEntity.isMaster(tag)) {
-            // 如果不是主方块，尝试从 NBT 获取主方块坐标并重定向
-            BlockPos masterPos = IMultiblockBlockEntity.readMasterPos(tag);
-            DebugLogger.debug("从 NBT 读取的主方块坐标：" + masterPos);
-            
-            if (masterPos != null && !masterPos.equals(pos)) {
-                DebugLogger.debug("重定向到主方块进行破坏：" + masterPos);
-                // 重定向到主方块进行破坏
-                return redirectAndBreak(level, masterPos, player);
+        DebugLogger.debug("isController: " + isMaster);
+        DebugLogger.debug("storedControllerPos: " + masterPosFromBe);
+        
+        if (!isMaster) {
+            // 如果不是主方块，从重定向到主方块进行破坏
+            if (masterPosFromBe != null && !masterPosFromBe.equals(pos)) {
+                DebugLogger.debug("重定向到主方块进行破坏：" + masterPosFromBe);
+                return redirectAndBreak(level, masterPosFromBe, player);
             }
             DebugLogger.debug("无法获取有效的主方块坐标，返回 false");
             return false;
         }
         
         // 是主方块，直接破坏整个结构
-        DebugLogger.info("是主方块，开始破坏整个结构");
+        DebugLogger.info("是主方块（isController=true），开始破坏整个结构");
         DebugLogger.info("主方块位置：" + pos);
+        
+        // 获取 NBT 用于后续处理（如果需要）
+        CompoundTag tag = be.saveWithoutMetadata(level.registryAccess());
+        if (tag == null) {
+            tag = new CompoundTag();
+        }
+        
         return breakEntireStructure(level, pos, tag, player);
     }
     

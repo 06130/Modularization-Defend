@@ -35,8 +35,8 @@ public class ElectricityRepeaterMultiblockDef extends AbstractMultiblock {
         return MultiblockStructure.start("ElectricityRepeater")
                 // 第 1 层（底部）- 2x2
                 .aisle(
-                    "BB",
-                    "YB"
+                        "YB",
+                        "BB"
                 )
                 // 第 2-9 层 - 2x2
                 .aisle("BB", "BB")

@@ -284,8 +284,14 @@ public abstract class AbstractMultiblockBlockEntity extends BlockEntity {
         tag.putBoolean(MULTIBLOCK_FORMED_KEY, this.multiblockFormed);
         
         // 将主方块坐标写入 NBT (使用 IMultiblockBlockEntity 的统一方法)
-        if (storedControllerPos != null) {
-            IMultiblockBlockEntity.writeMasterPos(tag, storedControllerPos);
+        // 确保所有结构方块都保存主方块坐标，以便破坏时能够正确重定向
+        BlockPos masterPosToSave = storedControllerPos;
+        if (masterPosToSave == null && isController) {
+            // 如果是主方块但没有存储坐标，使用当前位置
+            masterPosToSave = worldPosition;
+        }
+        if (masterPosToSave != null) {
+            IMultiblockBlockEntity.writeMasterPos(tag, masterPosToSave);
         }
     }
     

@@ -332,10 +332,11 @@ public class MultiblockPlacer {
         blockEntity.loadWithComponents(tag, blockEntity.getLevel().registryAccess());
         blockEntity.setChanged();
         
-        // 如果是 AbstractMultiblockBlockEntity，还需要设置主方块坐标字段
+        // 如果是 AbstractMultiblockBlockEntity，还需要设置字段
         if (blockEntity instanceof AbstractMultiblockBlockEntity multiblockBE) {
             multiblockBE.setControllerPosFromNBT(masterPos);  // 设置主方块坐标
             multiblockBE.setMultiblockFormed(true);  // 标记为已成型
+            // isController 默认为 false，不需要显式设置
         }
         
         DebugLogger.debug("[NBT 设置] 结构方块 NBT: " + tag);

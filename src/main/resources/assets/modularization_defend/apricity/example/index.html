@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>示例界面</title>
+    <link rel="stylesheet" href="modularization_defend:example/style.css"/>
+</head>
+<body>
+    <!-- 主容器 -->
+    <div id="app-container">
+        <!-- 标题栏 -->
+        <header class="header">
+            <h1 class="title">ApricityUI 示例</h1>
+            <div class="header-actions">
+                <button id="theme-toggle" class="icon-btn">🌓</button>
+            </div>
+        </header>
+        
+        <!-- 内容区域 -->
+        <main class="content">
+            <!-- 信息面板 -->
+            <section class="panel info-panel">
+                <div class="panel-header">
+                    <h2>欢迎使用</h2>
+                </div>
+                <div class="panel-body">
+                    <p>这是一个使用 ApricityUI 构建的可扩展 GUI 框架示例。</p>
+                    <p>框架特性：</p>
+                    <ul>
+                        <li>✅ 模块化设计</li>
+                        <li>✅ 可复用组件</li>
+                        <li>✅ 主题系统</li>
+                        <li>✅ 布局模板</li>
+                        <li>✅ 动画效果</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- 交互面板 -->
+            <section class="panel interaction-panel">
+                <div class="panel-header">
+                    <h2>交互测试</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="input-name">名称:</label>
+                        <input type="text" id="input-name" placeholder="请输入名称..."/>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="input-value">数值:</label>
+                        <input type="number" id="input-value" placeholder="0"/>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button id="btn-confirm" class="btn btn-primary">确认</button>
+                        <button id="btn-cancel" class="btn btn-secondary">取消</button>
+                        <button id="btn-reset" class="btn btn-danger">重置</button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 状态面板 -->
+            <section class="panel status-panel">
+                <div class="panel-header">
+                    <h2>状态信息</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="status-item">
+                        <span class="status-label">当前主题:</span>
+                        <span id="status-theme" class="status-value">light</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">调试模式:</span>
+                        <span id="status-debug" class="status-value">关闭</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">FPS:</span>
+                        <span id="status-fps" class="status-value">60</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <!-- 页脚 -->
+        <footer class="footer">
+            <p>Modularization Defend © 2026 - Powered by ApricityUI</p>
+        </footer>
+    </div>
+    
+    <script src="modularization_defend:example/script.js"></script>
+</body>
+</html>

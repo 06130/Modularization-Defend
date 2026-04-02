@@ -265,10 +265,8 @@ public abstract class AbstractMultiblock {
         IMultiblockStructure structure = getStructure();
         Block masterBlock = getMasterBlock();
         
-        // 检查是否有足够的空间
-        if (!canPlaceAt(level, origin)) {
-            return false;
-        }
+        // 注意：此方法假设已经通过 canPlaceAt() 检查，直接放置即可
+        // 如果检查失败，应该在 MultiblockPlacer 中返回 FAIL，不会调用到这里
         
         // 放置所有结构方块
         for (BlockPos partPos : structure.getPartPositions()) {
@@ -276,6 +274,7 @@ public abstract class AbstractMultiblock {
             Block blockToPlace = structure.isMaster(partPos) ? masterBlock : masterBlock;
             
             if (blockToPlace == null) {
+                DebugLogger.warn("方块为空，跳过位置：" + worldPos);
                 continue;
             }
             
@@ -337,6 +336,12 @@ public abstract class AbstractMultiblock {
         IMultiblockBlockEntity.setFormed(tag);
         
         blockEntity.loadWithComponents(tag, blockEntity.getLevel().registryAccess());
+        
+        // 同时设置 BlockEntity 的 isController 字段，确保 saveAdditional 能正确保存
+        if (blockEntity instanceof AbstractMultiblockBlockEntity multiblockBE) {
+            multiblockBE.setController(true);
+            multiblockBE.setMultiblockFormed(true);
+        }
     }
     
     /**
@@ -352,6 +357,11 @@ public abstract class AbstractMultiblock {
         IMultiblockBlockEntity.writeMasterPos(tag, masterPos);
         
         blockEntity.loadWithComponents(tag, blockEntity.getLevel().registryAccess());
+        
+        // 确保非主方块的 isController 为 false
+        if (blockEntity instanceof AbstractMultiblockBlockEntity multiblockBE) {
+            multiblockBE.setController(false);
+        }
     }
     
     /**

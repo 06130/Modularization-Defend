@@ -19,7 +19,9 @@ import org.lingZero.modularization_defend.Data.ModBlockTagsProvider;
 import org.lingZero.modularization_defend.Register.ModBlockEntities;
 import org.lingZero.modularization_defend.Register.ModBlocks;
 import org.lingZero.modularization_defend.Register.ModCreativeTabs;
+import org.lingZero.modularization_defend.Register.ModDataComponentTypes;
 import org.lingZero.modularization_defend.Register.ModItems;
+import org.lingZero.modularization_defend.Register.ModKeyBindings;
 import org.lingZero.modularization_defend.Register.ModMenuTypes;
 import org.lingZero.modularization_defend.Register.ModMultiblockStructures;
 import org.lingZero.modularization_defend.GeoModel.Renderer.ElectricityRepeaterRenderer;
@@ -51,11 +53,14 @@ public class ModularizationDefend {
         modEventBus.addListener(this::gatherData);
 
         // 注册延迟注册表
+        ModDataComponentTypes.DATA_COMPONENT_TYPES.register(modEventBus);
         ModBlocks.BLOCKS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModCreativeTabs.CREATIVE_TABS.register(modEventBus);
         ModMenuTypes.MENUS.register(modEventBus);
+        // 注册按键绑定（仅客户端）
+        ModKeyBindings.register(modEventBus);
         // 注册多方块结构注册表（使用 DeferredRegister 机制，避免重复解析）
         ModMultiblockStructures.register(modEventBus);
             
