@@ -26,7 +26,7 @@ public class ModItems {
     public static final Supplier<Item> TERMINAL_ITEM =
             ITEMS.registerSimpleItem("terminal_item", new Item.Properties()
     );
-    public static final Supplier<Item> DEFEND_CORE =
+    public static final DeferredItem<DefendCore> DEFEND_CORE =
             ITEMS.registerItem(
                     "defend_core",
                     DefendCore::new,

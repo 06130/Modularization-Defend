@@ -33,8 +33,8 @@ public class ModDefaultComponentsEvent {
         data.putInt("harm_level", 1);  // 默认伤害倍率
         data.putInt("energy_expend_level", 1);  // 默认能量消耗倍率
         
-        data.putLong("energy_max", 1000);  // 默认能量存储上限
-        data.putLong("energy_current", 1000); // 默认当前能量
+        data.putLong("energy_max", 10000);  // 默认能量存储上限
+        data.putLong("energy_current", 0); // 默认当前能量
         
         data.putDouble("level", 1); // 护盾容量 (1=1 点伤害)
         data.putBoolean("shieldActive", false);  // 护盾系统默认关闭
