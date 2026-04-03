@@ -19,7 +19,7 @@ import org.lingZero.modularization_defend.Data.ModBlockTagsProvider;
 import org.lingZero.modularization_defend.Register.ModBlockEntities;
 import org.lingZero.modularization_defend.Register.ModBlocks;
 import org.lingZero.modularization_defend.Register.ModCreativeTabs;
-import org.lingZero.modularization_defend.Register.ModDataComponentTypes;
+import org.lingZero.modularization_defend.Register.ModDataComponents;
 import org.lingZero.modularization_defend.Register.ModItems;
 import org.lingZero.modularization_defend.Register.ModKeyBindings;
 import org.lingZero.modularization_defend.Register.ModMenuTypes;
@@ -53,7 +53,7 @@ public class ModularizationDefend {
         modEventBus.addListener(this::gatherData);
 
         // 注册延迟注册表
-        ModDataComponentTypes.DATA_COMPONENT_TYPES.register(modEventBus);
+        ModDataComponents.DATA_COMPONENT_TYPES.register(modEventBus);
         ModBlocks.BLOCKS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);

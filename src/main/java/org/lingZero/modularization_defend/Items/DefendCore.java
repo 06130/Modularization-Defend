@@ -9,7 +9,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.lingZero.modularization_defend.Register.ModDataComponentTypes;
+import org.lingZero.modularization_defend.Register.ModDataComponents;
 import org.lingZero.modularization_defend.Register.ModKeyBindings;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
@@ -22,16 +22,16 @@ import java.util.List;
 // 3.能量缓存；
 // 4.护盾模块；
 // 5 随身炮台及其升级系统；
-// ！6.数据组件 (高优先)
-// 7.饰品槽添加 (高优先) #完成
+// ！6.数据组件 (高优先) #进行中
+// 7.饰品槽添加 (高优先) #部分完成
 // 8.渲染相关 (低优先)
 public class DefendCore extends Item implements ICurioItem {
     public DefendCore(Properties properties) {
-        super(properties.component(ModDataComponentTypes.CORE_MODULE_DATA.get(), createDefaultData()));
+        super(properties);
     }
     
     /**
-     * 创建默认数据组件
+     * 数据组件
      */
     private static CompoundTag createDefaultData() {
         CompoundTag data = new CompoundTag();
@@ -40,8 +40,8 @@ public class DefendCore extends Item implements ICurioItem {
         data.putInt("harm_level", 1);  // 默认伤害倍率
         data.putInt("energy_expend_level", 1);  // 默认能量消耗倍率
         
-        data.putLong("energy_max", 1000);  // 默认能量存储上限
-        data.putLong("energy_current", 1000); // 默认当前能量
+        data.putLong("energy_max", 10000);  // 默认能量存储上限
+        data.putLong("energy_current", 0); // 默认当前能量
         
         data.putDouble("level", 1); // 护盾容量 (1=1 点伤害)
         data.putBoolean("shieldActive", false);  // 护盾系统默认关闭
@@ -50,18 +50,6 @@ public class DefendCore extends Item implements ICurioItem {
         return data;
     }
     
-    /**
-     * 获取物品的默认实例（带默认数据组件）
-     */
-    @Override
-    public ItemStack getDefaultInstance() {
-        ItemStack stack = new ItemStack(this);
-        // 确保默认实例包含数据组件
-        if (!stack.has(ModDataComponentTypes.CORE_MODULE_DATA.get())) {
-            stack.set(ModDataComponentTypes.CORE_MODULE_DATA.get(), createDefaultData());
-        }
-        return stack;
-    }
 
     /**
      * tooltip
@@ -107,14 +95,14 @@ public class DefendCore extends Item implements ICurioItem {
         return new IEnergyStorage() {
             @Override
             public int receiveEnergy(int maxReceive, boolean simulate) {
-                CompoundTag data = stack.getOrDefault(ModDataComponentTypes.CORE_MODULE_DATA.get(), new CompoundTag());
+                CompoundTag data = stack.getOrDefault(ModDataComponents.CORE_MODULE_DATA.get(), new CompoundTag());
                 long currentEnergy = data.getLong("energy_current");
                 long maxEnergy = data.getLong("energy_max");
                 long canReceive = Math.min(maxReceive, maxEnergy - currentEnergy);
                     
                 if (!simulate && canReceive > 0) {
                     data.putLong("energy_current", currentEnergy + canReceive);
-                    stack.set(ModDataComponentTypes.CORE_MODULE_DATA.get(), data);
+                    stack.set(ModDataComponents.CORE_MODULE_DATA.get(), data);
                 }
                     
                 return (int) canReceive;
@@ -122,13 +110,13 @@ public class DefendCore extends Item implements ICurioItem {
                 
             @Override
             public int extractEnergy(int maxExtract, boolean simulate) {
-                CompoundTag data = stack.getOrDefault(ModDataComponentTypes.CORE_MODULE_DATA.get(), new CompoundTag());
+                CompoundTag data = stack.getOrDefault(ModDataComponents.CORE_MODULE_DATA.get(), new CompoundTag());
                 long currentEnergy = data.getLong("energy_current");
                 long canExtract = Math.min(maxExtract, currentEnergy);
                     
                 if (!simulate && canExtract > 0) {
                     data.putLong("energy_current", currentEnergy - canExtract);
-                    stack.set(ModDataComponentTypes.CORE_MODULE_DATA.get(), data);
+                    stack.set(ModDataComponents.CORE_MODULE_DATA.get(), data);
                 }
                     
                 return (int) canExtract;
@@ -136,13 +124,13 @@ public class DefendCore extends Item implements ICurioItem {
                 
             @Override
             public int getEnergyStored() {
-                CompoundTag data = stack.getOrDefault(ModDataComponentTypes.CORE_MODULE_DATA.get(), new CompoundTag());
+                CompoundTag data = stack.getOrDefault(ModDataComponents.CORE_MODULE_DATA.get(), new CompoundTag());
                 return (int) Math.min(data.getLong("energy_current"), Integer.MAX_VALUE);
             }
                 
             @Override
             public int getMaxEnergyStored() {
-                CompoundTag data = stack.getOrDefault(ModDataComponentTypes.CORE_MODULE_DATA.get(), new CompoundTag());
+                CompoundTag data = stack.getOrDefault(ModDataComponents.CORE_MODULE_DATA.get(), new CompoundTag());
                 return (int) Math.min(data.getLong("energy_max"), Integer.MAX_VALUE);
             }
                 
