@@ -5,12 +5,11 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.lingZero.modularization_defend.DataComponents.DefendCoreData;
 import org.lingZero.modularization_defend.Items.DefendCore;
 import org.lingZero.modularization_defend.ModularizationDefend;
 
 import java.util.function.Supplier;
-
-import static org.lingZero.modularization_defend.Event.ModDefaultComponentsEvent.createDefaultCoreData;
 
 public class ModItems {
     public static final DeferredRegister.Items ITEMS =
@@ -28,11 +27,13 @@ public class ModItems {
     public static final Supplier<Item> TERMINAL_ITEM =
             ITEMS.registerSimpleItem("terminal_item", new Item.Properties()
     );
+    
+    // 防御核心物品 - 注册时直接设置默认数据组件
     public static final DeferredItem<DefendCore> DEFEND_CORE =
             ITEMS.registerItem(
                     "defend_core",
                     properties -> new DefendCore(properties
-                            .component(ModDataComponents.CORE_MODULE_DATA.get(), createDefaultCoreData())),
+                            .component(ModDataComponents.CORE_MODULE_DATA.get(), DefendCoreData.createDefault())),
                     new Item.Properties()
                             .stacksTo(1)
                             .rarity(Rarity.EPIC)
