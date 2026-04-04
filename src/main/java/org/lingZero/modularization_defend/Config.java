@@ -20,7 +20,7 @@ public class Config {
 
     // GUI 配置
     private static final ModConfigSpec.ConfigValue<String> TEXT_COLOUR = BUILDER
-            .comment("GUI 主要文本字体颜色（十六进制格式，如 0x00AA00）")
+            .comment("GUI 主要文本字体颜色（十六进制格式，如 0x00AA00）。注：暂时没啥用")
             .define("textColour", "0xFFEE00");
         
     private static final ModConfigSpec.IntValue DEFAULT_HEARTBEAT_INTERVAL = BUILDER

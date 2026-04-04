@@ -44,7 +44,7 @@ public class ModularizationDefend {
     public ModularizationDefend(IEventBus modEventBus, ModContainer modContainer) {
         // 初始化调试日志系统
         DebugLogger.init();
-        DebugLogger.info("===== ModularizationDefend 模组初始化开始 =====");
+        DebugLogger.info("===== ModularizationDefend 初始化日志系统 =====");
         
         // 注册通用设置方法以供模组加载时调用
         modEventBus.addListener(this::commonSetup);
@@ -64,7 +64,7 @@ public class ModularizationDefend {
         // 注册多方块结构注册表（使用 DeferredRegister 机制，避免重复解析）
         ModMultiblockStructures.register(modEventBus);
             
-        DebugLogger.info("所有注册表完成，准备注册事件总线");
+        DebugLogger.info("所有注册表完成");
     
         // 将我们自己注册到服务器和其他我们感兴趣的游戏事件中。
         // 注意，只有当我们希望*这个*类（modularization_defend）直接响应事件时才有必要这样做。
@@ -78,7 +78,7 @@ public class ModularizationDefend {
         // 注册 ModConfigSpec
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
         DebugLogger.info("配置注册完成");
-        DebugLogger.info("===== ModularizationDefend 模组初始化完成 =====");
+        DebugLogger.info("===== ModularizationDefend 初始化完成 =====");
     }
     private void commonSetup(final FMLCommonSetupEvent event) {
         // 一些通用设置代码

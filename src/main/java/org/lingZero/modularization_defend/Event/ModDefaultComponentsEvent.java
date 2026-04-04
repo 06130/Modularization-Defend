@@ -26,7 +26,7 @@ public class ModDefaultComponentsEvent {
     /**
      * 创建防御核心的默认数据
      */
-    private static CompoundTag createDefaultCoreData() {
+    public static CompoundTag createDefaultCoreData() {
         CompoundTag data = new CompoundTag();
         
         data.putInt("firing_rate_level", 1);  // 默认射速倍率

@@ -31,6 +31,26 @@ public class DefendCore extends Item implements ICurioItem {
     }
     
     /**
+     * 获取物品的数据组件，如果不存在则添加
+     */
+    public static CompoundTag getOrCreateData(ItemStack stack) {
+        CompoundTag data = getData(stack);
+        if (data == null || !data.contains("energy_max")) {
+            data = createDefaultData();
+            stack.set(ModDataComponents.CORE_MODULE_DATA.get(), data);
+        }
+        return data;
+    }
+    
+    /**
+     * 获取物品的数据组件，不创建默认数据
+     */
+    @Nullable
+    public static CompoundTag getData(ItemStack stack) {
+        return stack.get(ModDataComponents.CORE_MODULE_DATA.get());
+    }
+    
+    /**
      * 数据组件
      */
     private static CompoundTag createDefaultData() {
@@ -43,14 +63,13 @@ public class DefendCore extends Item implements ICurioItem {
         data.putLong("energy_max", 10000);  // 默认能量存储上限
         data.putLong("energy_current", 0); // 默认当前能量
         
-        data.putDouble("level", 1); // 护盾容量 (1=1 点伤害)
-        data.putBoolean("shieldActive", false);  // 护盾系统默认关闭
-        data.putString("turretCount", "null");  // 炮台核心类型
+        data.putDouble("shield_capacity", 0); // 默认护盾容量 (1=1 点伤害)
+        data.putBoolean("shield_active", false);  // 护盾系统默认关闭
+        data.putString("fortress_core", "null");  // 炮台核心类型
         
         return data;
     }
     
-
     /**
      * tooltip
      * @param stack 物品栈
@@ -64,10 +83,17 @@ public class DefendCore extends Item implements ICurioItem {
         // 获取按键绑定的显示名称
         KeyMapping openKey = ModKeyBindings.openTurretGuiKey;
         String keyName = openKey != null ? openKey.getTranslatedKeyMessage().getString() : "G";
+        
+        // 获取能量数据
+        CompoundTag data = getData(stack);
+        long energy_current = data.getLong("energy_current");
+        long energy_max = data.getLong("energy_max");
+        
         // 使用翻译键并替换 %d 为按键名称，使用白色 (#FFFFFF)
         tooltip.add(Component.translatable("tooltip.modularization_defend.defend_core.desc", keyName)
                 .withStyle(style -> style.withColor(0xFFFFFF))
         );
+        tooltip.add(Component.translatable("tooltip.modularization_defend.defend_core.energy", energy_current, energy_max));
     }
 
     /**
@@ -95,7 +121,7 @@ public class DefendCore extends Item implements ICurioItem {
         return new IEnergyStorage() {
             @Override
             public int receiveEnergy(int maxReceive, boolean simulate) {
-                CompoundTag data = stack.getOrDefault(ModDataComponents.CORE_MODULE_DATA.get(), new CompoundTag());
+                CompoundTag data = getOrCreateData(stack);
                 long currentEnergy = data.getLong("energy_current");
                 long maxEnergy = data.getLong("energy_max");
                 long canReceive = Math.min(maxReceive, maxEnergy - currentEnergy);
@@ -110,7 +136,7 @@ public class DefendCore extends Item implements ICurioItem {
                 
             @Override
             public int extractEnergy(int maxExtract, boolean simulate) {
-                CompoundTag data = stack.getOrDefault(ModDataComponents.CORE_MODULE_DATA.get(), new CompoundTag());
+                CompoundTag data = getOrCreateData(stack);
                 long currentEnergy = data.getLong("energy_current");
                 long canExtract = Math.min(maxExtract, currentEnergy);
                     
@@ -124,13 +150,13 @@ public class DefendCore extends Item implements ICurioItem {
                 
             @Override
             public int getEnergyStored() {
-                CompoundTag data = stack.getOrDefault(ModDataComponents.CORE_MODULE_DATA.get(), new CompoundTag());
+                CompoundTag data = getOrCreateData(stack);
                 return (int) Math.min(data.getLong("energy_current"), Integer.MAX_VALUE);
             }
                 
             @Override
             public int getMaxEnergyStored() {
-                CompoundTag data = stack.getOrDefault(ModDataComponents.CORE_MODULE_DATA.get(), new CompoundTag());
+                CompoundTag data = getOrCreateData(stack);
                 return (int) Math.min(data.getLong("energy_max"), Integer.MAX_VALUE);
             }
                 
