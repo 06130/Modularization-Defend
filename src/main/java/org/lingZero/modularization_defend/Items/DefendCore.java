@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.lingZero.modularization_defend.DataComponents.DefendCoreData;
 import org.lingZero.modularization_defend.Register.ModDataComponents;
 import org.lingZero.modularization_defend.Register.ModKeyBindings;
+import org.lingZero.modularization_defend.util.EnergydataConversion;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
@@ -59,7 +60,13 @@ public class DefendCore extends Item implements ICurioItem {
         tooltip.add(Component.translatable("tooltip.modularization_defend.defend_core.desc", keyName)
                 .withStyle(style -> style.withColor(0xFFFFFF))
         );
-        tooltip.add(Component.translatable("tooltip.modularization_defend.defend_core.energy", energy_current, energy_max));
+        
+        // 使用单位转换格式化能量显示
+        String currentEnergyFormatted = EnergydataConversion.convertToHumanReadable(energy_current);
+        String maxEnergyFormatted = EnergydataConversion.convertToHumanReadable(energy_max);
+        
+        tooltip.add(Component.translatable("tooltip.modularization_defend.defend_core.energy", 
+                currentEnergyFormatted, maxEnergyFormatted));
     }
 
     /**

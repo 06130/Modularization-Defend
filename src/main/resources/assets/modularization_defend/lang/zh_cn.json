@@ -38,5 +38,5 @@
   "message.modularization_defend.gui_not_implemented": "§eGUI 功能尚未实现",
   
   "tooltip.modularization_defend.defend_core.desc": "装备后按 [ %d ] 键打开",
-  "tooltip.modularization_defend.defend_core.energy": " %d FE/%d FE"
+  "tooltip.modularization_defend.defend_core.energy": "§b已储能：§f %dFE/§c上限：§f%dFE"
 }
