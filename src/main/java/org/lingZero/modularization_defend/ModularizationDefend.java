@@ -53,7 +53,7 @@ public class ModularizationDefend {
         modEventBus.addListener(this::gatherData);
 
         // 注册延迟注册表
-        ModDataComponents.DATA_COMPONENT_TYPES.register(modEventBus);
+        ModDataComponents.REGISTRAR.register(modEventBus);
         ModBlocks.BLOCKS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);

@@ -1,7 +1,6 @@
 package org.lingZero.modularization_defend.Items;
 
 import net.minecraft.client.KeyMapping;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -9,6 +8,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lingZero.modularization_defend.DataComponents.DefendCoreData;
 import org.lingZero.modularization_defend.Register.ModDataComponents;
 import org.lingZero.modularization_defend.Register.ModKeyBindings;
 import top.theillusivec4.curios.api.SlotContext;
@@ -22,7 +22,7 @@ import java.util.List;
 // 3.能量缓存；
 // 4.护盾模块；
 // 5 随身炮台及其升级系统；
-// ！6.数据组件 (高优先) #进行中
+// ！6.数据组件 (高优先) #进行中(使用数据组件记录)
 // 7.饰品槽添加 (高优先) #部分完成
 // 8.渲染相关 (低优先)
 public class DefendCore extends Item implements ICurioItem {
@@ -33,41 +33,21 @@ public class DefendCore extends Item implements ICurioItem {
     /**
      * 获取物品的数据组件，如果不存在则添加
      */
-    public static CompoundTag getOrCreateData(ItemStack stack) {
-        CompoundTag data = getData(stack);
-        if (data == null || !data.contains("energy_max")) {
-            data = createDefaultData();
+    public static DefendCoreData getOrCreateData(ItemStack stack) {
+        DefendCoreData data = stack.get(ModDataComponents.CORE_MODULE_DATA.get());
+        if (data == null || !data.isValid()) {
+            data = DefendCoreData.createDefault();
             stack.set(ModDataComponents.CORE_MODULE_DATA.get(), data);
         }
         return data;
     }
     
     /**
-     * 获取物品的数据组件，不创建默认数据
+     * 获取物品的数据组件
      */
     @Nullable
-    public static CompoundTag getData(ItemStack stack) {
+    public static DefendCoreData getData(ItemStack stack) {
         return stack.get(ModDataComponents.CORE_MODULE_DATA.get());
-    }
-    
-    /**
-     * 数据组件
-     */
-    private static CompoundTag createDefaultData() {
-        CompoundTag data = new CompoundTag();
-        
-        data.putInt("firing_rate_level", 1);  // 默认射速倍率
-        data.putInt("harm_level", 1);  // 默认伤害倍率
-        data.putInt("energy_expend_level", 1);  // 默认能量消耗倍率
-        
-        data.putLong("energy_max", 10000);  // 默认能量存储上限
-        data.putLong("energy_current", 0); // 默认当前能量
-        
-        data.putDouble("shield_capacity", 0); // 默认护盾容量 (1=1 点伤害)
-        data.putBoolean("shield_active", false);  // 护盾系统默认关闭
-        data.putString("fortress_core", "null");  // 炮台核心类型
-        
-        return data;
     }
     
     /**
@@ -84,10 +64,10 @@ public class DefendCore extends Item implements ICurioItem {
         KeyMapping openKey = ModKeyBindings.openTurretGuiKey;
         String keyName = openKey != null ? openKey.getTranslatedKeyMessage().getString() : "G";
         
-        // 获取能量数据
-        CompoundTag data = getData(stack);
-        long energy_current = data.getLong("energy_current");
-        long energy_max = data.getLong("energy_max");
+        // 获取能量数据（使用getOrCreateData确保数据存在）
+        DefendCoreData data = getOrCreateData(stack);
+        long energy_current = data.energyCurrent();
+        long energy_max = data.energyMax();
         
         // 使用翻译键并替换 %d 为按键名称，使用白色 (#FFFFFF)
         tooltip.add(Component.translatable("tooltip.modularization_defend.defend_core.desc", keyName)
@@ -121,14 +101,14 @@ public class DefendCore extends Item implements ICurioItem {
         return new IEnergyStorage() {
             @Override
             public int receiveEnergy(int maxReceive, boolean simulate) {
-                CompoundTag data = getOrCreateData(stack);
-                long currentEnergy = data.getLong("energy_current");
-                long maxEnergy = data.getLong("energy_max");
+                DefendCoreData data = getOrCreateData(stack);
+                long currentEnergy = data.energyCurrent();
+                long maxEnergy = data.energyMax();
                 long canReceive = Math.min(maxReceive, maxEnergy - currentEnergy);
                     
                 if (!simulate && canReceive > 0) {
-                    data.putLong("energy_current", currentEnergy + canReceive);
-                    stack.set(ModDataComponents.CORE_MODULE_DATA.get(), data);
+                    DefendCoreData newData = data.withEnergyCurrent(currentEnergy + canReceive);
+                    stack.set(ModDataComponents.CORE_MODULE_DATA.get(), newData);
                 }
                     
                 return (int) canReceive;
@@ -136,13 +116,13 @@ public class DefendCore extends Item implements ICurioItem {
                 
             @Override
             public int extractEnergy(int maxExtract, boolean simulate) {
-                CompoundTag data = getOrCreateData(stack);
-                long currentEnergy = data.getLong("energy_current");
+                DefendCoreData data = getOrCreateData(stack);
+                long currentEnergy = data.energyCurrent();
                 long canExtract = Math.min(maxExtract, currentEnergy);
                     
                 if (!simulate && canExtract > 0) {
-                    data.putLong("energy_current", currentEnergy - canExtract);
-                    stack.set(ModDataComponents.CORE_MODULE_DATA.get(), data);
+                    DefendCoreData newData = data.withEnergyCurrent(currentEnergy - canExtract);
+                    stack.set(ModDataComponents.CORE_MODULE_DATA.get(), newData);
                 }
                     
                 return (int) canExtract;
@@ -150,14 +130,14 @@ public class DefendCore extends Item implements ICurioItem {
                 
             @Override
             public int getEnergyStored() {
-                CompoundTag data = getOrCreateData(stack);
-                return (int) Math.min(data.getLong("energy_current"), Integer.MAX_VALUE);
+                DefendCoreData data = getOrCreateData(stack);
+                return (int) Math.min(data.energyCurrent(), Integer.MAX_VALUE);
             }
                 
             @Override
             public int getMaxEnergyStored() {
-                CompoundTag data = getOrCreateData(stack);
-                return (int) Math.min(data.getLong("energy_max"), Integer.MAX_VALUE);
+                DefendCoreData data = getOrCreateData(stack);
+                return (int) Math.min(data.energyMax(), Integer.MAX_VALUE);
             }
                 
             @Override

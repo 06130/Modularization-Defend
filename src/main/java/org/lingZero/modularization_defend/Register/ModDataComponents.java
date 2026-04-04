@@ -1,25 +1,26 @@
 package org.lingZero.modularization_defend.Register;
 
 import net.minecraft.core.component.DataComponentType;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.lingZero.modularization_defend.DataComponents.DefendCoreData;
 import org.lingZero.modularization_defend.ModularizationDefend;
 
 /**
  * 数据组件类型注册
+ * 使用 DeferredRegister.DataComponents 简化数据组件注册并避免泛型推断问题
  */
 public class ModDataComponents {
-    public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENT_TYPES =
-            DeferredRegister.create(net.minecraft.core.registries.BuiltInRegistries.DATA_COMPONENT_TYPE, ModularizationDefend.MODID);
+    // 使用专门的 DataComponents 注册器
+    public static final DeferredRegister.DataComponents REGISTRAR =
+            DeferredRegister.createDataComponents(ModularizationDefend.MODID);
 
     // DefendCore物品的核心模块数据组件
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> CORE_MODULE_DATA = 
-            DATA_COMPONENT_TYPES.register("core_module_data", 
-                    () -> DataComponentType.<CompoundTag>builder()
-                            .persistent(CompoundTag.CODEC)
-                            .networkSynchronized(ByteBufCodecs.COMPOUND_TAG)
-                            .build());
+    // 同时支持持久化存储和网络同步
+    public static final net.neoforged.neoforge.registries.DeferredHolder<DataComponentType<?>, DataComponentType<DefendCoreData>> CORE_MODULE_DATA = 
+            REGISTRAR.registerComponentType("core_module_data", 
+                    builder -> builder
+                            .persistent(DefendCoreData.CODEC)  // 用于磁盘存储的编解码器
+                            .networkSynchronized(DefendCoreData.STREAM_CODEC)  // 用于网络同步的流编解码器
+                    );
 
 }
