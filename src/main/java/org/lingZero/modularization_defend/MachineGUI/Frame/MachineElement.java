@@ -1,6 +1,7 @@
-package org.lingZero.modularization_defend.MachineGUI;
+package org.lingZero.modularization_defend.MachineGUI.Frame;
 
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
 
@@ -10,7 +11,7 @@ import java.util.List;
  * 机器GUI元素的基础类
  * 所有GUI元素都应该继承此类
  */
-public abstract class MachineElement implements GuiEventListener {
+public abstract class MachineElement implements GuiEventListener, Renderable {
     
     protected final BaseMachineScreen<?> screen;
     protected int x;
@@ -41,6 +42,18 @@ public abstract class MachineElement implements GuiEventListener {
      */
     public void renderForeground(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         // 默认不渲染前景
+    }
+    
+    /**
+     * Renderable接口的render方法实现
+     * 默认调用renderBackground和renderForeground
+     */
+    @Override
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        if (visible) {
+            renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+            renderForeground(guiGraphics, mouseX, mouseY);
+        }
     }
     
     /**

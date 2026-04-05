@@ -1,8 +1,7 @@
-package org.lingZero.modularization_defend.MachineGUI;
+package org.lingZero.modularization_defend.MachineGUI.Frame;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
@@ -16,22 +15,16 @@ import java.util.function.Consumer;
  * 机器GUI窗口类，提供可拖动的悬浮窗功能
  * 类似于Mekanism的GuiWindow
  */
-public class MachineWindow implements GuiEventListener {
+public class MachineWindow extends MachineElement {
     
     // 窗口背景纹理
     private final ResourceLocation windowTexture;
-    protected final BaseMachineScreen<?> screen;
-    
-    // 窗口位置和大小
-    protected int x, y, width, height;
     
     // 窗口状态
     private double dragX, dragY;
     private int prevDX, prevDY;
     private boolean dragging = false;
     private boolean pinned = false;
-    private boolean active = true;
-    private boolean visible = true;
     
     // 事件监听器
     private Consumer<MachineWindow> closeListener;
@@ -55,14 +48,8 @@ public class MachineWindow implements GuiEventListener {
     }
     
     public MachineWindow(BaseMachineScreen<?> screen, int x, int y, int width, int height, ResourceLocation windowTexture) {
-        this.screen = screen;
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
+        super(screen, x, y, width, height);
         this.windowTexture = windowTexture;
-        this.active = true;
-        this.visible = true;
     }
     
     /**

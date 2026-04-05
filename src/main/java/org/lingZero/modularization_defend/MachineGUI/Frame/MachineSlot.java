@@ -1,4 +1,4 @@
-package org.lingZero.modularization_defend.MachineGUI;
+package org.lingZero.modularization_defend.MachineGUI.Frame;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
@@ -98,14 +98,14 @@ public class MachineSlot extends MachineElement {
         // 渲染物品数量
         if (stack.getCount() > 1) {
             String countText = String.valueOf(stack.getCount());
-            guiGraphics.drawString(screen.font, countText, x + 10, y + 9, 0xFFFFFF, true);
+            guiGraphics.drawString(screen.getMinecraft().font, countText, x + 10, y + 9, 0xFFFFFF, true);
         }
     }
     
     @Override
     public void renderToolTip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
         if (!stack.isEmpty() && hovered) {
-            guiGraphics.renderTooltip(screen.font, stack, mouseX, mouseY);
+            guiGraphics.renderTooltip(screen.getMinecraft().font, stack, mouseX, mouseY);
         }
     }
     

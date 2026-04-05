@@ -8,6 +8,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import org.lingZero.modularization_defend.Items.DefendCore;
+import org.lingZero.modularization_defend.MachineGUI.DefendCoreItemScreen;
 import org.lingZero.modularization_defend.ModularizationDefend;
 import org.lingZero.modularization_defend.Register.ModKeyBindings;
 import org.lingZero.modularization_defend.util.DebugLogger;
@@ -69,7 +70,7 @@ public class ClientKeyInputHandler {
     }
     
     /**
-     * 打开炮塔配置 GUI
+     * 打开防御核心 GUI
      * 
      * @param player 玩家
      * @param stack 防御核心物品栈
@@ -77,17 +78,22 @@ public class ClientKeyInputHandler {
     private static void openTurretGui(Player player, ItemStack stack) {
         // 客户端请求打开 GUI
         if (player.level().isClientSide) {
-            DebugLogger.info("Requesting to open DefendCore Curio Item UI");
+            Minecraft minecraft = Minecraft.getInstance();
             
-            // 使用 ApricityUI 的网络处理器请求打开 UI
-            // 注意：路径应该是相对于 assets/{modid}/apricity/ 的路径，不需要 modid 前缀
+            DebugLogger.info("正在打开防御核心 GUI");
+            
             try {
-                com.sighs.apricityui.instance.network.handler.ApricityScreenNetworkHandler.requestOpenScreen(
-                    "Item/CurioItem/DefendCoreUI/index.html"
+                // 创建并显示 DefendCoreItemScreen
+                DefendCoreItemScreen screen = new DefendCoreItemScreen(
+                    player.containerMenu,
+                    player.getInventory(),
+                    stack.getHoverName()
                 );
-                DebugLogger.info("Successfully requested DefendCore UI opening");
+                
+                minecraft.setScreen(screen);
+                DebugLogger.info("成功打开防御核心 GUI");
             } catch (Exception e) {
-                DebugLogger.error("Failed to open DefendCore UI: " + e.getMessage());
+                DebugLogger.error("打开防御核心 GUI 失败: " + e.getMessage());
                 e.printStackTrace();
             }
         }

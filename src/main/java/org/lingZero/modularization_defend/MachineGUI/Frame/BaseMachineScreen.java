@@ -1,4 +1,4 @@
-package org.lingZero.modularization_defend.MachineGUI;
+package org.lingZero.modularization_defend.MachineGUI.Frame;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -47,8 +47,8 @@ public abstract class BaseMachineScreen<MENU extends AbstractContainerMenu> exte
     
     @Override
     public void removed() {
-        // 关闭所有窗口
-        windows.forEach(MachineWindow::close);
+        // 关闭所有窗口（创建副本列表以避免 ConcurrentModificationException）
+        new ArrayList<>(windows).forEach(MachineWindow::close);
         super.removed();
     }
     

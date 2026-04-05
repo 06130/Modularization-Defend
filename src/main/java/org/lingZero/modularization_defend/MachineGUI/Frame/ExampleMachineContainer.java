@@ -1,4 +1,4 @@
-package org.lingZero.modularization_defend.MachineGUI;
+package org.lingZero.modularization_defend.MachineGUI.Frame;
 
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;

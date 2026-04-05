@@ -1,0 +1,56 @@
+{
+  "itemGroup.modularization_defend": "Modularization Defend",
+
+  "block.modularization_defend.electricity_repeater_block": "Electricity Repeater",
+  "block.modularization_defend.agreement_core_block": "Agreement Core",
+
+  "item.modularization_defend.example_item": "Example Item",
+  "item.modularization_defend.terminal_item": "Modular Terminal",
+  "item.modularization_defend.energy_network_configuration_tool_item": "Energy Network Configuration Tool",
+  "item.modularization_defend.electricity_repeater_item": "Electricity Repeater (Item)",
+  "item.modularization_defend.agreement_core_item": "Agreement Core (Item)",
+  "item.modularization_defend.portable_gun_turret_core_frame": "Portable Gun Turret Core Frame",
+
+  "key.modularization_defend.open_defend_core_gui": "Open Defend Core GUI",
+
+  "gui.modularization_defend.electricity_repeater": "Electricity Repeater",
+  "gui.modularization_defend.agreement_core": "Agreement Core",
+
+  "gui.modularization_defend.electricity_repeater.messageText": "§aData Display",
+  "gui.modularization_defend.electricity_repeater.agreementNetwork1": "§rAgreement Network:",
+  "gui.modularization_defend.electricity_repeater.agreementNetwork1_1": "§cNot Connected",
+  "gui.modularization_defend.electricity_repeater.agreementNetwork1_2": "§eConnected",
+
+  "gui.modularization_defend.electricity_repeater.online_power": "Online Power:",
+  "gui.modularization_defend.electricity_repeater.load_power": "Load Power:",
+
+  "gui.modularization_defend.electricity_repeater.powerText": "Current Capacity:",
+  "gui.modularization_defend.electricity_repeater.time_remaining": "Time Remaining:",
+  "gui.modularization_defend.electricity_repeater.limitText": "Capacity Limit:",
+
+  "message.modularization_defend.first_click": "§bStarted power connection, node coordinates: [%d, %d, %d]",
+  "message.modularization_defend.player_distance": "§eDistance: %.2f blocks | §7Player: [%d, %d, %d] -> §bNode: [%d, %d, %d]",
+  "message.modularization_defend.block_distance": "§aSecond click: [%d, %d, %d] | §eStraight distance: %.2f blocks",
+  "message.modularization_defend.too_far": "§cToo far! Current: %.2f blocks, Max allowed: %.2f blocks",
+  "message.modularization_defend.out_of_range": "§c Out of range! Distance: %.2f blocks > %.2f blocks",
+  "message.modularization_defend.connection_broken": "Connection broken",
+  "message.modularization_defend.multiblock_blocked": "§c Cannot place: Structure area blocked by other blocks!",
+  "message.modularization_defend.gui_not_implemented": "§eGUI functionality not implemented",
+  
+  "tooltip.modularization_defend.defend_core.desc": "Press [ %d ] key to open after equipping",
+  "tooltip.modularization_defend.defend_core.energy": "§bStored: §f %dFE/§cMax: §f%dFE",
+  
+  "upgrade.modularization_defend.speed": "Speed Upgrade",
+  "upgrade.modularization_defend.energy": "Energy Upgrade",
+  "upgrade.modularization_defend.efficiency": "Efficiency Upgrade",
+  "upgrade.modularization_defend.capacity": "Capacity Upgrade",
+  "upgrade.modularization_defend.security": "Security Upgrade",
+  
+  "tooltip.modularization_defend.upgrade.speed": "Increases fire rate by 10%/level",
+  "tooltip.modularization_defend.upgrade.energy": "Increases damage by 15%/level",
+  "tooltip.modularization_defend.upgrade.efficiency": "Reduces energy consumption by 8%/level",
+  "tooltip.modularization_defend.upgrade.capacity": "Increases capacity by 5000 RF/level",
+  "tooltip.modularization_defend.upgrade.security": "Improves security",
+  
+  "tooltip.modularization_defend.upgrade_module.usage": "Right-click on upgradable item to apply upgrade"
+}

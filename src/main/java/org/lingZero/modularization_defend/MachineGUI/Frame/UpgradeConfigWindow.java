@@ -1,10 +1,8 @@
-package org.lingZero.modularization_defend.MachineGUI;
+package org.lingZero.modularization_defend.MachineGUI.Frame;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -97,7 +95,7 @@ public class UpgradeConfigWindow extends MachineWindow {
     private Button installButton;
     private Button removeButton;
     private Button closeButton;
-    
+
     public UpgradeConfigWindow(BaseMachineScreen<?> screen, int x, int y) {
         super(screen, x, y, 200, 180);
         initializeUpgrades();
@@ -249,7 +247,7 @@ public class UpgradeConfigWindow extends MachineWindow {
     /**
      * 升级槽位类
      */
-    private static class UpgradeSlot extends MachineElement {
+    private class UpgradeSlot extends MachineElement {
         private final UpgradeInfo upgradeInfo;
         private boolean selected = false;
         
@@ -273,13 +271,13 @@ public class UpgradeConfigWindow extends MachineWindow {
             
             // 渲染升级名称和等级
             String text = upgradeInfo.getType().getName() + " Lv." + upgradeInfo.getLevel();
-            guiGraphics.drawString(screen.font, text, x + 5, y + 6, 0xFFFFFF);
+            guiGraphics.drawString(screen.getMinecraft().font, text, x + 5, y + 6, 0xFFFFFF);
         }
         
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             if (isMouseOver(mouseX, mouseY) && button == 0) {
-                ((UpgradeConfigWindow) screen).selectUpgrade(upgradeInfo);
+                UpgradeConfigWindow.this.selectUpgrade(upgradeInfo);
                 return true;
             }
             return false;
@@ -329,14 +327,14 @@ public class UpgradeConfigWindow extends MachineWindow {
             
             // 升级名称
             String name = currentInfo.getType().getName() + " (等级 " + currentInfo.getLevel() + "/" + currentInfo.getMaxLevel() + ")";
-            guiGraphics.drawString(screen.font, name, textX, textY, 0xFFFFFF);
+            guiGraphics.drawString(screen.getMinecraft().font, name, textX, textY, 0xFFFFFF);
             textY += 12;
             
             // 升级描述
             String description = currentInfo.getType().getDescription();
             List<String> wrappedLines = wrapText(description, width - 10);
             for (String line : wrappedLines) {
-                guiGraphics.drawString(screen.font, line, textX, textY, 0xCCCCCC);
+                guiGraphics.drawString(screen.getMinecraft().font, line, textX, textY, 0xCCCCCC);
                 textY += 10;
             }
             
@@ -346,17 +344,17 @@ public class UpgradeConfigWindow extends MachineWindow {
             String effectInfo = getEffectInfo();
             List<String> effectLines = wrapText(effectInfo, width - 10);
             for (String line : effectLines) {
-                guiGraphics.drawString(screen.font, line, textX, textY, 0x00FF00);
+                guiGraphics.drawString(screen.getMinecraft().font, line, textX, textY, 0x00FF00);
                 textY += 10;
             }
         }
         
         private void renderNoSelection(GuiGraphics guiGraphics) {
             String text = "请选择一个升级查看详细信息";
-            int textWidth = screen.font.width(text);
+            int textWidth = screen.getMinecraft().font.width(text);
             int textX = x + (width - textWidth) / 2;
             int textY = y + (height - 9) / 2;
-            guiGraphics.drawString(screen.font, text, textX, textY, 0x888888);
+            guiGraphics.drawString(screen.getMinecraft().font, text, textX, textY, 0x888888);
         }
         
         private String getEffectInfo() {
@@ -378,7 +376,7 @@ public class UpgradeConfigWindow extends MachineWindow {
             
             for (String word : words) {
                 String testLine = currentLine.length() == 0 ? word : currentLine + " " + word;
-                if (screen.font.width(testLine) <= maxWidth) {
+                if (screen.getMinecraft().font.width(testLine) <= maxWidth) {
                     currentLine = new StringBuilder(testLine);
                 } else {
                     if (currentLine.length() > 0) {
@@ -431,11 +429,11 @@ public class UpgradeConfigWindow extends MachineWindow {
             guiGraphics.fill(x + width - 1, y, x + width, y + height, borderColor);
             
             // 渲染按钮文字
-            int textWidth = screen.font.width(text);
+            int textWidth = screen.getMinecraft().font.width(text);
             int textX = x + (width - textWidth) / 2;
             int textY = y + (height - 9) / 2;
             int textColor = active ? 0xFFFFFF : 0x888888;
-            guiGraphics.drawString(screen.font, text, textX, textY, textColor);
+            guiGraphics.drawString(screen.getMinecraft().font, text, textX, textY, textColor);
         }
         
         @Override

@@ -1,8 +1,7 @@
-package org.lingZero.modularization_defend.MachineGUI;
+package org.lingZero.modularization_defend.MachineGUI.Frame;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.jetbrains.annotations.NotNull;
@@ -42,10 +41,11 @@ public class ExampleMachineScreen extends BaseMachineScreen<AbstractContainerMen
                 Component.literal("⚡"), ConfigButton.Type.ENERGY, this::onEnergyButtonClicked);
         sideConfigButton = new ConfigButton(this, buttonStartX, buttonStartY + 50, 20, 20, 
                 Component.literal("⚙"), ConfigButton.Type.SIDE_CONFIG, this::onSideConfigButtonClicked);
-        
-        addRenderableWidget(upgradeButton);
-        addRenderableWidget(energyButton);
-        addRenderableWidget(sideConfigButton);
+
+        //未修复错误
+        //addRenderableWidget(upgradeButton);
+        //addRenderableWidget(energyButton);
+        //addRenderableWidget(sideConfigButton);
         
         // 添加能量显示条（可选）
         addEnergyGauge();
@@ -159,10 +159,10 @@ public class ExampleMachineScreen extends BaseMachineScreen<AbstractContainerMen
             guiGraphics.fill(x + width - 1, y, x + width, y + height, borderColor);
             
             // 渲染按钮文字
-            int textWidth = screen.font.width(text);
+            int textWidth = screen.getMinecraft().font.width(text);
             int textX = x + (width - textWidth) / 2;
             int textY = y + (height - 9) / 2;
-            guiGraphics.drawString(screen.font, text, textX, textY, 0xFFFFFF);
+            guiGraphics.drawString(screen.getMinecraft().font, text, textX, textY, 0xFFFFFF);
         }
         
         @Override
@@ -174,8 +174,7 @@ public class ExampleMachineScreen extends BaseMachineScreen<AbstractContainerMen
             }
             return false;
         }
-        
-        @Override
+
         public void onRelease(double mouseX, double mouseY) {
             pressed = false;
         }
