@@ -43,7 +43,6 @@ public class ClientKeyInputHandler {
         if (isKeyDown && !wasKeyDown) {
             handleKeyPress(player);
         }
-        
         wasKeyDown = isKeyDown;
     }
     
@@ -55,15 +54,17 @@ public class ClientKeyInputHandler {
     private static void handleKeyPress(Player player) {
         DebugLogger.debug("检测到按键按下，检查 Curios 装备");
         
-        // 检查玩家是否在 Curios 槽位装备了 DefendCore
-        CuriosApi.getCuriosHelper().findEquippedCurio(item -> item.getItem() instanceof DefendCore, player).ifPresent(pair -> {
-            ItemStack stack = pair.getRight();
-            
-            DebugLogger.info("检测到 DefendCore 装备，触发功能");
-            
-            // TODO: 在这里实现打开 GUI 或其他功能
-            // 示例：打开炮塔配置 GUI
-            openTurretGui(player, stack);
+        // 使用新的 Curios API 检查玩家是否在 Curios 槽位装备了 DefendCore
+        CuriosApi.getCuriosInventory(player).ifPresent(handler -> {
+            var curios = handler.findCurios(item -> item.getItem() instanceof DefendCore);
+            if (!curios.isEmpty()) {
+                var stack = curios.getFirst().stack();
+                
+                DebugLogger.info("检测到 DefendCore 装备，触发功能");
+                
+                // 打开 GUI
+                openTurretGui(player, stack);
+            }
         });
     }
     
@@ -76,11 +77,19 @@ public class ClientKeyInputHandler {
     private static void openTurretGui(Player player, ItemStack stack) {
         // 客户端请求打开 GUI
         if (player.level().isClientSide) {
-            DebugLogger.info("Requesting to open DefendCore GUI from client");
+            DebugLogger.info("Requesting to open DefendCore Curio Item UI");
+            
             // 使用 ApricityUI 的网络处理器请求打开 UI
-            com.sighs.apricityui.instance.network.handler.ApricityScreenNetworkHandler.requestOpenScreen(
-                "modularization_defend:Item/CurioItem/DefendCoreUI/index.html"
-            );
+            // 注意：路径应该是相对于 assets/{modid}/apricity/ 的路径，不需要 modid 前缀
+            try {
+                com.sighs.apricityui.instance.network.handler.ApricityScreenNetworkHandler.requestOpenScreen(
+                    "Item/CurioItem/DefendCoreUI/index.html"
+                );
+                DebugLogger.info("Successfully requested DefendCore UI opening");
+            } catch (Exception e) {
+                DebugLogger.error("Failed to open DefendCore UI: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
 }
