@@ -32,8 +32,4 @@ public class ModMenuTypes {
                         return new AgreementCoreMenu(windowId, playerInventory);
                     })
             );
-    
-    // DefendCore 饰品菜单类型（用于 ApricityUI）
-    // 注意：ApricityUI 使用自己的 UI 系统，不需要传统的 MenuType
-    // 这里保留注释以供参考
 }

@@ -10,6 +10,7 @@
   "item.modularization_defend.electricity_repeater_item": "中继塔（物品）",
   "item.modularization_defend.agreement_core_item": "协议核心（物品）",
   "item.modularization_defend.portable_gun_turret_core_frame": "便携式炮塔核心框架",
+  "item.modularization_defend.defend_core": "个人防护核心",
 
   "key.modularization_defend.open_defend_core_gui": "打开防御核心GUI",
 

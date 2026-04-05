@@ -15,22 +15,16 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import org.lingZero.modularization_defend.Data.ModBlockTagsProvider;
-import org.lingZero.modularization_defend.Register.ModBlockEntities;
-import org.lingZero.modularization_defend.Register.ModBlocks;
-import org.lingZero.modularization_defend.Register.ModCreativeTabs;
-import org.lingZero.modularization_defend.Register.ModDataComponents;
-import org.lingZero.modularization_defend.Register.ModItems;
-import org.lingZero.modularization_defend.Register.ModKeyBindings;
-import org.lingZero.modularization_defend.Register.ModMenuTypes;
-import org.lingZero.modularization_defend.Register.ModMultiblockStructures;
-import org.lingZero.modularization_defend.GeoModel.Renderer.ElectricityRepeaterRenderer;
-import org.lingZero.modularization_defend.GeoModel.Renderer.AgreementCoreRenderer;
-import org.lingZero.modularization_defend.Blocks.ElectricityRepeater.ElectricityRepeaterScreen;
-import org.lingZero.modularization_defend.Blocks.AgreementCore.AgreementCoreScreen;
-import org.lingZero.modularization_defend.util.DebugLogger;
-import org.lingZero.modularization_defend.Event.MultiblockEvents;
 import org.lingZero.modularization_defend.Blocks.AgreementCore.AgreementCoreMultiblockDef;
+import org.lingZero.modularization_defend.Blocks.AgreementCore.AgreementCoreScreen;
+import org.lingZero.modularization_defend.Blocks.ElectricityRepeater.ElectricityRepeaterScreen;
+import org.lingZero.modularization_defend.Data.ModBlockTagsProvider;
+import org.lingZero.modularization_defend.Event.MultiblockEvents;
+import org.lingZero.modularization_defend.GeoModel.Renderer.AgreementCoreRenderer;
+import org.lingZero.modularization_defend.GeoModel.Renderer.ElectricityRepeaterRenderer;
+import org.lingZero.modularization_defend.Register.*;
+import org.lingZero.modularization_defend.util.DebugCommand;
+import org.lingZero.modularization_defend.util.DebugLogger;
 import org.slf4j.Logger;
 
 @Mod(ModularizationDefend.MODID)
@@ -70,6 +64,9 @@ public class ModularizationDefend {
         // 注意，只有当我们希望*这个*类（modularization_defend）直接响应事件时才有必要这样做。
         // 如果此类中没有 @SubscribeEvent 注解的方法（如下面的 onServerStarting()），则不要添加此行。
         NeoForge.EVENT_BUS.register(this);
+                
+        // 注册调试命令
+        NeoForge.EVENT_BUS.addListener(DebugCommand::register);
         
         // 注册多方块到事件处理器
         MultiblockEvents.registerMultiblock(AgreementCoreMultiblockDef.getInstance());
