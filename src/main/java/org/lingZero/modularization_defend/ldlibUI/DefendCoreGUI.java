@@ -3,12 +3,9 @@ package org.lingZero.modularization_defend.ldlibUI;
 import com.lowdragmc.lowdraglib2.gui.ui.ModularUI;
 import com.lowdragmc.lowdraglib2.gui.ui.UI;
 import com.lowdragmc.lowdraglib2.gui.ui.UIElement;
-import com.lowdragmc.lowdraglib2.gui.ui.elements.Button;
-import com.lowdragmc.lowdraglib2.gui.ui.elements.Label;
 import com.lowdragmc.lowdraglib2.gui.ui.elements.inventory.InventorySlots;
-import com.lowdragmc.lowdraglib2.gui.ui.style.StylesheetManager;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+
 
 
 /**
@@ -21,25 +18,16 @@ public class DefendCoreGUI {
      * @return 返回创建的ModularUI实例
      */
     public static ModularUI createModularUI(Player player) {
-
-        // 创建根元素
+        // create a root element
         var root = new UIElement();
+        root.addChildren(
+                new InventorySlots()
+                        .apply(slot -> slot.slotStyle(style -> style.showItemTooltips(true)))
 
-        //标题
-        var label = new Label().setText(Component.translatable("item.modularization_defend.defend_core"));
-        root.addChild(label);
+        );
+        root.addClass("panel_bg");
 
-        //按钮
-        var button = new Button().setText("Click Me!");
-        root.addChild(button);
-
-        // 物品栏
-        var inv = new InventorySlots();
-        root.addChild(inv);
-        
-        // 创建UI
-        var ui = UI.of(root, StylesheetManager.INSTANCE.getStylesheetSafe(StylesheetManager.MC));
-
-        return ModularUI.of(ui, player);
+        var ui = UI.of(root);
+        return ModularUI.of(ui);
     }
 }
