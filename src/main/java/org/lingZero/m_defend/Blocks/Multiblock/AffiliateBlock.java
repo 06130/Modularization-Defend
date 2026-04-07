@@ -55,8 +55,8 @@ public class AffiliateBlock extends Block implements EntityBlock {
                 BlockPos mainBlockPos = affiliateBE.getMainBlockPos();
                 DebugLogger.debug("找到主方块坐标: " + mainBlockPos);
                 
-                // 验证主方块是否存在且仍为 Turret1Block
-                if (level.getBlockState(mainBlockPos).getBlock() instanceof Turret1Block) {
+                // 验证主方块是否存在且仍为 BaseTurretBlock
+                if (level.getBlockState(mainBlockPos).getBlock() instanceof BaseTurretBlock) {
                     return mainBlockPos; // 重定向到主方块
                 } else {
                     DebugLogger.warn("主方块不存在或已被破坏");

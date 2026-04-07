@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import org.lingZero.m_defend.Blocks.Multiblock.AffiliateBlock;
-import org.lingZero.m_defend.Blocks.Multiblock.Turret1Block;
+import org.lingZero.m_defend.Blocks.Multiblock.BaseTurretBlock;
 import org.lingZero.m_defend.util.DebugLogger;
 
 public class TurretRemovalTool extends Item {
@@ -32,11 +32,11 @@ public class TurretRemovalTool extends Item {
             BlockPos targetPos = AffiliateBlock.redirectIfAffiliate(level, clickedPos);
             
             // 检查目标方块是否为主方块
-            if (level.getBlockState(targetPos).getBlock() instanceof Turret1Block) {
+            if (level.getBlockState(targetPos).getBlock() instanceof BaseTurretBlock turretBlock) {
                 DebugLogger.info("使用拆除工具右键主方块 at: " + targetPos);
                 
                 // 执行拆除逻辑
-                Turret1Block.dismantleStructure(level, targetPos, player);
+                turretBlock.dismantleStructure(level, targetPos, player);
                 
                 return InteractionResult.SUCCESS;
             } else {

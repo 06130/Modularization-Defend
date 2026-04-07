@@ -27,9 +27,9 @@ public class ModBlocks {
     
     public static final DeferredBlock<AffiliateBlock> AFFILIATE_BLOCK =
             BLOCKS.register("affiliate_block", () -> new AffiliateBlock(BlockBehaviour.Properties.of()
-                    .strength(-1, -1)
-                    .sound(SoundType.STONE)
-                    .requiresCorrectToolForDrops()
+                    .strength(-1, -1)      // 不可破坏
+                    .sound(SoundType.METAL)
+                    .noOcclusion()                                // 不遮挡视线（透明）
             ));
     
     public static final DeferredBlock<Turret1Block> TURRET1_BLOCK =

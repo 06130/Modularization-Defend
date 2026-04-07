@@ -15,7 +15,7 @@ public class BasicTurretCore extends TurretCore {
      */
     @Override
     public CampType getCampType() {
-        return CampType.END;
+        return CampType.NONE;
     }
     
     public BasicTurretCore(Properties properties) {
