@@ -12,6 +12,9 @@
   "item.modularization_defend.portable_gun_turret_core_frame": "便携式炮塔核心框架",
   "item.modularization_defend.defend_core": "个人防护核心",
 
+  "item.modularization_defend.basic_turret_core": "测试炮塔核心1",
+  "item.modularization_defend.turret_core_shu": "权能核心-黍-因果",
+
   "key.modularization_defend.open_defend_core_gui": "打开防御核心GUI",
 
   "gui.modularization_defend.electricity_repeater": "电力中继器",
@@ -53,5 +56,26 @@
   "tooltip.modularization_defend.upgrade.capacity": "提升容量 5000 RF/级",
   "tooltip.modularization_defend.upgrade.security": "提升安全性",
   
-  "tooltip.modularization_defend.upgrade_module.usage": "右键点击可升级物品以应用升级"
+  "tooltip.modularization_defend.upgrade_module.usage": "右键点击可升级物品以应用升级",
+
+  "tooltip.modularization_defend.turret_core.energy_level": "能耗减免：%s",
+  "tooltip.modularization_defend.turret_core.harm_level": "伤害倍率：%s",
+  "tooltip.modularization_defend.turret_core.firing_rate_level": "射速倍率：%s",
+  "tooltip.modularization_defend.turret_core.type": "炮塔同调类型",
+  "tooltip.modularization_defend.turret_core.camp_type": "分类",
+
+  "turret_type.modularization_defend.none": "未同调",
+  "turret_type.modularization_defend.laser": "能量弹",
+  "turret_type.modularization_defend.missile": "制导导弹",
+  "turret_type.modularization_defend.howitzer": "曲射榴弹",
+  "turret_type.modularization_defend.range": "范围法术",
+
+  "camp.modularization_defend.none": "未知",
+  "camp.modularization_defend.end": "终末地工业",
+  "camp.modularization_defend.gregtech": "格雷科技",
+  "camp.modularization_defend.camp.laterano": "拉特兰",
+  "camp.modularization_defend.camp.yan": "炎",
+  "camp.modularization_defend.camp.sui": "炎->岁->权能",
+  
+  "message.modularization_defend.turret_placement_blocked": "§c无法放置：目标区域被方块阻挡！"
 }

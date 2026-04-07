@@ -53,5 +53,14 @@
   "tooltip.modularization_defend.upgrade.capacity": "Increases capacity by 5000 RF/level",
   "tooltip.modularization_defend.upgrade.security": "Improves security",
   
-  "tooltip.modularization_defend.upgrade_module.usage": "Right-click on upgradable item to apply upgrade"
+  "tooltip.modularization_defend.upgrade_module.usage": "Right-click on upgradable item to apply upgrade",
+
+  "camp.modularization_defend.none": "Unknown",
+  "camp.modularization_defend.end": "Endfield Industries",
+  "camp.modularization_defend.gregtech": "GregTech",
+  "camp.modularization_defend.camp.laterano": "Laterano",
+  "camp.modularization_defend.camp.yan": "Yan",
+  "camp.modularization_defend.camp.sui": "Sui",
+  
+  "message.modularization_defend.turret_placement_blocked": "§cCannot place: Target area is blocked by blocks!"
 }
