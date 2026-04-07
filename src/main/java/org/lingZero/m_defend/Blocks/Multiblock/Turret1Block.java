@@ -13,6 +13,11 @@ import org.lingZero.m_defend.Register.ModItems;
 import org.lingZero.m_defend.util.DebugLogger;
 
 public class Turret1Block extends Block implements EntityBlock {
+    
+    // 多方块结构尺寸配置
+    public static final int STRUCTURE_WIDTH = 0;   // 区域宽度（X轴和Z轴的半径，0表示1x1）
+    public static final int STRUCTURE_HEIGHT = 2;  // 区域高度（Y轴）
+    
     public Turret1Block(Properties properties) {
         super(properties);
     }
@@ -68,16 +73,13 @@ public class Turret1Block extends Block implements EntityBlock {
      * @param mainBlockPos 主方块坐标
      */
     private static void destroyAffiliateBlocks(Level level, BlockPos mainBlockPos) {
-        int width = 0;  // 区域宽度（X轴和Z轴的半径）
-        int height = 2; // 区域高度（Y轴）
-        
         // 计算结构的基准位置（底层）
-        BlockPos basePos = mainBlockPos.offset(0, -(height - 1), 0);
+        BlockPos basePos = mainBlockPos.offset(0, -(STRUCTURE_HEIGHT - 1), 0);
         
         // 遍历区域内的所有位置
-        for (int x = -width; x <= width; x++) {
-            for (int y = 0; y < height; y++) {
-                for (int z = -width; z <= width; z++) {
+        for (int x = -STRUCTURE_WIDTH; x <= STRUCTURE_WIDTH; x++) {
+            for (int y = 0; y < STRUCTURE_HEIGHT; y++) {
+                for (int z = -STRUCTURE_WIDTH; z <= STRUCTURE_WIDTH; z++) {
                     BlockPos checkPos = basePos.offset(x, y, z);
                     
                     // 跳过主方块位置

@@ -9,9 +9,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.lingZero.m_defend.Blocks.Multiblock.AffiliateBlockEntity;
+import org.lingZero.m_defend.Blocks.Multiblock.Turret1Block;
 import org.lingZero.m_defend.Register.ModBlocks;
 import org.lingZero.m_defend.util.DebugLogger;
 
@@ -56,10 +57,7 @@ public class Turret1Item extends Item {
         DebugLogger.info("点击的方块坐标: x=" + clickedPos.getX() + ", y=" + clickedPos.getY() + ", z=" + clickedPos.getZ());
         
         // 检查目标方块上方区域是否为空或可替换
-        int width = 0;  // 区域宽度（X轴和Z轴的半径，0表示1x1）
-        int height = 2; // 区域高度（Y轴）
-        
-        if (isAreaClear(level, clickedPos.above(), width, height)) {
+        if (isAreaClear(level, clickedPos.above(), Turret1Block.STRUCTURE_WIDTH, Turret1Block.STRUCTURE_HEIGHT)) {
             DebugLogger.info("目标区域为空或可替换，可以放置炮塔");
             // 放置多方块结构
             placeMultiblockStructure(level, clickedPos.above(), player, itemStack, hand);
@@ -109,20 +107,17 @@ public class Turret1Item extends Item {
      * @param hand 使用的手
      */
     private void placeMultiblockStructure(Level level, BlockPos basePos, Player player, ItemStack itemStack, InteractionHand hand) {
-        int width = 0;  // 区域宽度（X轴和Z轴的半径，0表示1x1）
-        int height = 2; // 区域高度（Y轴）
-        
         // 首先在顶层位置放置主方块
-        BlockPos mainBlockPos = basePos.offset(0, height - 1, 0); // 主方块在顶层
+        BlockPos mainBlockPos = basePos.offset(0, Turret1Block.STRUCTURE_HEIGHT - 1, 0); // 主方块在顶层
         level.setBlock(mainBlockPos, ModBlocks.TURRET1_BLOCK.get().defaultBlockState(), 3);
         DebugLogger.info("放置主方块 at: " + mainBlockPos);
         
         // 遍历区域内的其他位置，放置附属方块
-        for (int x = -width; x <= width; x++) {
-            for (int y = 0; y < height; y++) {
-                for (int z = -width; z <= width; z++) {
+        for (int x = -Turret1Block.STRUCTURE_WIDTH; x <= Turret1Block.STRUCTURE_WIDTH; x++) {
+            for (int y = 0; y < Turret1Block.STRUCTURE_HEIGHT; y++) {
+                for (int z = -Turret1Block.STRUCTURE_WIDTH; z <= Turret1Block.STRUCTURE_WIDTH; z++) {
                     // 跳过主方块位置
-                    if (x == 0 && y == height - 1 && z == 0) {
+                    if (x == 0 && y == Turret1Block.STRUCTURE_HEIGHT - 1 && z == 0) {
                         continue;
                     }
                     
@@ -144,6 +139,6 @@ public class Turret1Item extends Item {
             itemStack.shrink(1);
         }
         
-        DebugLogger.info("多方块结构放置完成，共 " + ((width * 2 + 1) * (width * 2 + 1) * height) + " 个方块");
+        DebugLogger.info("多方块结构放置完成，共 " + ((Turret1Block.STRUCTURE_WIDTH * 2 + 1) * (Turret1Block.STRUCTURE_WIDTH * 2 + 1) * Turret1Block.STRUCTURE_HEIGHT) + " 个方块");
     }
 }
