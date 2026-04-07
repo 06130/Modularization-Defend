@@ -1,4 +1,4 @@
-package org.lingZero.modularization_defend.Blocks.AgreementCore;
+package org.lingZero.modularization_defend.Blocks.Multiblock.AgreementCore;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;

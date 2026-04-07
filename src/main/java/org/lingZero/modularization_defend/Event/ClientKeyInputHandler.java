@@ -6,13 +6,13 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.lingZero.modularization_defend.Items.DefendCore;
 import org.lingZero.modularization_defend.ModularizationDefend;
 import org.lingZero.modularization_defend.Register.ModKeyBindings;
-import org.lingZero.modularization_defend.ldlibUI.NewUIScreen;
+import org.lingZero.modularization_defend.network.OpenDefendCoreGUIMessage;
+import org.lingZero.modularization_defend.util.DebugLogger;
 import top.theillusivec4.curios.api.CuriosApi;
-
-import static org.lingZero.modularization_defend.ldlibUI.DefendCoreGUI.createModularUI;
 
 /**
  * 客户端按键事件处理器
@@ -53,13 +53,18 @@ public class ClientKeyInputHandler {
      * @param player 玩家实例
      */
     private static void handleKeyPress(Player player) {
+        if (player == null) {
+            return;
+        }
 
         CuriosApi.getCuriosInventory(player).ifPresent(handler -> {
             var curios = handler.findCurios(item -> item.getItem() instanceof DefendCore);
             if (!curios.isEmpty()) {
                 var stack = curios.getFirst().stack();
-                Minecraft minecraft = Minecraft.getInstance();
-                minecraft.setScreen(new NewUIScreen(createModularUI(player)));
+                DebugLogger.info("检测到 DefendCore，发送打开 GUI 请求到服务端");
+                
+                // 发送网络消息到服务端，由服务端打开 GUI
+                PacketDistributor.sendToServer(new OpenDefendCoreGUIMessage());
             }
         });
     }

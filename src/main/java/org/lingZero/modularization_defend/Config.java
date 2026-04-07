@@ -9,6 +9,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 import static org.lingZero.modularization_defend.ModularizationDefend.MODVERSION;
 
+@SuppressWarnings("removal")
 @EventBusSubscriber(modid = ModularizationDefend.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class Config {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
@@ -26,16 +27,27 @@ public class Config {
     private static final ModConfigSpec.IntValue DEFAULT_HEARTBEAT_INTERVAL = BUILDER
             .comment("协议网络默认心跳间隔。注：如果你不知道你在干什么，请不要修改。")
             .defineInRange("AgreementCoreNetworkHeartbeatInterval", 40,1,65536);
+    
+    //炮塔核心升级配置
+    private static final ModConfigSpec.IntValue FIRING_RATE_LEVEL_MAX_CONFIG = BUILDER
+            .comment("射速倍率上限")
+            .defineInRange("firingRateLevelmax", 16,1,2147483647);
+    private static final ModConfigSpec.IntValue HARM_LEVEL_MAX_CONFIG = BUILDER
+            .comment("伤害倍率上限")
+            .defineInRange("harmLevelmax", 16,1,2147483647);
+    private static final ModConfigSpec.IntValue ENERGY_LEVEL_MAX_CONFIG = BUILDER
+            .comment("能量消耗减免倍率上限")
+            .defineInRange("energyLevelmax", 16,1,2147483647);
+
     static final ModConfigSpec SPEC = BUILDER.build();
-    
-    // 电网配置工具配置
+
+
     public static double maxConnectionDistance;
-    
-    // GUI 配置
     public static int textColour;
-        
-    // 协议网络配置
     public static int agreementCoreHeartbeatInterval;
+    public static int FIRING_RATE_LEVEL_MAX;
+    public static int HARM_LEVEL_MAX;
+    public static int ENERGY_LEVEL_MAX;
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
@@ -45,6 +57,10 @@ public class Config {
         textColour = parseColor(TEXT_COLOUR.get());
         // 加载协议网络心跳间隔配置
         agreementCoreHeartbeatInterval = DEFAULT_HEARTBEAT_INTERVAL.get();
+        // 加载炮塔核心升级配置
+        FIRING_RATE_LEVEL_MAX = FIRING_RATE_LEVEL_MAX_CONFIG.get();
+        HARM_LEVEL_MAX = HARM_LEVEL_MAX_CONFIG.get();
+        ENERGY_LEVEL_MAX = ENERGY_LEVEL_MAX_CONFIG.get();
     }
 
     /**

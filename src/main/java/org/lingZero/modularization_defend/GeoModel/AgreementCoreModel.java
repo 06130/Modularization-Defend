@@ -1,7 +1,7 @@
 package org.lingZero.modularization_defend.GeoModel;
 
 import net.minecraft.resources.ResourceLocation;
-import org.lingZero.modularization_defend.Blocks.AgreementCore.AgreementCoreBlockEntity;
+import org.lingZero.modularization_defend.Blocks.Multiblock.AgreementCore.AgreementCoreBlockEntity;
 import software.bernie.geckolib.model.GeoModel;
 
 public class AgreementCoreModel extends GeoModel<AgreementCoreBlockEntity> {

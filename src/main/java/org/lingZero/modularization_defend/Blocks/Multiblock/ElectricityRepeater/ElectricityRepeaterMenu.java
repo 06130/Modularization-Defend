@@ -1,4 +1,4 @@
-package org.lingZero.modularization_defend.Blocks.ElectricityRepeater;
+package org.lingZero.modularization_defend.Blocks.Multiblock.ElectricityRepeater;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;

@@ -7,7 +7,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.RegisterEvent;
-import org.lingZero.modularization_defend.Blocks.AgreementCore.AgreementCoreMultiblockDef;
+import org.lingZero.modularization_defend.Blocks.Multiblock.AgreementCore.AgreementCoreMultiblockDef;
 import org.lingZero.modularization_defend.Blocks.Multiblock.newMultiblock.IMultiblockStructure;
 import org.lingZero.modularization_defend.ModularizationDefend;
 import org.lingZero.modularization_defend.util.DebugLogger;

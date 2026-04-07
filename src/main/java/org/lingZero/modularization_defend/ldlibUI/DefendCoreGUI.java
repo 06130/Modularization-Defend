@@ -13,7 +13,7 @@ import net.minecraft.world.entity.player.Player;
  */
 public class DefendCoreGUI {
     /**
-     * 创建模块化UI界面（由ModularUIContainerMenu调用）
+     * 创建模块化UI界面
      * @param player 玩家实例，用于关联UI
      * @return 返回创建的ModularUI实例
      */

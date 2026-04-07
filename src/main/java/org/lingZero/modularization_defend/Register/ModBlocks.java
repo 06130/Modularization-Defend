@@ -1,17 +1,15 @@
 package org.lingZero.modularization_defend.Register;
 
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import org.lingZero.modularization_defend.Blocks.ElectricityRepeater.ElectricityRepeaterMultiblock;
-import org.lingZero.modularization_defend.Blocks.AgreementCore.AgreementCoreMultiblock;
+import org.lingZero.modularization_defend.Blocks.Multiblock.AgreementCore.AgreementCoreMultiblock;
+import org.lingZero.modularization_defend.Blocks.Multiblock.ElectricityRepeater.ElectricityRepeaterMultiblock;
+import org.lingZero.modularization_defend.Blocks.UpgradeCraftingTableBlock;
 import org.lingZero.modularization_defend.ModularizationDefend;
 
 
@@ -37,7 +35,14 @@ public class ModBlocks {
                     .noOcclusion()                                    // 不遮挡光线和相邻方块的面
 
             ));
-    
+
+    public static final DeferredBlock<UpgradeCraftingTableBlock> UPGRADE_CRAFTING_TABLE =
+            BLOCKS.register("upgrade_crafting_table", () -> new UpgradeCraftingTableBlock(BlockBehaviour.Properties.of()
+                    .strength(3.0f, 6.0f)      // 硬度等级与抗爆等级
+                    .sound(SoundType.WOOD)                             // 挖掘时的声音类型（木质）
+                    .requiresCorrectToolForDrops()                    // 需要正确的工具（斧）破坏并掉落物品
+            ));
+
     /**
      * 方块标签，用于数据生成器
      */

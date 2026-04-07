@@ -1,7 +1,7 @@
 package org.lingZero.modularization_defend.GeoModel;
 
 import net.minecraft.resources.ResourceLocation;
-import org.lingZero.modularization_defend.Blocks.ElectricityRepeater.ElectricityRepeaterBlockEntity;
+import org.lingZero.modularization_defend.Blocks.Multiblock.ElectricityRepeater.ElectricityRepeaterBlockEntity;
 import software.bernie.geckolib.model.GeoModel;
 
 public class ElectricityRepeaterModel extends GeoModel<ElectricityRepeaterBlockEntity> {

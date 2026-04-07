@@ -26,6 +26,8 @@ public class ModCreativeTabs {
                                 output.accept(ModBlocks.AGREEMENT_CORE_BLOCK.get().asItem());
                                 output.accept(ModItems.AGREEMENT_CORE_ITEM.get());
                                 output.accept(ModItems.DEFEND_CORE.get());
+                                output.accept(ModItems.UPGRADE_CRAFTING_TABLE_ITEM.get());
+                                output.accept(ModItems.TURRET_CORE.get());
                             }
                     )
                     .build());

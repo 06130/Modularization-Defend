@@ -1,4 +1,4 @@
-package org.lingZero.modularization_defend.Blocks.ElectricityRepeater;
+package org.lingZero.modularization_defend.Blocks.Multiblock.ElectricityRepeater;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiGraphics;

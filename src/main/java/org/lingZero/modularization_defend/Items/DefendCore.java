@@ -7,8 +7,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import org.jetbrains.annotations.NotNull;
 import org.lingZero.modularization_defend.DataComponents.DefendCoreData;
-import org.lingZero.modularization_defend.Items.UpgradableItem.IUpgradableItem;
-import org.lingZero.modularization_defend.Items.UpgradableItem.UpgradeModule;
 import org.lingZero.modularization_defend.Register.ModDataComponents;
 import org.lingZero.modularization_defend.Register.ModKeyBindings;
 import org.lingZero.modularization_defend.util.EnergydataConversion;
@@ -26,7 +24,7 @@ import java.util.List;
 // 6.数据组件 (高优先) #完成
 // 7.饰品槽添加 (高优先) #完成
 // 8.渲染相关 (低优先)
-public class DefendCore extends Item implements ICurioItem, IUpgradableItem {
+public class DefendCore extends Item implements ICurioItem{
     public DefendCore(Properties properties) {
         super(properties);
     }
@@ -79,40 +77,5 @@ public class DefendCore extends Item implements ICurioItem, IUpgradableItem {
     @Override
     public void curioTick(SlotContext slotContext, ItemStack stack) {
         // do something
-    }
-    
-    // ==================== IUpgradableItem 接口实现 ====================
-    
-    @Override
-    public boolean canAcceptUpgrade(ItemStack stack, UpgradeModule.UpgradeType upgradeType) {
-        // DefendCore 支持所有升级类型
-        return true;
-    }
-    
-    @Override
-    public int getUpgradeLevel(ItemStack stack, UpgradeModule.UpgradeType upgradeType) {
-        DefendCoreData data = getData(stack);
-        return switch (upgradeType) {
-            case SPEED -> data.speedUpgradeLevel();
-            case ENERGY -> data.energyUpgradeLevel();
-            case EFFICIENCY -> data.efficiencyUpgradeLevel();
-            case CAPACITY -> data.capacityUpgradeLevel();
-            case SECURITY -> data.securityUpgradeLevel();
-        };
-    }
-    
-    @Override
-    public ItemStack applyUpgrade(ItemStack stack, UpgradeModule.UpgradeType upgradeType, int newLevel) {
-        DefendCoreData currentData = getData(stack);
-        DefendCoreData newData = switch (upgradeType) {
-            case SPEED -> currentData.withSpeedUpgradeLevel(newLevel);
-            case ENERGY -> currentData.withEnergyUpgradeLevel(newLevel);
-            case EFFICIENCY -> currentData.withEfficiencyUpgradeLevel(newLevel);
-            case CAPACITY -> currentData.withCapacityUpgradeLevel(newLevel);
-            case SECURITY -> currentData.withSecurityUpgradeLevel(newLevel);
-        };
-        
-        stack.set(org.lingZero.modularization_defend.Register.ModDataComponents.CORE_MODULE_DATA.get(), newData);
-        return stack;
     }
 }

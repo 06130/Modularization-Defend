@@ -1,7 +1,7 @@
 package org.lingZero.modularization_defend.GeoModel.Renderer;
 
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import org.lingZero.modularization_defend.Blocks.ElectricityRepeater.ElectricityRepeaterBlockEntity;
+import org.lingZero.modularization_defend.Blocks.Multiblock.ElectricityRepeater.ElectricityRepeaterBlockEntity;
 import org.lingZero.modularization_defend.GeoModel.ElectricityRepeaterModel;
 
 /**

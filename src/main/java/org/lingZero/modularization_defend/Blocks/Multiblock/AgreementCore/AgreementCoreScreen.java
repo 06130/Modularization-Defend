@@ -1,4 +1,4 @@
-package org.lingZero.modularization_defend.Blocks.AgreementCore;
+package org.lingZero.modularization_defend.Blocks.Multiblock.AgreementCore;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiGraphics;

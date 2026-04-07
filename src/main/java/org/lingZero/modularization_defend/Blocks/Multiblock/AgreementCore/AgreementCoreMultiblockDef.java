@@ -1,4 +1,4 @@
-package org.lingZero.modularization_defend.Blocks.AgreementCore;
+package org.lingZero.modularization_defend.Blocks.Multiblock.AgreementCore;
 
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;

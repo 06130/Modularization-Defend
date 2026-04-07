@@ -15,9 +15,9 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
-import org.lingZero.modularization_defend.Blocks.AgreementCore.AgreementCoreMultiblockDef;
-import org.lingZero.modularization_defend.Blocks.AgreementCore.AgreementCoreScreen;
-import org.lingZero.modularization_defend.Blocks.ElectricityRepeater.ElectricityRepeaterScreen;
+import org.lingZero.modularization_defend.Blocks.Multiblock.AgreementCore.AgreementCoreMultiblockDef;
+import org.lingZero.modularization_defend.Blocks.Multiblock.AgreementCore.AgreementCoreScreen;
+import org.lingZero.modularization_defend.Blocks.Multiblock.ElectricityRepeater.ElectricityRepeaterScreen;
 import org.lingZero.modularization_defend.Data.ModBlockTagsProvider;
 import org.lingZero.modularization_defend.Event.MultiblockEvents;
 import org.lingZero.modularization_defend.GeoModel.Renderer.AgreementCoreRenderer;
@@ -114,6 +114,11 @@ public class ModularizationDefend {
             event.register(
                 ModMenuTypes.AGREEMENT_CORE_MENU.get(),
                 AgreementCoreScreen::new
+            );
+            // 注册 DefendCore GUI Screen
+            event.register(
+                ModMenuTypes.DEFEND_CORE_MENU.get(),
+                org.lingZero.modularization_defend.ldlibUI.NewUIScreen::new
             );
         }
         

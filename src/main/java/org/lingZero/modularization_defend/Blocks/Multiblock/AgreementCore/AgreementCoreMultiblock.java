@@ -1,4 +1,4 @@
-package org.lingZero.modularization_defend.Blocks.AgreementCore;
+package org.lingZero.modularization_defend.Blocks.Multiblock.AgreementCore;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
