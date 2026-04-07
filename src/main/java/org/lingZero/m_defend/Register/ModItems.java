@@ -11,6 +11,7 @@ import org.lingZero.m_defend.Items.DefendCore;
 import org.lingZero.m_defend.Items.Turret.Turret1Item;
 import org.lingZero.m_defend.Items.TurretCore.BasicTurretCore;
 import org.lingZero.m_defend.Items.TurretCore.Shu;
+import org.lingZero.m_defend.Items.TurretRemovalTool;
 import org.lingZero.m_defend.ModularizationDefend;
 
 import java.util.function.Supplier;
@@ -62,5 +63,13 @@ public class ModItems {
                     new Item.Properties()
                             .stacksTo(1)
                             .rarity(Rarity.UNCOMMON)
+            );
+    
+    // 炮塔拆除工具
+    public static final DeferredItem<Item> TURRET_REMOVAL_TOOL =
+            ITEMS.registerItem("turret_removal_tool",
+                    TurretRemovalTool::new,
+                    new Item.Properties()
+                            .stacksTo(1)
             );
 }

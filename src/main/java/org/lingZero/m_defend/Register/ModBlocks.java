@@ -27,14 +27,14 @@ public class ModBlocks {
     
     public static final DeferredBlock<AffiliateBlock> AFFILIATE_BLOCK =
             BLOCKS.register("affiliate_block", () -> new AffiliateBlock(BlockBehaviour.Properties.of()
-                    .strength(3.0f, 6.0f)
+                    .strength(-1, -1)
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops()
             ));
     
     public static final DeferredBlock<Turret1Block> TURRET1_BLOCK =
             BLOCKS.register("turret1_block", () -> new Turret1Block(BlockBehaviour.Properties.of()
-                    .strength(5.0f, 10.0f)
+                    .strength(-1, -1)
                     .sound(SoundType.METAL)
                     .requiresCorrectToolForDrops()
             ));
