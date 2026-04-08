@@ -4,7 +4,7 @@ package org.lingZero.m_defend.Register;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import org.lingZero.m_defend.Blocks.Multiblock.AffiliateBlockEntity;
+import org.lingZero.m_defend.Blocks.MultiblockFrame.AffiliateBlockEntity;
 import org.lingZero.m_defend.Blocks.Multiblock.Turret1BlockEntity;
 import org.lingZero.m_defend.Blocks.UpgradeCraftingTable;
 

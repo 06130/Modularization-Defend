@@ -1,4 +1,4 @@
-package org.lingZero.m_defend.Blocks.Multiblock;
+package org.lingZero.m_defend.Blocks.MultiblockFrame;
 
 
 import net.minecraft.client.renderer.RenderType;

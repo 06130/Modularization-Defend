@@ -7,7 +7,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import org.lingZero.m_defend.Blocks.Multiblock.AffiliateBlock;
+import org.lingZero.m_defend.Blocks.MultiblockFrame.AffiliateBlock;
 import org.lingZero.m_defend.Blocks.Multiblock.Turret1Block;
 import org.lingZero.m_defend.Blocks.UpgradeCraftingTableBlock;
 import org.lingZero.m_defend.ModularizationDefend;
@@ -29,7 +29,8 @@ public class ModBlocks {
             BLOCKS.register("affiliate_block", () -> new AffiliateBlock(BlockBehaviour.Properties.of()
                     .strength(-1, -1)      // 不可破坏
                     .sound(SoundType.METAL)
-                    .noOcclusion()                                // 不遮挡视线（透明）
+                    .noOcclusion()// 不遮挡视线（透明）
+                    .noCollission()
             ));
     
     public static final DeferredBlock<Turret1Block> TURRET1_BLOCK =
@@ -37,6 +38,8 @@ public class ModBlocks {
                     .strength(-1, -1)
                     .sound(SoundType.METAL)
                     .requiresCorrectToolForDrops()
+                    .noOcclusion()
+                    .noCollission()
             ));
 
     /**

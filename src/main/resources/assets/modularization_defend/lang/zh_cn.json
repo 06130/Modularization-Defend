@@ -65,6 +65,8 @@
   "tooltip.modularization_defend.turret_core.type": "炮塔同调类型",
   "tooltip.modularization_defend.turret_core.camp_type": "分类",
 
+  "tooltip.modularization_defend.turret_removal_tool.usage": "左键拆除炮塔",
+
   "turret_type.modularization_defend.none": "未同调",
   "turret_type.modularization_defend.laser": "能量弹",
   "turret_type.modularization_defend.missile": "制导导弹",

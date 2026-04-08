@@ -15,7 +15,10 @@ public record TurretCoreData(
         int firingRateLevel,      // 射速倍率等级
         int harmLevel,            // 伤害倍率等级
         int energyLevel,          // 能量消耗减免倍率等级
-        TurretType turretType     // 炮塔核心类型
+        TurretType turretType,     // 炮塔同调类型
+        long energy, // 当前能量存储
+        long maxEnergy // 最大能量存储
+
 ) {
     /**
      * 创建默认数据
@@ -25,7 +28,9 @@ public record TurretCoreData(
                 0,              // 默认射速等级
                 0,              // 默认伤害等级
                 0,              // 默认能量消耗减免等级
-                TurretType.NONE // 默认炮塔核心类型
+                TurretType.NONE, // 默认炮塔核心类型
+                0L,             // 默认当前能量
+                100L              // 默认最大能量
         );
     }
     
@@ -37,7 +42,9 @@ public record TurretCoreData(
                 Math.max(0, Math.min(level, Config.FIRING_RATE_LEVEL_MAX)),
                 harmLevel,
                 energyLevel,
-                turretType
+                turretType,
+                energy,
+                maxEnergy
         );
     }
     
@@ -49,7 +56,9 @@ public record TurretCoreData(
                 firingRateLevel,
                 Math.max(0, Math.min(level, Config.HARM_LEVEL_MAX)),
                 energyLevel,
-                turretType
+                turretType,
+                energy,
+                maxEnergy
         );
     }
     
@@ -61,7 +70,9 @@ public record TurretCoreData(
                 firingRateLevel,
                 harmLevel,
                 Math.max(0, Math.min(level, Config.ENERGY_LEVEL_MAX)),
-                turretType
+                turretType,
+                energy,
+                maxEnergy
         );
     }
     
@@ -73,7 +84,37 @@ public record TurretCoreData(
                 firingRateLevel,
                 harmLevel,
                 energyLevel,
-                type != null ? type : TurretType.NONE
+                type != null ? type : TurretType.NONE,
+                energy,
+                maxEnergy
+        );
+    }
+    
+    /**
+     * 更新当前能量
+     */
+    public TurretCoreData withEnergy(long energy) {
+        return new TurretCoreData(
+                firingRateLevel,
+                harmLevel,
+                energyLevel,
+                turretType,
+                Math.max(0, Math.min(energy, maxEnergy)),
+                maxEnergy
+        );
+    }
+    
+    /**
+     * 更新最大能量
+     */
+    public TurretCoreData withMaxEnergy(long maxEnergy) {
+        return new TurretCoreData(
+                firingRateLevel,
+                harmLevel,
+                energyLevel,
+                turretType,
+                Math.min(energy, maxEnergy),
+                Math.max(0, maxEnergy)
         );
     }
     
@@ -84,7 +125,9 @@ public record TurretCoreData(
             Codec.INT.fieldOf("firing_rate_level").forGetter(TurretCoreData::firingRateLevel),
             Codec.INT.fieldOf("harm_level").forGetter(TurretCoreData::harmLevel),
             Codec.INT.fieldOf("energy_level").forGetter(TurretCoreData::energyLevel),
-            TurretType.CODEC.fieldOf("turret_type").forGetter(TurretCoreData::turretType)
+            TurretType.CODEC.fieldOf("turret_type").forGetter(TurretCoreData::turretType),
+            Codec.LONG.fieldOf("energy").forGetter(TurretCoreData::energy),
+            Codec.LONG.fieldOf("max_energy").forGetter(TurretCoreData::maxEnergy)
     ).apply(instance, TurretCoreData::new));
     
     /**

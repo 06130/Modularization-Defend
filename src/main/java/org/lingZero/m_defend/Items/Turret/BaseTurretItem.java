@@ -12,7 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import org.lingZero.m_defend.Blocks.Multiblock.AffiliateBlockEntity;
+import org.lingZero.m_defend.Blocks.MultiblockFrame.AffiliateBlockEntity;
 import org.lingZero.m_defend.util.DebugLogger;
 
 /**

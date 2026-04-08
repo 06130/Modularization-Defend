@@ -56,6 +56,8 @@
   
   "tooltip.modularization_defend.upgrade_module.usage": "Right-click on upgradable item to apply upgrade",
 
+  "tooltip.modularization_defend.turret_removal_tool.usage": "Left-click on turret block to dismantle the entire structure",
+
   "camp.modularization_defend.none": "Unknown",
   "camp.modularization_defend.end": "Endfield Industries",
   "camp.modularization_defend.gregtech": "GregTech",

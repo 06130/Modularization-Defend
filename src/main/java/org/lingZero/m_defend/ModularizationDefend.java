@@ -10,11 +10,14 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import org.lingZero.m_defend.Blocks.MultiblockFrame.AffiliateBlock;
 import org.lingZero.m_defend.Data.ModBlockTagsProvider;
 import org.lingZero.m_defend.Register.*;
 import org.lingZero.m_defend.util.DebugCommand;
@@ -36,6 +39,9 @@ public class ModularizationDefend {
         
         // 注册通用设置方法以供模组加载时调用
         modEventBus.addListener(this::commonSetup);
+        
+        // 注册能力（Capability）
+        modEventBus.addListener(this::registerCapabilities);
         
         // 注册数据生成器
         modEventBus.addListener(this::gatherData);
@@ -67,6 +73,28 @@ public class ModularizationDefend {
     }
     private void commonSetup(final FMLCommonSetupEvent event) {
         // 一些通用设置代码
+    }
+    
+    /**
+     * 注册方块实体的能力（Capability）
+     * 使炮塔能够与其他 MOD 的物流系统交互
+     */
+    private void registerCapabilities(final RegisterCapabilitiesEvent event) {
+        // 为所有继承 BaseTurretBlockEntity 的方块实体注册物品处理器能力
+        event.registerBlockEntity(
+            Capabilities.ItemHandler.BLOCK,
+            ModBlockEntities.TURRET1_BLOCK_ENTITY.get(),
+            (blockEntity, context) -> blockEntity.getCapability(Capabilities.ItemHandler.BLOCK, context)
+        );
+        
+        // 为附属方块注册物品处理器能力（重定向到主方块）
+        event.registerBlockEntity(
+            Capabilities.ItemHandler.BLOCK,
+            ModBlockEntities.AFFILIATE_BLOCK_ENTITY.get(),
+            (blockEntity, context) -> blockEntity.getCapability(Capabilities.ItemHandler.BLOCK, context)
+        );
+        
+        DebugLogger.info("已注册炮塔方块的 ItemHandler 能力");
     }
     
     private void gatherData(final GatherDataEvent event) {
@@ -111,7 +139,7 @@ public class ModularizationDefend {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
             // 客户端初始化逻辑
-            org.lingZero.m_defend.Blocks.Multiblock.AffiliateBlock.initClient();
+            AffiliateBlock.initClient();
         }
     }
 }

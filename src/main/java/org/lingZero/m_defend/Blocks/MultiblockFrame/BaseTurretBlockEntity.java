@@ -1,0 +1,188 @@
+package org.lingZero.m_defend.Blocks.MultiblockFrame;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.capabilities.BlockCapability;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import org.jetbrains.annotations.Nullable;
+
+public abstract class BaseTurretBlockEntity extends BlockEntity {
+
+    // 槽位索引常量
+    public static final int SLOT_CORE = 0;              // 核心槽
+    public static final int SLOT_GUIDANCE_CONTROL = 1;  // 制导控制组件槽
+    public static final int SLOT_TARGET_SELECTOR = 2;  // 目标选择器槽
+    public static final int SLOT_COUNT = 3;             // 总槽位数
+
+    // 默认TAG条目：是否激活
+    protected boolean isActive = false;
+    
+    // NeoForge物品处理器（3个槽位）
+    protected final IItemHandler itemHandler = createItemHandler();
+
+    public BaseTurretBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
+    }
+    
+    /**
+     * 创建物品处理器
+     * 子类可以重写此方法以自定义槽位数量和行為
+     *
+     * @return 物品处理器实例
+     */
+    protected IItemHandler createItemHandler() {
+        return new ItemStackHandler(SLOT_COUNT) {
+            @Override
+            protected void onContentsChanged(int slot) {
+                // 当物品变化时标记数据已更改
+                setChanged();
+            }
+            
+            @Override
+            public boolean isItemValid(int slot, ItemStack stack) {
+                // 子类可以重写此方法以限制可插入的物品
+                // TODO: 根据槽位类型验证物品
+                return true;
+            }
+        };
+    }
+    
+    /**
+     * 获取物品处理器能力
+     * 用于与其他 MOD 的物流系统交互（如 Mekanism、Immersive Engineering 等）
+     *
+     * @param capability 能力类型
+     * @param side       方向（可为 null）
+     * @return 能力实例
+     */
+    @Nullable
+    @SuppressWarnings("unchecked")
+    public <T> T getCapability(BlockCapability<T, Direction> capability, @Nullable Direction side) {
+        if (capability == Capabilities.ItemHandler.BLOCK) {
+            return (T) itemHandler;
+        }
+        return null;
+    }
+    
+    /**
+     * 从 NBT 标签中读取数据
+     */
+    @Override
+    public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        
+        // 读取激活状态
+        if (tag.contains("IsActive")) {
+            this.isActive = tag.getBoolean("IsActive");
+        }
+        
+        // 读取物品处理器的数据
+        if (itemHandler instanceof ItemStackHandler) {
+            ((ItemStackHandler) itemHandler).deserializeNBT(registries, tag.getCompound("ItemHandler"));
+        }
+    }
+    
+    /**
+     * 将数据保存到 NBT 标签
+     */
+    @Override
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        
+        // 保存激活状态
+        tag.putBoolean("IsActive", isActive);
+        
+        // 保存物品处理器的数据
+        if (itemHandler instanceof ItemStackHandler) {
+            tag.put("ItemHandler", ((ItemStackHandler) itemHandler).serializeNBT(registries));
+        }
+    }
+    
+    /**
+     * 获取激活状态
+     *
+     * @return 是否激活
+     */
+    public boolean isActive() {
+        return isActive;
+    }
+    
+    /**
+     * 设置激活状态
+     *
+     * @param active 激活状态
+     */
+    public void setActive(boolean active) {
+        this.isActive = active;
+        setChanged();
+    }
+    
+    /**
+     * 获取指定槽位的物品
+     *
+     * @param slot 槽位索引
+     * @return 物品栈
+     */
+    public ItemStack getItemInSlot(int slot) {
+        return itemHandler.getStackInSlot(slot);
+    }
+    
+    /**
+     * 设置指定槽位的物品
+     *
+     * @param slot  槽位索引
+     * @param stack 物品栈
+     */
+    public void setItemInSlot(int slot, ItemStack stack) {
+        if (itemHandler instanceof net.neoforged.neoforge.items.IItemHandlerModifiable) {
+            ((net.neoforged.neoforge.items.IItemHandlerModifiable) itemHandler).setStackInSlot(slot, stack);
+        }
+    }
+    
+    /**
+     * 获取或设置核心槽的物品
+     *
+     * @param stack 物品栈（null 时为获取，非 null 时为设置）
+     * @return 当前核心槽的物品栈
+     */
+    public ItemStack coreItem(ItemStack stack) {
+        if (stack != null) {
+            setItemInSlot(SLOT_CORE, stack);
+        }
+        return getItemInSlot(SLOT_CORE);
+    }
+    
+    /**
+     * 获取或设置制导控制组件槽的物品
+     *
+     * @param stack 物品栈（null 时为获取，非 null 时为设置）
+     * @return 当前制导控制组件槽的物品栈
+     */
+    public ItemStack guidanceControlItem(ItemStack stack) {
+        if (stack != null) {
+            setItemInSlot(SLOT_GUIDANCE_CONTROL, stack);
+        }
+        return getItemInSlot(SLOT_GUIDANCE_CONTROL);
+    }
+    
+    /**
+     * 获取或设置目标选择器槽的物品
+     *
+     * @param stack 物品栈（null 时为获取，非 null 时为设置）
+     * @return 当前目标选择器槽的物品栈
+     */
+    public ItemStack targetSelectorItem(ItemStack stack) {
+        if (stack != null) {
+            setItemInSlot(SLOT_TARGET_SELECTOR, stack);
+        }
+        return getItemInSlot(SLOT_TARGET_SELECTOR);
+    }
+}
