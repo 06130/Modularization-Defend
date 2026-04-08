@@ -6,7 +6,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import org.lingZero.m_defend.Config;
-import org.lingZero.m_defend.Items.TurretCore.frame.TurretType;
 
 /**
  * TurretCore的数据组件记录类

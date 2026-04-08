@@ -27,6 +27,11 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
     
     // NeoForge物品处理器（3个槽位）
     protected final IItemHandler itemHandler = createItemHandler();
+    
+    // 计时器相关字段（不持久化）
+    protected long lastTriggerTick = 0;             // 上次触发的游戏刻
+    protected int triggerInterval = 20;             // 触发间隔（tick），默认1秒（20 ticks）
+    protected boolean timerEnabled = true;          // 计时器是否启用
 
     public BaseTurretBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -184,5 +189,111 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
             setItemInSlot(SLOT_TARGET_SELECTOR, stack);
         }
         return getItemInSlot(SLOT_TARGET_SELECTOR);
+    }
+    
+    /**
+     * 更新计时器
+     * 应在子类的 serverTick() 方法中调用
+     * 使用世界游戏刻进行计时，达到间隔时自动触发 onTimerTrigger()
+     */
+    protected void updateTimer() {
+        if (!timerEnabled || !isActive || level == null) {
+            return;
+        }
+        
+        long currentTick = level.getGameTime();
+        
+        // 检查是否达到触发间隔
+        if (currentTick - lastTriggerTick >= triggerInterval) {
+            lastTriggerTick = currentTick;  // 更新上次触发时间
+            onTimerTrigger();               // 触发回调
+        }
+    }
+    
+    /**
+     * 计时器触发回调
+     * 子类应重写此方法以实现定时触发的逻辑
+     * 例如：炮塔射击、扫描目标、发射弹药等
+     */
+    protected void onTimerTrigger() {
+        // 默认实现为空，子类应重写此方法
+    }
+    
+    /**
+     * 获取上次触发的游戏刻
+     *
+     * @return 上次触发的刻数
+     */
+    public long getLastTriggerTick() {
+        return lastTriggerTick;
+    }
+    
+    /**
+     * 获取触发间隔（tick）
+     *
+     * @return 触发间隔
+     */
+    public int getTriggerInterval() {
+        return triggerInterval;
+    }
+    
+    /**
+     * 设置触发间隔
+     *
+     * @param interval 新的触发间隔（tick），必须大于 0
+     */
+    public void setTriggerInterval(int interval) {
+        if (interval > 0) {
+            this.triggerInterval = interval;
+            setChanged();
+        }
+    }
+    
+    /**
+     * 检查计时器是否启用
+     *
+     * @return 是否启用
+     */
+    public boolean isTimerEnabled() {
+        return timerEnabled;
+    }
+    
+    /**
+     * 设置计时器启用状态
+     *
+     * @param enabled 是否启用
+     */
+    public void setTimerEnabled(boolean enabled) {
+        this.timerEnabled = enabled;
+        if (!enabled && level != null) {
+            lastTriggerTick = level.getGameTime(); // 禁用时重置为当前时间
+        }
+        setChanged();
+    }
+    
+    /**
+     * 手动重置计时器
+     * 将下次触发时间设置为当前时间 + 间隔
+     */
+    public void resetTimer() {
+        if (level != null) {
+            lastTriggerTick = level.getGameTime();
+        }
+    }
+    
+    /**
+     * 立即触发一次计时器事件
+     * 不会重置计数器
+     */
+    protected void triggerNow() {
+        onTimerTrigger();
+    }
+    
+    /**
+     * 服务端 tick 方法
+     * 子类应重写此方法并在其中调用 super.serverTick()
+     */
+    public void serverTick() {
+        // 默认实现为空，子类可以重写
     }
 }

@@ -6,6 +6,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import org.lingZero.m_defend.Blocks.MultiblockFrame.BaseTurretBlock;
+import org.lingZero.m_defend.DataComponents.TurretType;
 import org.lingZero.m_defend.Register.ModItems;
 
 /**
@@ -42,5 +43,15 @@ public class Turret1Block extends BaseTurretBlock {
     @Override
     protected Item getTurretItem() {
         return ModItems.TURRET_1_ITEM.get();
+    }
+    
+    /**
+     * 获取炮塔类型
+     *
+     * @return 炮塔类型枚举
+     */
+    @Override
+    public TurretType getTurretType() {
+        return TurretType.LASER; // 测试炮塔1为激光炮塔
     }
 }

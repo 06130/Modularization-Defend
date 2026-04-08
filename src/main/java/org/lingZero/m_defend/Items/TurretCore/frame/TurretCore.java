@@ -6,6 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import org.jetbrains.annotations.NotNull;
 import org.lingZero.m_defend.DataComponents.TurretCoreData;
+import org.lingZero.m_defend.DataComponents.TurretType;
 import org.lingZero.m_defend.Register.ModDataComponents;
 
 import java.util.List;

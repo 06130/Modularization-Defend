@@ -1,4 +1,4 @@
-package org.lingZero.m_defend.Items.TurretCore.frame;
+package org.lingZero.m_defend.DataComponents;
 
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;

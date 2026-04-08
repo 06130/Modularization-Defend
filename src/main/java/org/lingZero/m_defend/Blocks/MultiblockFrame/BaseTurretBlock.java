@@ -8,6 +8,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import org.lingZero.m_defend.DataComponents.TurretType;
 import org.lingZero.m_defend.util.DebugLogger;
 
 /**
@@ -15,6 +16,14 @@ import org.lingZero.m_defend.util.DebugLogger;
  * 所有炮塔主方块都应继承此类
  */
 public abstract class BaseTurretBlock extends Block implements EntityBlock {
+    
+    /**
+     * 获取炮塔类型
+     * 子类必须实现此方法以返回对应的炮塔类型
+     *
+     * @return 炮塔类型枚举
+     */
+    public abstract TurretType getTurretType();
     
     // 多方块结构尺寸配置（子类可重写）
     public int getStructureWidth() {
