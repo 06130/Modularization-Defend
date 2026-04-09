@@ -28,11 +28,17 @@ import java.util.UUID;
  * 1. 调用 super.tick() 处理基本逻辑
  * 2. 手动调用 setPos(position().add(getDeltaMovement())) 更新位置
  * 3. 使用 ProjectileUtil.getHitResultOnMoveVector 进行碰撞检测
+ * 4. 自动支持客户端平滑插值（基于 Minecraft 内置机制）
  * 
  * 使用说明：
  * - 子类只需重写 onHitEntity() 和 onHitBlock() 方法处理命中逻辑
  * - 通过 shoot() 方法设置初始速度和方向
  * - 可选：通过 setHomingTarget() 设置制导目标
+ * 
+ * 平滑移动机制：
+ * - 服务端：每tick更新位置和速度，保存旧位置到 xo/yo/zo
+ * - 客户端：Minecraft自动在旧位置和新位置之间插值渲染
+ * - 无需额外代码，基类已处理所有细节
  */
 public abstract class Projectile extends net.minecraft.world.entity.projectile.Projectile implements IEntityWithComplexSpawn {
 
@@ -51,6 +57,12 @@ public abstract class Projectile extends net.minecraft.world.entity.projectile.P
     protected Entity cachedHomingTarget;
     
     /**
+     * 旧的速度向量，用于客户端插值
+     * 参考 Iron's Spells 的实现，防止第一帧闪烁
+     */
+    protected Vec3 deltaMovementOld = Vec3.ZERO;
+    
+    /**
      * 构造函数
      * 
      * @param entityType 实体类型
@@ -65,22 +77,43 @@ public abstract class Projectile extends net.minecraft.world.entity.projectile.P
      * 
      * @param direction 方向向量（会自动归一化）
      * @param speed 速度大小
+     * 
+     * 注意：此方法会自动设置 hasImpulse = true，确保：
+     * 1. Minecraft 正确同步实体位置
+     * 2. 客户端能够进行平滑插值渲染
      */
     public void shoot(Vec3 direction, double speed) {
         // 计算速度向量并设置
         setDeltaMovement(direction.normalize().scale(speed));
-        // 标记实体有冲量，确保Minecraft处理移动
+        // 标记实体有冲量，确保Minecraft处理移动和同步
+        // 这是客户端平滑插值的关键
         hasImpulse = true;
     }
     
     /**
      * 实体的tick更新逻辑
      * 每游戏tick调用一次，处理移动、碰撞和生命周期
+     * 
+     * 平滑移动说明：
+     * - super.tick() 会自动保存当前位置到 xo/yo/zo（旧位置）
+     * - setPos() 更新新位置后，客户端会在两帧之间自动插值
+     * - 公式：renderPos = oldPos + (newPos - oldPos) * partialTicks
+     * - 无需任何额外代码，Minecraft 内置机制已处理
+     * 
+     * 重要：参考 Iron's Spells 的实现，需要初始化 deltaMovementOld 以防止第一帧闪烁
+     * 
+     * 注意：制导逻辑已移除，子类如需制导请重写 handleHoming() 并在 tick() 中调用
      */
     @Override
     public void tick() {
         // 先调用父类tick处理基本逻辑（如重力、旋转等）
+        // 重要：这会保存当前位置到 xo/yo/zo，用于客户端插值
         super.tick();
+        
+        // 关键：防止第一帧闪烁（参考 Iron's Spells 第96-98行）
+        if (tickCount == 1) {
+            deltaMovementOld = getDeltaMovement();
+        }
         
         // 客户端只处理粒子效果等视觉相关逻辑
         if (level().isClientSide) {
@@ -96,8 +129,8 @@ public abstract class Projectile extends net.minecraft.world.entity.projectile.P
             return;
         }
         
-        // 2. 制导逻辑：如果有制导目标，调整飞行方向
-        handleHoming();
+        // 2. 制导逻辑（可选）：子类可以重写 handleHoming() 并在此调用
+        // handleHoming();  // ← 默认禁用，子类按需启用
         
         // 3. 碰撞检测：使用 ProjectileUtil 检测前方是否有实体或方块
         HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
@@ -109,9 +142,13 @@ public abstract class Projectile extends net.minecraft.world.entity.projectile.P
         
         // 4. 关键：手动更新位置（参考 Iron's Spells 的 travel() 方法）
         // 这是投射物能够移动的核心代码
+        // 更新后，Minecraft 会在下一帧同步给客户端并进行插值
         setPos(position().add(getDeltaMovement()));
         
-        // 5. 调用子类的自定义tick逻辑
+        // 5. 更新旧速度向量（参考 Iron's Spells 第111行）
+        deltaMovementOld = getDeltaMovement();
+        
+        // 6. 调用子类的自定义tick逻辑
         onServerTick();
     }
     
@@ -134,12 +171,27 @@ public abstract class Projectile extends net.minecraft.world.entity.projectile.P
     }
     
     /**
-     * 处理制导逻辑
+     * 处理制导逻辑（可选）
      * 如果设置了制导目标，会平滑地调整飞行方向朝向目标
      * 
      * 制导算法：
      * - 距离目标 < 0.5格：直接飞向目标中心
      * - 距离目标 >= 0.5格：使用线性插值平滑转向（turnStrength=0.15）
+     * 
+     * 使用方法：
+     * 1. 子类在 tick() 中调用此方法以启用制导
+     * 2. 通过 setHomingTarget() 设置制导目标
+     * 
+     * 示例：
+     * <pre>{@code
+     * @Override
+     * public void tick() {
+     *     super.tick();
+     *     if (!level().isClientSide) {
+     *         handleHoming();  // 启用制导
+     *     }
+     * }
+     * }</pre>
      */
     protected void handleHoming() {
         // 如果没有设置制导目标，直接返回

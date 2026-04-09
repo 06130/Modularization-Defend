@@ -13,6 +13,13 @@ import org.lingZero.m_defend.util.DebugLogger;
 
 /**
  * 激光弹 - 简化版本，完全参考 Iron's Spells 实现
+ * 
+ * 特性：
+ * - 直线飞行，无制导（性能优化）
+ * - 击中实体或方块后立即销毁
+ * - 使用魔法伤害类型
+ * 
+ * 注意：继承自 Projectile，自动获得平滑移动支持
  */
 public class LaserProjectile extends Projectile {
     
@@ -47,7 +54,7 @@ public class LaserProjectile extends Projectile {
         
         return projectile;
     }
-    
+
     @Override
     protected void onHitEntity(@NotNull EntityHitResult result) {
         Entity entity = result.getEntity();
