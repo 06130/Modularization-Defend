@@ -9,7 +9,7 @@ import org.lingZero.m_defend.DataComponents.TurretCoreData;
 import org.lingZero.m_defend.Items.TurretCore.frame.CampType;
 import org.lingZero.m_defend.Items.TurretCore.frame.TurretCore;
 import org.lingZero.m_defend.Register.ModEntities;
-import org.lingZero.m_defend.entity.projectile.impl.SimpleLaserProjectile;
+import org.lingZero.m_defend.entity.LaserProjectile;
 import org.lingZero.m_defend.util.DebugLogger;
 
 /**
@@ -50,7 +50,7 @@ public class BasicTurretCore extends TurretCore {
         Vec3 direction = targetPos.subtract(sourcePos).normalize();
         
         // 设置速度（快速直线飞行）
-        double speed = 3.0;
+        double speed = 0.5;
         
         // 计算基础伤害（8点）并根据伤害等级加成
         float baseDamage = 8.0F;
@@ -58,7 +58,7 @@ public class BasicTurretCore extends TurretCore {
         float finalDamage = baseDamage * damageMultiplier;
         
         // 使用简化版本创建激光弹
-        SimpleLaserProjectile projectile = SimpleLaserProjectile.create(
+        LaserProjectile projectile = LaserProjectile.create(
             ModEntities.SIMPLE_LASER_PROJECTILE.get(),
             level,
             sourcePos,

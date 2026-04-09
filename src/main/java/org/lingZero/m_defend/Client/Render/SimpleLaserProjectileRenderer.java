@@ -6,12 +6,12 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
-import org.lingZero.m_defend.entity.projectile.impl.SimpleLaserProjectile;
+import org.lingZero.m_defend.entity.LaserProjectile;
 
 /**
  * 简化激光弹渲染器
  */
-public class SimpleLaserProjectileRenderer extends EntityRenderer<SimpleLaserProjectile> {
+public class SimpleLaserProjectileRenderer extends EntityRenderer<LaserProjectile> {
     
     private static final ResourceLocation TEXTURE = 
         ResourceLocation.fromNamespaceAndPath("modularization_defend", "textures/entity/laser_projectile.png");
@@ -22,7 +22,7 @@ public class SimpleLaserProjectileRenderer extends EntityRenderer<SimpleLaserPro
     
     @Override
     public void render(
-            @NotNull SimpleLaserProjectile entity,
+            @NotNull LaserProjectile entity,
             float entityYaw,
             float partialTick,
             @NotNull PoseStack poseStack,
@@ -34,7 +34,7 @@ public class SimpleLaserProjectileRenderer extends EntityRenderer<SimpleLaserPro
     
     @Override
     @NotNull
-    public ResourceLocation getTextureLocation(@NotNull SimpleLaserProjectile entity) {
+    public ResourceLocation getTextureLocation(@NotNull LaserProjectile entity) {
         return TEXTURE;
     }
 }

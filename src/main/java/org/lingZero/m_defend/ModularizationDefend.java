@@ -19,7 +19,6 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.lingZero.m_defend.Blocks.MultiblockFrame.AffiliateBlock;
 import org.lingZero.m_defend.Data.ModBlockTagsProvider;
-import org.lingZero.m_defend.Event.ProjectileChunkHandler;
 import org.lingZero.m_defend.Items.TargetFilter.EntityIdFilter;
 import org.lingZero.m_defend.Register.*;
 import org.lingZero.m_defend.util.DebugCommand;
@@ -68,9 +67,6 @@ public class ModularizationDefend {
                 
         // 注册调试命令
         NeoForge.EVENT_BUS.addListener(DebugCommand::register);
-        
-        // 注册子弹区块事件处理器
-        NeoForge.EVENT_BUS.register(ProjectileChunkHandler.class);
         
         // 注册实体ID过滤器事件处理器
         NeoForge.EVENT_BUS.register(EntityIdFilter.class);

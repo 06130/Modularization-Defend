@@ -5,7 +5,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.lingZero.m_defend.ModularizationDefend;
-import org.lingZero.m_defend.entity.projectile.impl.SimpleLaserProjectile;
+import org.lingZero.m_defend.entity.LaserProjectile;
 
 import java.util.function.Supplier;
 
@@ -15,9 +15,9 @@ public class ModEntities {
             DeferredRegister.create(Registries.ENTITY_TYPE, ModularizationDefend.MODID);
     
     // 激光子弹实体 - 简化版本
-    public static final Supplier<EntityType<SimpleLaserProjectile>> SIMPLE_LASER_PROJECTILE = 
-            ENTITIES.register("simple_laser_projectile", () -> EntityType.Builder.<SimpleLaserProjectile>of(
-                    SimpleLaserProjectile::new,
+    public static final Supplier<EntityType<LaserProjectile>> SIMPLE_LASER_PROJECTILE =
+            ENTITIES.register("simple_laser_projectile", () -> EntityType.Builder.<LaserProjectile>of(
+                    LaserProjectile::new,
                     MobCategory.MISC
             )
             .sized(0.25F, 0.25F)

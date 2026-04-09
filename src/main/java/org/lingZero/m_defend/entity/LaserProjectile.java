@@ -1,4 +1,4 @@
-package org.lingZero.m_defend.entity.projectile.impl;
+package org.lingZero.m_defend.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -9,35 +9,41 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-import org.lingZero.m_defend.entity.projectile.core.SimpleProjectile;
 import org.lingZero.m_defend.util.DebugLogger;
 
 /**
  * 激光弹 - 简化版本，完全参考 Iron's Spells 实现
  */
-public class SimpleLaserProjectile extends SimpleProjectile {
+public class LaserProjectile extends Projectile {
     
-    private static final double LASER_SPEED = 3.0;
+    /** 激光弹默认伤害值 */
     private static final float LASER_DAMAGE = 8.0f;
     
-    public SimpleLaserProjectile(EntityType<? extends SimpleLaserProjectile> entityType, Level level) {
+    public LaserProjectile(EntityType<? extends LaserProjectile> entityType, Level level) {
         super(entityType, level);
     }
     
     /**
      * 便捷构造方法
+     * 
+     * @param entityType 实体类型
+     * @param level 世界实例
+     * @param startPos 起始位置
+     * @param direction 方向向量（会自动归一化）
+     * @param speed 速度大小（建议值：3.0）
+     * @return 新创建的激光弹实体
      */
-    public static SimpleLaserProjectile create(
-            EntityType<? extends SimpleLaserProjectile> entityType,
+    public static LaserProjectile create(
+            EntityType<? extends LaserProjectile> entityType,
             Level level,
             Vec3 startPos,
             Vec3 direction,
             double speed) {
         
-        SimpleLaserProjectile projectile = new SimpleLaserProjectile(entityType, level);
+        LaserProjectile projectile = new LaserProjectile(entityType, level);
         projectile.setPos(startPos);
-        projectile.shoot(direction, speed);
-        projectile.setDamage(LASER_DAMAGE);
+        projectile.shoot(direction, speed);  // 使用传入的速度参数
+        projectile.setDamage(LASER_DAMAGE);  // 使用默认伤害
         
         return projectile;
     }
