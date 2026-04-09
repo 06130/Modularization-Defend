@@ -13,6 +13,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
+import org.lingZero.m_defend.DataComponents.TargetFilterData;
 
 public abstract class BaseTurretBlockEntity extends BlockEntity {
 
@@ -25,6 +26,7 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
     // 默认TAG条目：是否激活
     protected boolean isActive = false;
     
+
     // NeoForge物品处理器（3个槽位）
     protected final IItemHandler itemHandler = createItemHandler();
     
@@ -32,6 +34,10 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
     protected long lastTriggerTick = 0;             // 上次触发的游戏刻
     protected int triggerInterval = 20;             // 触发间隔（tick），默认1秒（20 ticks）
     protected boolean timerEnabled = true;          // 计时器是否启用
+    
+    // 过滤器数据（持久化）
+    @Nullable
+    protected TargetFilterData cachedFilterData = null;  // 缓存的过滤器数据
 
     public BaseTurretBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -93,6 +99,17 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
         if (itemHandler instanceof ItemStackHandler) {
             ((ItemStackHandler) itemHandler).deserializeNBT(registries, tag.getCompound("ItemHandler"));
         }
+        
+        // 读取过滤器数据
+        if (tag.contains("FilterData")) {
+            try {
+                this.cachedFilterData = TargetFilterData.CODEC.parse(
+                    net.minecraft.nbt.NbtOps.INSTANCE, tag.getCompound("FilterData")
+                ).result().orElse(null);
+            } catch (Exception e) {
+                this.cachedFilterData = null;
+            }
+        }
     }
     
     /**
@@ -108,6 +125,14 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
         // 保存物品处理器的数据
         if (itemHandler instanceof ItemStackHandler) {
             tag.put("ItemHandler", ((ItemStackHandler) itemHandler).serializeNBT(registries));
+        }
+        
+        // 保存过滤器数据
+        if (cachedFilterData != null) {
+            tag.put("FilterData", 
+                TargetFilterData.CODEC.encodeStart(net.minecraft.nbt.NbtOps.INSTANCE, cachedFilterData)
+                    .result().orElse(new CompoundTag())
+            );
         }
     }
     
@@ -161,6 +186,8 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
     public ItemStack coreItem(ItemStack stack) {
         if (stack != null) {
             setItemInSlot(SLOT_CORE, stack);
+            // 检查是否所有槽位都已安装，自动激活炮塔
+            checkAndAutoActivate();
         }
         return getItemInSlot(SLOT_CORE);
     }
@@ -174,6 +201,8 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
     public ItemStack guidanceControlItem(ItemStack stack) {
         if (stack != null) {
             setItemInSlot(SLOT_GUIDANCE_CONTROL, stack);
+            // 检查是否所有槽位都已安装，自动激活炮塔
+            checkAndAutoActivate();
         }
         return getItemInSlot(SLOT_GUIDANCE_CONTROL);
     }
@@ -187,8 +216,72 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
     public ItemStack targetSelectorItem(ItemStack stack) {
         if (stack != null) {
             setItemInSlot(SLOT_TARGET_SELECTOR, stack);
+            // 更新过滤器数据缓存
+            updateFilterDataCache();
+            // 检查是否所有槽位都已安装，自动激活炮塔
+            checkAndAutoActivate();
         }
         return getItemInSlot(SLOT_TARGET_SELECTOR);
+    }
+    
+    /**
+     * 检查所有槽位是否都已安装物品，并自动激活/停用炮塔
+     * 当所有3个槽位都有物品时激活炮塔，否则停用
+     */
+    protected void checkAndAutoActivate() {
+        boolean allSlotsFilled = true;
+        
+        // 检查所有槽位是否都有物品
+        for (int slot = 0; slot < SLOT_COUNT; slot++) {
+            if (getItemInSlot(slot).isEmpty()) {
+                allSlotsFilled = false;
+                break;
+            }
+        }
+        
+        // 根据检查结果设置激活状态
+        if (allSlotsFilled && !isActive) {
+            setActive(true);
+            org.lingZero.m_defend.util.DebugLogger.info("炮塔已自动激活（所有槽位已安装）");
+        } else if (!allSlotsFilled && isActive) {
+            setActive(false);
+            org.lingZero.m_defend.util.DebugLogger.info("炮塔已自动停用（槽位不完整）");
+        }
+    }
+    
+    /**
+     * 更新过滤器数据缓存
+     * 从目标选择器槽的物品中读取过滤器配置并缓存
+     */
+    protected void updateFilterDataCache() {
+        ItemStack filterItem = getItemInSlot(SLOT_TARGET_SELECTOR);
+        
+        if (filterItem.isEmpty()) {
+            cachedFilterData = null;
+            return;
+        }
+        
+        // 从物品的 DataComponent 中读取过滤器数据
+        TargetFilterData data = filterItem.get(
+            org.lingZero.m_defend.Register.ModDataComponents.TARGET_FILTER_DATA.get()
+        );
+        
+        if (data != null) {
+            cachedFilterData = data;
+            setChanged();  // 标记数据已更改，需要保存
+        } else {
+            cachedFilterData = null;
+        }
+    }
+    
+    /**
+     * 获取缓存的过滤器数据
+     * 
+     * @return 过滤器数据，如果未安装则返回 null
+     */
+    @Nullable
+    public TargetFilterData getCachedFilterData() {
+        return cachedFilterData;
     }
     
     /**
@@ -209,7 +302,31 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
             onTimerTrigger();               // 触发回调
         }
     }
+
+    /**
+     * BlockEntity tick 方法
+     * 每个游戏刻调用一次，由 Minecraft 自动调用
+     */
+    public void tick() {
+        if (level == null || level.isClientSide) {
+            return;
+        }
+        
+        // 调用子类的自定义 tick 逻辑
+        onCustomTick();
+        
+        // 更新计时器（激活时会自动触发 onTimerTrigger）
+        updateTimer();
+    }
     
+    /**
+     * 自定义 tick 逻辑
+     * 子类可以重写此方法添加额外的 tick 处理
+     */
+    protected void onCustomTick() {
+        // 默认实现为空
+    }
+
     /**
      * 计时器触发回调
      * 子类应重写此方法以实现定时触发的逻辑

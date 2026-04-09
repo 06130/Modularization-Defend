@@ -19,6 +19,8 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.lingZero.m_defend.Blocks.MultiblockFrame.AffiliateBlock;
 import org.lingZero.m_defend.Data.ModBlockTagsProvider;
+import org.lingZero.m_defend.Event.ProjectileChunkHandler;
+import org.lingZero.m_defend.Items.TargetFilter.EntityIdFilter;
 import org.lingZero.m_defend.Register.*;
 import org.lingZero.m_defend.util.DebugCommand;
 import org.lingZero.m_defend.util.DebugLogger;
@@ -53,6 +55,7 @@ public class ModularizationDefend {
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModCreativeTabs.CREATIVE_TABS.register(modEventBus);
         ModMenuTypes.MENUS.register(modEventBus);
+        ModEntities.ENTITIES.register(modEventBus);
         // 注册按键绑定（仅客户端）
         ModKeyBindings.register(modEventBus);
             
@@ -65,6 +68,12 @@ public class ModularizationDefend {
                 
         // 注册调试命令
         NeoForge.EVENT_BUS.addListener(DebugCommand::register);
+        
+        // 注册子弹区块事件处理器
+        NeoForge.EVENT_BUS.register(ProjectileChunkHandler.class);
+        
+        // 注册实体ID过滤器事件处理器
+        NeoForge.EVENT_BUS.register(EntityIdFilter.class);
 
         // 注册 ModConfigSpec
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
@@ -134,6 +143,11 @@ public class ModularizationDefend {
          */
         @SubscribeEvent
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+            // 注册简化激光子弹实体渲染器
+            event.registerEntityRenderer(
+                ModEntities.SIMPLE_LASER_PROJECTILE.get(),
+                org.lingZero.m_defend.Client.Render.SimpleLaserProjectileRenderer::new
+            );
         }
         
         @SubscribeEvent

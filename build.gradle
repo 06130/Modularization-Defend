@@ -33,6 +33,15 @@ repositories {
     }
     // LDLib2
     maven { url = "https://maven.firstdark.dev/snapshots" }
+
+    /*
+    maven { // Ritchie's Projectile Library
+        url = "https://maven.realrobotix.me/master/"
+        content {
+            includeGroup("com.rbasamoyai") // THIS IS IMPORTANT
+        }
+    }
+     */
 }
 
 base {
@@ -147,6 +156,14 @@ dependencies {
     implementation("com.lowdragmc.ldlib2:ldlib2-neoforge-${minecraft_version}:${ldlib2_version}:all")
     implementation "curse.maven:curios-309927:6529130"
     implementation "curse.maven:photon-871522:7658228"
+
+    /*
+    jarJar("com.rbasamoyai:ritchiesprojectilelib:${rpl_version}+mc.${minecraft_version}-forge-build.${rpl_build_number}") {
+        transitive = false
+        jarJar.ranged(it, '[2.0.0,2.0.1)') // 根据 rpl_version 修改范围值（jarJar.pin 可能失效）
+    }
+
+     */
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

@@ -14,7 +14,14 @@
 
   "item.modularization_defend.basic_turret_core": "测试炮塔核心1",
   "item.modularization_defend.turret_core_shu": "权能核心-黍-因果",
+
   "item.modularization_defend.turret_removal_tool": "炮塔拆除工具",
+  
+  "item.modularization_defend.hostile_filter": "敌对生物过滤器",
+  "item.modularization_defend.neutral_filter": "中立生物过滤器",
+  "item.modularization_defend.friendly_filter": "友好生物过滤器",
+  "item.modularization_defend.player_filter": "玩家过滤器",
+  "item.modularization_defend.entity_id_filter": "实体ID过滤器",
 
   "key.modularization_defend.open_defend_core_gui": "打开防御核心GUI",
 
@@ -66,6 +73,30 @@
   "tooltip.modularization_defend.turret_core.camp_type": "分类",
 
   "tooltip.modularization_defend.turret_removal_tool.usage": "左键拆除炮塔",
+  
+  "tooltip.modularization_defend.guidance_control.description": "用于炮塔的制导控制系统",
+  
+  "item.modularization_defend.guidance_control_component": "制导控制组件",
+  
+  "tooltip.modularization_defend.target_filter.type": "过滤器类型",
+  "tooltip.modularization_defend.target_filter.entity_id": "实体ID",
+  "tooltip.modularization_defend.target_filter.type.hostile": "敌对生物",
+  "tooltip.modularization_defend.target_filter.type.neutral": "中立生物",
+  "tooltip.modularization_defend.target_filter.type.friendly": "友好生物",
+  "tooltip.modularization_defend.target_filter.type.player": "玩家",
+  "tooltip.modularization_defend.target_filter.type.entity_id": "特定实体",
+  
+  "message.modularization_defend.entity_id_filter.saved": "§a已保存实体ID: %s",
+  
+  "message.modularization_defend.turret_core.installed": "§a已安装炮塔核心",
+  "message.modularization_defend.turret_core.replaced": "§e已替换炮塔核心，旧核心已返还",
+  "message.modularization_defend.guidance_control.installed": "§a已安装制导控制组件",
+  "message.modularization_defend.guidance_control.replaced": "§e已替换制导控制组件，旧组件已返还",
+  "message.modularization_defend.target_filter.installed": "§a已安装目标过滤器",
+  "message.modularization_defend.target_filter.replaced": "§e已替换目标过滤器，旧过滤器已返还",
+  
+  "message.modularization_defend.turret_items_ejected": "§a已弹出炮塔存储的物品",
+  "message.modularization_defend.turret_no_items": "§e炮塔中没有存储物品",
 
   "turret_type.modularization_defend.none": "未同调",
   "turret_type.modularization_defend.laser": "能量弹",

@@ -3,10 +3,13 @@ package org.lingZero.m_defend.Blocks.Multiblock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import org.lingZero.m_defend.Blocks.MultiblockFrame.BaseTurretBlock;
 import org.lingZero.m_defend.DataComponents.TurretType;
+import org.lingZero.m_defend.Register.ModBlockEntities;
 import org.lingZero.m_defend.Register.ModItems;
 
 /**
@@ -31,7 +34,29 @@ public class Turret1Block extends BaseTurretBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        org.lingZero.m_defend.util.DebugLogger.info("创建 Turret1BlockEntity at: %s", pos);
         return new Turret1BlockEntity(pos, state);
+    }
+    
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(
+            net.minecraft.world.level.Level pLevel,
+            BlockState pState,
+            BlockEntityType<T> pBlockEntityType) {
+        // 只在服务端注册 tick
+        if (pLevel.isClientSide) {
+            return null;
+        }
+        // 检查 BlockEntityType 是否匹配
+        if (pBlockEntityType == ModBlockEntities.TURRET1_BLOCK_ENTITY.get()) {
+            return (BlockEntityTicker<T>) (level, pos, state, blockEntity) -> {
+                if (blockEntity instanceof Turret1BlockEntity turret) {
+                    turret.tick();
+                }
+            };
+        }
+        return null;
     }
 
 
@@ -50,7 +75,6 @@ public class Turret1Block extends BaseTurretBlock {
      *
      * @return 炮塔类型枚举
      */
-    @Override
     public TurretType getTurretType() {
         return TurretType.LASER; // 测试炮塔1为激光炮塔
     }

@@ -6,8 +6,15 @@ import net.minecraft.world.item.Rarity;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.lingZero.m_defend.DataComponents.DefendCoreData;
+import org.lingZero.m_defend.DataComponents.TargetFilterData;
 import org.lingZero.m_defend.DataComponents.TurretCoreData;
 import org.lingZero.m_defend.Items.DefendCore;
+import org.lingZero.m_defend.Items.GuidanceControl.GuidanceControlComponent;
+import org.lingZero.m_defend.Items.TargetFilter.EntityIdFilter;
+import org.lingZero.m_defend.Items.TargetFilter.FriendlyFilter;
+import org.lingZero.m_defend.Items.TargetFilter.HostileFilter;
+import org.lingZero.m_defend.Items.TargetFilter.NeutralFilter;
+import org.lingZero.m_defend.Items.TargetFilter.PlayerFilter;
 import org.lingZero.m_defend.Items.Turret.Turret1Item;
 import org.lingZero.m_defend.Items.TurretCore.BasicTurretCore;
 import org.lingZero.m_defend.Items.TurretCore.Shu;
@@ -71,5 +78,54 @@ public class ModItems {
                     TurretRemovalTool::new,
                     new Item.Properties()
                             .stacksTo(1)
+            );
+    
+    // 制导控制组件
+    public static final DeferredItem<Item> GUIDANCE_CONTROL_COMPONENT =
+            ITEMS.registerItem("guidance_control_component",
+                    GuidanceControlComponent::new,
+                    new Item.Properties()
+                            .stacksTo(64)
+            );
+    
+    // 目标过滤器物品
+    public static final DeferredItem<Item> HOSTILE_FILTER =
+            ITEMS.registerItem("hostile_filter",
+                    properties -> new HostileFilter(properties
+                            .component(ModDataComponents.TARGET_FILTER_DATA.get(), TargetFilterData.hostile())),
+                    new Item.Properties()
+                            .stacksTo(64)
+            );
+    
+    public static final DeferredItem<Item> NEUTRAL_FILTER =
+            ITEMS.registerItem("neutral_filter",
+                    properties -> new NeutralFilter(properties
+                            .component(ModDataComponents.TARGET_FILTER_DATA.get(), TargetFilterData.neutral())),
+                    new Item.Properties()
+                            .stacksTo(64)
+            );
+    
+    public static final DeferredItem<Item> FRIENDLY_FILTER =
+            ITEMS.registerItem("friendly_filter",
+                    properties -> new FriendlyFilter(properties
+                            .component(ModDataComponents.TARGET_FILTER_DATA.get(), TargetFilterData.friendly())),
+                    new Item.Properties()
+                            .stacksTo(64)
+            );
+    
+    public static final DeferredItem<Item> PLAYER_FILTER =
+            ITEMS.registerItem("player_filter",
+                    properties -> new PlayerFilter(properties
+                            .component(ModDataComponents.TARGET_FILTER_DATA.get(), TargetFilterData.player())),
+                    new Item.Properties()
+                            .stacksTo(64)
+            );
+    
+    public static final DeferredItem<Item> ENTITY_ID_FILTER =
+            ITEMS.registerItem("entity_id_filter",
+                    properties -> new EntityIdFilter(properties
+                            .component(ModDataComponents.TARGET_FILTER_DATA.get(), TargetFilterData.entityId("minecraft:zombie"))),
+                    new Item.Properties()
+                            .stacksTo(64)
             );
 }

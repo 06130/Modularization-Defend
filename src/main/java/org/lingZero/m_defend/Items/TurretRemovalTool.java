@@ -71,4 +71,52 @@ public class TurretRemovalTool extends Item {
             }
         }
     }
+    
+    /**
+     * 处理右键点击方块事件
+     * 用于弹出炮塔存储的物品但不破坏炮塔
+     */
+    @SubscribeEvent
+    public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        Level level = event.getLevel();
+        Player player = event.getEntity();
+        BlockPos clickedPos = event.getPos();
+        ItemStack itemStack = player.getMainHandItem();
+        
+        // 检查玩家是否手持炮塔拆除工具
+        if (!itemStack.is(ModItems.TURRET_REMOVAL_TOOL.get())) {
+            return;
+        }
+        
+        // 只在服务端执行逻辑
+        if (!level.isClientSide && player != null) {
+            // 使用重定向方法获取目标坐标
+            BlockPos targetPos = AffiliateBlock.redirectIfAffiliate(level, clickedPos);
+            
+            // 检查目标方块是否为主方块
+            if (level.getBlockState(targetPos).getBlock() instanceof BaseTurretBlock turretBlock) {
+                DebugLogger.info("使用拆除工具右键主方块 at: " + targetPos);
+                
+                // 仅弹出物品，不破坏炮塔
+                boolean success = turretBlock.ejectStoredItems(level, targetPos, player);
+                
+                if (success) {
+                    // 发送成功消息给玩家
+                    player.sendSystemMessage(
+                        net.minecraft.network.chat.Component.translatable("message.modularization_defend.turret_items_ejected")
+                            .withStyle(style -> style.withColor(0x00ff00))
+                    );
+                } else {
+                    // 发送失败消息
+                    player.sendSystemMessage(
+                        net.minecraft.network.chat.Component.translatable("message.modularization_defend.turret_no_items")
+                            .withStyle(style -> style.withColor(0xffaa00))
+                    );
+                }
+                
+                // 取消事件，防止其他交互
+                event.setCanceled(true);
+            }
+        }
+    }
 }

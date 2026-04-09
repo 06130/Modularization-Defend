@@ -2,9 +2,13 @@ package org.lingZero.m_defend.Blocks.Multiblock;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.lingZero.m_defend.Blocks.MultiblockFrame.BaseTurretBlockEntity;
+import org.lingZero.m_defend.DataComponents.TargetFilterData;
+import org.lingZero.m_defend.DataComponents.TurretCoreData;
+import org.lingZero.m_defend.DataComponents.TurretType;
+import org.lingZero.m_defend.Items.TurretCore.frame.TurretCore;
 import org.lingZero.m_defend.Register.ModBlockEntities;
 import org.lingZero.m_defend.entity.EntityTrace.EntityFilter;
 import org.lingZero.m_defend.entity.EntityTrace.EntityTracker;
@@ -23,20 +27,14 @@ public class Turret1BlockEntity extends BaseTurretBlockEntity {
     }
     
     /**
-     * 服务端 tick 方法
-     * 每个游戏刻调用一次
+     * 自定义 tick 逻辑
+     * 更新实体追踪器状态
      */
     @Override
-    public void serverTick() {
-        super.serverTick();
-        
-        // 更新追踪器状态
+    protected void onCustomTick() {
         if (targetTracker != null) {
             targetTracker.update();
         }
-        
-        // 更新计时器（激活时会自动触发 onTimerTrigger）
-        updateTimer();
     }
     
     /**
@@ -45,13 +43,17 @@ public class Turret1BlockEntity extends BaseTurretBlockEntity {
      */
     @Override
     protected void onTimerTrigger() {
+        DebugLogger.debug("[Turret1] onTimerTrigger 被调用, isActive=%s", isActive());
+        
         // 检查是否激活
         if (!isActive()) {
+            DebugLogger.debug("[Turret1] 炮塔未激活，跳过攻击");
             return;
         }
         
         // 如果没有追踪器或丢失目标，尝试锁定新目标
         if (targetTracker == null || !targetTracker.isTracking()) {
+            DebugLogger.debug("[Turret1] 尝试锁定新目标...");
             lockNewTarget();
             return;
         }
@@ -67,7 +69,6 @@ public class Turret1BlockEntity extends BaseTurretBlockEntity {
                     DebugLogger.debug("炮塔射击！目标: %s, 距离: %.2f", 
                             target.getType().getDescriptionId(), 
                             Math.sqrt(distance));
-                    // TODO: 执行攻击逻辑
                     performAttack(target);
                 } else {
                     DebugLogger.debug("目标超出射程 (%.2f > 30)，释放锁定", Math.sqrt(distance));
@@ -86,6 +87,8 @@ public class Turret1BlockEntity extends BaseTurretBlockEntity {
      * 锁定新目标
      */
     private void lockNewTarget() {
+        DebugLogger.debug("[Turret1] lockNewTarget 被调用");
+        
         // 从目标选择器槽位获取过滤器
         EntityFilter filter = getTargetFilter();
         
@@ -94,6 +97,8 @@ public class Turret1BlockEntity extends BaseTurretBlockEntity {
             DebugLogger.debug("未安装目标选择器，无法锁定目标");
             return;
         }
+        
+        DebugLogger.debug("[Turret1] 开始搜索目标, 半径=30, 高度=15");
         
         targetTracker = IEntitySearch.createAndLockTracker(
                 getLevel(),
@@ -113,27 +118,35 @@ public class Turret1BlockEntity extends BaseTurretBlockEntity {
     
     /**
      * 从目标选择器槽位获取实体过滤器
-     * TODO: 后续通过 DataComponent 从物品中读取过滤器配置
+     * 使用持久化的过滤器数据创建对应的 EntityFilter
      * 
      * @return 实体过滤器，如果未安装或无效则返回 null
      */
     private EntityFilter getTargetFilter() {
-        ItemStack selectorItem = targetSelectorItem(null);
+        // 获取缓存的过滤器数据
+        TargetFilterData filterData = getCachedFilterData();
         
-        // 检查槽位是否为空
-        if (selectorItem.isEmpty()) {
+        if (filterData == null) {
             return null;
         }
         
-        // TODO: 从物品的 DataComponent 中读取过滤器配置
-        // 例如：
-        // TargetSelectorComponent component = selectorItem.get(ModDataComponents.TARGET_SELECTOR.get());
-        // if (component != null) {
-        //     return component.getFilter();
-        // }
-        
-        // 目前返回 null，使用默认过滤器
-        return null;
+        // 根据过滤器类型创建对应的 EntityFilter
+        return switch (filterData.filterType()) {
+            case HOSTILE -> org.lingZero.m_defend.entity.EntityTrace.EntityFilters.hostileMobs();
+            case NEUTRAL -> org.lingZero.m_defend.entity.EntityTrace.EntityFilters.neutralMobs();
+            case FRIENDLY -> org.lingZero.m_defend.entity.EntityTrace.EntityFilters.friendlyMobs();
+            case PLAYER -> org.lingZero.m_defend.entity.EntityTrace.EntityFilters.players();
+            case ENTITY_ID -> {
+                // 实体ID过滤器，需要从 Optional 中获取 ID
+                if (filterData.entityId().isPresent()) {
+                    yield org.lingZero.m_defend.entity.EntityTrace.EntityFilters.byEntityId(
+                        filterData.entityId().get()
+                    );
+                } else {
+                    yield null;
+                }
+            }
+        };
     }
     
     /**
@@ -142,8 +155,71 @@ public class Turret1BlockEntity extends BaseTurretBlockEntity {
      * @param target 攻击目标
      */
     private void performAttack(Entity target) {
-        // TODO: 实现具体的攻击逻辑
-        // 例如：生成投射物、造成伤害、播放音效等
+        DebugLogger.debug("[Turret1] performAttack 被调用, 目标=%s", target.getType().getDescriptionId());
+        
+        // 获取核心槽位的物品
+        var coreStack = coreItem(null);
+        
+        if (coreStack.isEmpty()) {
+            DebugLogger.debug("炮塔核心槽位为空，无法攻击");
+            return;
+        }
+        
+        DebugLogger.debug("[Turret1] 核心物品: %s", coreStack.getItem().getDescriptionId());
+
+        // 检查是否为炮塔核心
+        if (!(coreStack.getItem() instanceof TurretCore turretCore)) {
+            DebugLogger.debug("核心槽位物品不是有效的炮塔核心");
+            return;
+        }
+
+        // 获取炮塔类型（由炮塔方块决定）
+        TurretType turretType = getTurretTypeFromBlock();
+        DebugLogger.debug("[Turret1] 炮塔类型: %s", turretType.getSerializedName());
+        
+        // 获取核心数据
+        TurretCoreData coreData =
+            org.lingZero.m_defend.Items.TurretCore.frame.TurretCore.getData(coreStack);
+        
+        // 创建临时的核心数据副本，设置正确的炮塔类型
+       TurretCoreData modifiedData =
+            coreData.withTurretType(turretType);
+        
+        // 计算炮塔位置和目标位置
+        Vec3 sourcePos = getBlockPos().getCenter();
+        Vec3 targetPos = target.position();
+        
+        DebugLogger.debug("[Turret1] 准备执行攻击, 起点=%s, 目标=%s", sourcePos, targetPos);
+        
+        // 执行攻击
+        boolean success = turretCore.executeAttack(
+            getLevel(),
+            modifiedData,
+            sourcePos,
+            target instanceof net.minecraft.world.entity.LivingEntity livingTarget ? livingTarget : null,
+            targetPos
+        );
+
+        if (success) {
+            DebugLogger.debug("炮塔攻击成功");
+        } else {
+            DebugLogger.debug("炮塔攻击失败");
+        }
+    }
+    
+    /**
+     * 从炮塔方块获取炮塔类型
+     * 
+     * @return 炮塔类型
+     */
+    private org.lingZero.m_defend.DataComponents.TurretType getTurretTypeFromBlock() {
+        if (getLevel() != null) {
+            var blockState = getLevel().getBlockState(getBlockPos());
+            if (blockState.getBlock() instanceof org.lingZero.m_defend.Blocks.MultiblockFrame.BaseTurretBlock turretBlock) {
+                return turretBlock.getTurretType();
+            }
+        }
+        return org.lingZero.m_defend.DataComponents.TurretType.NONE;
     }
     
     /**

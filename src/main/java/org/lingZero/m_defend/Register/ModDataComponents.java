@@ -4,6 +4,7 @@ import net.minecraft.core.component.DataComponentType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.lingZero.m_defend.DataComponents.DefendCoreData;
+import org.lingZero.m_defend.DataComponents.TargetFilterData;
 import org.lingZero.m_defend.DataComponents.TurretCoreData;
 import org.lingZero.m_defend.ModularizationDefend;
 
@@ -32,6 +33,14 @@ public class ModDataComponents {
                     builder -> builder
                             .persistent(TurretCoreData.CODEC)
                             .networkSynchronized(TurretCoreData.STREAM_CODEC)
+            );
+    
+    // TargetFilter 目标过滤器数据组件
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<TargetFilterData>> TARGET_FILTER_DATA =
+            REGISTRAR.registerComponentType("target_filter_data",
+                    builder -> builder
+                            .persistent(TargetFilterData.CODEC)
+                            .networkSynchronized(TargetFilterData.STREAM_CODEC)
             );
 
 }

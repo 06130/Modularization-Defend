@@ -157,6 +157,22 @@ public class DebugLogger {
     }
     
     /**
+     * 检查是否已初始化
+     * @return true 如果已初始化
+     */
+    public static boolean isInitialized() {
+        return initialized;
+    }
+    
+    /**
+     * 检查调试日志是否启用（用于性能优化）
+     * @return true 如果调试日志已初始化并启用
+     */
+    public static boolean isDebugEnabled() {
+        return initialized;
+    }
+    
+    /**
      * 获取调试日志器
      * @return 调试日志器实例
      */
