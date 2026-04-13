@@ -81,13 +81,19 @@ public abstract class Projectile extends net.minecraft.world.entity.projectile.P
      * 注意：此方法会自动设置 hasImpulse = true，确保：
      * 1. Minecraft 正确同步实体位置
      * 2. 客户端能够进行平滑插值渲染
+     * 3. 初始化 deltaMovementOld 以防止第一帧闪烁
      */
     public void shoot(Vec3 direction, double speed) {
         // 计算速度向量并设置
-        setDeltaMovement(direction.normalize().scale(speed));
+        Vec3 motion = direction.normalize().scale(speed);
+        setDeltaMovement(motion);
         // 标记实体有冲量，确保Minecraft处理移动和同步
         // 这是客户端平滑插值的关键
         hasImpulse = true;
+        
+        // 关键：立即初始化 deltaMovementOld，防止第一帧插值错误
+        // 参考 Iron's Spells 第96-98行的逻辑，但提前到创建时执行
+        deltaMovementOld = motion;
     }
     
     /**
@@ -100,14 +106,13 @@ public abstract class Projectile extends net.minecraft.world.entity.projectile.P
      * - 公式：renderPos = oldPos + (newPos - oldPos) * partialTicks
      * - 无需任何额外代码，Minecraft 内置机制已处理
      * 
-     * 重要：参考 Iron's Spells 的实现，需要初始化 deltaMovementOld 以防止第一帧闪烁
+     * 重要：deltaMovementOld 已在 shoot() 中初始化，确保第一帧插值正确
      * 
      * 注意：制导逻辑已移除，子类如需制导请重写 handleHoming() 并在 tick() 中调用
      */
     @Override
     public void tick() {
         // 先调用父类tick处理基本逻辑（如重力、旋转等）
-        // 重要：这会保存当前位置到 xo/yo/zo，用于客户端插值
         super.tick();
         
         // 关键：防止第一帧闪烁（参考 Iron's Spells 第96-98行）
@@ -115,7 +120,13 @@ public abstract class Projectile extends net.minecraft.world.entity.projectile.P
             deltaMovementOld = getDeltaMovement();
         }
         
-        // 客户端只处理粒子效果等视觉相关逻辑
+        // 超时检查
+        if (tickCount > EXPIRE_TIME) {
+            discard();
+            return;
+        }
+        
+        // 客户端只处理粒子效果
         if (level().isClientSide) {
             onClientTick();
             return;
@@ -123,16 +134,10 @@ public abstract class Projectile extends net.minecraft.world.entity.projectile.P
         
         // === 服务端逻辑 ===
         
-        // 1. 超时检查：如果存活时间超过限制，销毁实体
-        if (tickCount > EXPIRE_TIME) {
-            discard();
-            return;
-        }
-        
-        // 2. 制导逻辑（可选）：子类可以重写 handleHoming() 并在此调用
+        // 制导逻辑（可选）：子类可以重写 handleHoming() 并在此调用
         // handleHoming();  // ← 默认禁用，子类按需启用
         
-        // 3. 碰撞检测：使用 ProjectileUtil 检测前方是否有实体或方块
+        // 碰撞检测：使用 ProjectileUtil 检测前方是否有实体或方块
         HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
         // 如果检测到碰撞且事件未被取消，处理命中
         if (hitresult.getType() != HitResult.Type.MISS && 
@@ -140,15 +145,16 @@ public abstract class Projectile extends net.minecraft.world.entity.projectile.P
             onHit(hitresult);
         }
         
-        // 4. 关键：手动更新位置（参考 Iron's Spells 的 travel() 方法）
-        // 这是投射物能够移动的核心代码
-        // 更新后，Minecraft 会在下一帧同步给客户端并进行插值
+        // 关键：手动更新位置（参考 Iron's Spells 的 travel() 方法）
         setPos(position().add(getDeltaMovement()));
         
-        // 5. 更新旧速度向量（参考 Iron's Spells 第111行）
+        // 更新旧速度向量（参考 Iron's Spells 第111行）
         deltaMovementOld = getDeltaMovement();
         
-        // 6. 调用子类的自定义tick逻辑
+        // 确保 hasImpulse 为 true，触发同步
+        hasImpulse = true;
+        
+        // 调用子类的自定义tick逻辑
         onServerTick();
     }
     
