@@ -68,8 +68,11 @@ public class ModularizationDefend {
         // 注册实体ID过滤器事件处理器
         NeoForge.EVENT_BUS.register(EntityIdFilter.class);
 
-        // 注册 ModConfigSpec
-        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        // 注册模块化配置（存储在 config/modularization_defend/ 子目录中）
+        modContainer.registerConfig(ModConfig.Type.COMMON, Config.GENERAL.getSpec(), "modularization_defend/general.toml");
+        modContainer.registerConfig(ModConfig.Type.COMMON, Config.TURRET.getSpec(), "modularization_defend/turret.toml");
+        modContainer.registerConfig(ModConfig.Type.COMMON, Config.DEBUG.getSpec(), "modularization_defend/debug.toml");
+        
         DebugLogger.debug("配置注册完成");
         DebugLogger.debug("===== ModularizationDefend 初始化完成 =====");
     }

@@ -7,13 +7,17 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 import org.lingZero.m_defend.Blocks.MultiblockFrame.AffiliateBlockEntity;
 import org.lingZero.m_defend.util.DebugLogger;
+
+import java.util.List;
 
 /**
  * 炮塔物品抽象基类
@@ -52,6 +56,14 @@ public abstract class BaseTurretItem extends Item {
      * @return 炮塔主方块
      */
     protected abstract Block getTurretBlock();
+
+
+    /**
+     * tooltip
+     * 子类必须实现此方法以自定义物品提示信息
+     */
+    @Override
+    public abstract void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> tooltip, TooltipFlag flag);
     
     /**
      * 获取结构宽度（X轴和Z轴的半径）

@@ -8,7 +8,6 @@
 
   "block.modularization_defend.affiliate_block": "结构方块",
 
-
   "item.modularization_defend.example_item": "Example Item",
   "item.modularization_defend.terminal_item": "模块化终端",
   "item.modularization_defend.energy_network_configuration_tool_item": "电网工具",
@@ -78,6 +77,11 @@
   "tooltip.modularization_defend.turret_core.firing_rate_level": "射速倍率：%s",
   "tooltip.modularization_defend.turret_core.type": "炮塔同调类型",
   "tooltip.modularization_defend.turret_core.camp_type": "分类",
+
+  "tooltip.modularization_defend.turret.base_fire_rate": "§b基础射速：§f%d 发/秒",
+  "tooltip.modularization_defend.turret.base_damage": "§c基础伤害：§f%d",
+  "tooltip.modularization_defend.turret.base_range": "§a射程：§f%d 格",
+  "tooltip.modularization_defend.turret.energy_capacity": "§e能量缓冲区：§f%.1f FE",
 
   "tooltip.modularization_defend.turret_removal_tool.usage": "左键拆除炮塔",
   "tooltip.modularization_defend.turret_removal_tool.usage2": "右键弹出已安装模块",

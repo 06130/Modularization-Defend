@@ -60,6 +60,11 @@
 
   "tooltip.modularization_defend.turret_removal_tool.usage": "Left-click on turret block to dismantle the entire structure",
 
+  "tooltip.modularization_defend.turret.base_fire_rate": "§bBase Fire Rate: §f%d shots/sec",
+  "tooltip.modularization_defend.turret.base_damage": "§cBase Damage: §f%d",
+  "tooltip.modularization_defend.turret.base_range": "§aRange: §f%d blocks",
+  "tooltip.modularization_defend.turret.energy_capacity": "§eEnergy Buffer: §f%.1f FE",
+
   "camp.modularization_defend.none": "Unknown",
   "camp.modularization_defend.end": "Endfield Industries",
   "camp.modularization_defend.gregtech": "GregTech",

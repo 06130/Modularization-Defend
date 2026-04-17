@@ -5,6 +5,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.lingZero.m_defend.Blocks.MultiblockFrame.BaseTurretBlockEntity;
+import org.lingZero.m_defend.Config;
 import org.lingZero.m_defend.DataComponents.TargetFilterData;
 import org.lingZero.m_defend.DataComponents.TurretCoreData;
 import org.lingZero.m_defend.DataComponents.TurretType;
@@ -22,8 +23,9 @@ public class BasicBulletTurretV1BlockEntity extends BaseTurretBlockEntity {
     
     public BasicBulletTurretV1BlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.BASIC_BULLET_TURRET_V1_BLOCK_ENTITY.get(), pos, state);
-        // 设置默认触发间隔为 20 ticks (1秒)
-        setTriggerInterval(20);
+        // 从配置读取基础射速，转换为 tick 间隔
+        int baseInterval = (int) (20.0 / Config.TURRET.basicBulletV1.fireRate.get());
+        setTriggerInterval(Math.max(1, baseInterval));
     }
     
     /**
@@ -64,14 +66,17 @@ public class BasicBulletTurretV1BlockEntity extends BaseTurretBlockEntity {
             if (target != null) {
                 double distance = target.distanceToSqr(getBlockPos().getCenter());
                 
-                // 检查目标是否在射程内（射程 30 格）
-                if (distance <= 900.0) {
+                // 检查目标是否在射程内（从配置读取）
+                int range = Config.TURRET.basicBulletV1.range.get();
+                double maxRangeSq = range * range;
+                if (distance <= maxRangeSq) {
                     DebugLogger.debug("炮塔射击！目标: %s, 距离: %.2f", 
                             target.getType().getDescriptionId(), 
                             Math.sqrt(distance));
                     performAttack(target);
                 } else {
-                    DebugLogger.debug("目标超出射程 (%.2f > 30)，释放锁定", Math.sqrt(distance));
+                    DebugLogger.debug("目标超出射程 (%.2f > %d)，释放锁定", 
+                            Math.sqrt(distance), range);
                     targetTracker.release();
                     targetTracker = null;
                 }
@@ -98,13 +103,14 @@ public class BasicBulletTurretV1BlockEntity extends BaseTurretBlockEntity {
             return;
         }
         
-        DebugLogger.debug("[BasicBulletTurretV1] 开始搜索目标, 半径=30, 高度=15");
+        DebugLogger.debug("[BasicBulletTurretV1] 开始搜索目标, 半径=%d, 高度=%d", 
+                Config.TURRET.basicBulletV1.range.get(), Config.TURRET.basicBulletV1.searchHeight.get());
         
         targetTracker = IEntitySearch.createAndLockTracker(
                 getLevel(),
                 getBlockPos(),
-                30.0,  // 搜索半径 30 格
-                15.0,  // 搜索高度 15 格
+                Config.TURRET.basicBulletV1.range.get(),           // 从配置读取搜索半径
+                Config.TURRET.basicBulletV1.searchHeight.get(),   // 从配置读取搜索高度
                 filter
         );
         

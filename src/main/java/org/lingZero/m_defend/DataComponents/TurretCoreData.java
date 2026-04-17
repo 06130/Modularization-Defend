@@ -38,7 +38,7 @@ public record TurretCoreData(
      */
     public TurretCoreData withFiringRateLevel(int level) {
         return new TurretCoreData(
-                Math.max(0, Math.min(level, Config.FIRING_RATE_LEVEL_MAX)),
+                Math.max(0, Math.min(level, Config.getFiringRateLevelMax())),
                 harmLevel,
                 energyLevel,
                 turretType,
@@ -53,7 +53,7 @@ public record TurretCoreData(
     public TurretCoreData withHarmLevel(int level) {
         return new TurretCoreData(
                 firingRateLevel,
-                Math.max(0, Math.min(level, Config.HARM_LEVEL_MAX)),
+                Math.max(0, Math.min(level, Config.getHarmLevelMax())),
                 energyLevel,
                 turretType,
                 energy,
@@ -68,7 +68,7 @@ public record TurretCoreData(
         return new TurretCoreData(
                 firingRateLevel,
                 harmLevel,
-                Math.max(0, Math.min(level, Config.ENERGY_LEVEL_MAX)),
+                Math.max(0, Math.min(level, Config.getEnergyLevelMax())),
                 turretType,
                 energy,
                 maxEnergy

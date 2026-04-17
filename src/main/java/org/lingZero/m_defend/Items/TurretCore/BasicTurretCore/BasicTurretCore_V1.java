@@ -49,8 +49,8 @@ public class BasicTurretCore_V1 extends TurretCore {
         // 计算方向向量
         Vec3 direction = targetPos.subtract(sourcePos).normalize();
         
-        // 设置速度（快速直线飞行）
-        double speed = 1;
+        // 设置速度
+        double speed = 3;
         
         // 计算基础伤害（8点）并根据伤害等级加成
         float baseDamage = 8.0F;
