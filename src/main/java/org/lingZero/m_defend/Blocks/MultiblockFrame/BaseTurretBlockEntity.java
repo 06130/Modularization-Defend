@@ -35,6 +35,9 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
     protected int triggerInterval = 20;             // 触发间隔（tick），默认1秒（20 ticks）
     protected boolean timerEnabled = true;          // 计时器是否启用
     
+    // 射击系统管理器（封装所有射击相关逻辑）
+    protected final TurretFireSystem fireSystem = new TurretFireSystem(this);
+    
     // 过滤器数据（持久化）
     @Nullable
     protected TargetFilterData cachedFilterData = null;  // 缓存的过滤器数据
@@ -110,6 +113,9 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
                 this.cachedFilterData = null;
             }
         }
+        
+        // 读取射击系统数据
+        fireSystem.readFromNBT(tag);
     }
     
     /**
@@ -134,6 +140,70 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
                     .result().orElse(new CompoundTag())
             );
         }
+        
+        // 保存射击系统数据
+        fireSystem.writeToNBT(tag);
+    }
+    
+    /**
+     * 计算实际射击间隔（应用增益系统）
+     * 子类可以重写此方法以自定义增益计算逻辑
+     * 
+     * @return 实际射击间隔（tick）
+     * 
+     * @example 示例子类实现：
+     * <pre>{@code
+     * @Override
+     * protected int getActualFireInterval() {
+     *     // 从核心槽位获取炮塔核心数据
+     *     ItemStack coreStack = getItemInSlot(SLOT_CORE);
+     *     if (coreStack.isEmpty() || !(coreStack.getItem() instanceof TurretCore)) {
+     *         return fireSystem.getBaseFireInterval(); // 没有核心时使用基础间隔
+     *     }
+     *     
+     *     TurretCoreData coreData = TurretCore.getData(coreStack);
+     *     int firingRateLevel = coreData.firingRateLevel(); // 射速等级
+     *     
+     *     // 应用增益：每级减少10%间隔
+     *     // 例如：baseInterval=40, level=3 -> 40 / (1 + 3*0.1) = 40 / 1.3 ≈ 30 ticks
+     *     double multiplier = 1.0 + (firingRateLevel * 0.1);
+     *     return Math.max(1, (int)(fireSystem.getBaseFireInterval() / multiplier));
+     * }
+     * }</pre>
+     */
+    protected int getActualFireInterval() {
+        // 默认实现：直接返回基础间隔
+        // 子类应重写此方法，从炮塔核心读取射速等级并应用增益
+        return fireSystem.getBaseFireInterval();
+    }
+    
+    /**
+     * 射击回调方法
+     * 子类必须重写此方法以实现具体的攻击逻辑
+     * 例如：发射子弹、激光、导弹等
+     */
+    protected void onFire() {
+        // 默认实现为空，子类必须重写
+        org.lingZero.m_defend.util.DebugLogger.warn("onFire() 未被子类实现");
+    }
+    
+    /**
+     * 设置目标锁定状态
+     * 优化：自动启用/禁用射击计时器
+     * 
+     * @param locked 是否锁定目标
+     */
+    public void setTargetLocked(boolean locked) {
+        fireSystem.setTargetLocked(locked);
+    }
+    
+    /**
+     * 检查是否锁定目标
+     * 
+     * @return 是否锁定目标
+     */
+    public boolean hasTarget() {
+        return fireSystem.hasTarget();
     }
     
     /**
@@ -317,6 +387,9 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
         
         // 更新计时器（激活时会自动触发 onTimerTrigger）
         updateTimer();
+        
+        // 更新射击系统（如果锁定目标且达到射击间隔则自动射击）
+        fireSystem.tick();
     }
     
     /**
@@ -404,6 +477,78 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
      */
     protected void triggerNow() {
         onTimerTrigger();
+    }
+    
+    // ==================== 射击系统 API（委托给 fireSystem）====================
+    
+    /**
+     * 获取基础射击间隔
+     * 
+     * @return 基础射击间隔（tick）
+     */
+    public int getBaseFireInterval() {
+        return fireSystem.getBaseFireInterval();
+    }
+    
+    /**
+     * 设置基础射击间隔
+     * 
+     * @param interval 新的基础射击间隔（tick），必须大于 0
+     */
+    public void setBaseFireInterval(int interval) {
+        fireSystem.setBaseFireInterval(interval);
+    }
+    
+    /**
+     * 获取实际射击间隔（应用增益后）
+     * 
+     * @return 实际射击间隔（tick）
+     */
+    public int getCurrentFireInterval() {
+        return fireSystem.getActualFireInterval();
+    }
+    
+    /**
+     * 获取上次射击的游戏刻
+     * 
+     * @return 上次射击的刻数
+     */
+    public long getLastFireTick() {
+        return fireSystem.getLastFireTick();
+    }
+    
+    /**
+     * 检查射击计时器是否启用
+     * 
+     * @return 是否启用
+     */
+    public boolean isFireTimerEnabled() {
+        return fireSystem.isFireTimerEnabled();
+    }
+    
+    /**
+     * 设置射击计时器启用状态
+     * 
+     * @param enabled 是否启用
+     */
+    public void setFireTimerEnabled(boolean enabled) {
+        fireSystem.setFireTimerEnabled(enabled);
+    }
+    
+    /**
+     * 手动重置射击计时器
+     * 将下次射击时间设置为当前时间 + 间隔
+     */
+    public void resetFireTimer() {
+        fireSystem.resetFireTimer();
+    }
+    
+    /**
+     * 立即触发一次射击
+     * 不会重置计数器，也不会检查间隔
+     */
+    protected void fireNow() {
+        fireSystem.fireNow();
     }
     
     /**

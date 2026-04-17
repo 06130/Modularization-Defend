@@ -94,7 +94,7 @@ public class AffiliateBlock extends Block implements EntityBlock {
                 // 如果重定向成功且不是原位置，说明是附属方块
                 if (!mainBlockPos.equals(pos)) {
                     DebugLogger.info("重定向到主方块并执行破坏");
-                    // 破坏主方块（会触发 Turret1Block.onRemove 从而破坏所有附属方块）
+                    // 破坏主方块（会触发 BasicBulletTurretV1Block.onRemove 从而破坏所有附属方块）
                     level.destroyBlock(mainBlockPos, true); // 掉落物品
                 } else {
                     DebugLogger.warn("无法获取主方块坐标，仅破坏当前附属方块");

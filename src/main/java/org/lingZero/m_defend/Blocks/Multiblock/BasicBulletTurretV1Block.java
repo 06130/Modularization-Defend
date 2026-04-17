@@ -13,11 +13,11 @@ import org.lingZero.m_defend.Register.ModBlockEntities;
 import org.lingZero.m_defend.Register.ModItems;
 
 /**
- * 测试炮塔1的主方块
+ * 基础子弹炮塔V1的主方块
  */
-public class Turret1Block extends BaseTurretBlock {
+public class BasicBulletTurretV1Block extends BaseTurretBlock {
 
-    public Turret1Block(Properties properties) {
+    public BasicBulletTurretV1Block(Properties properties) {
         super(properties);
     }
 
@@ -30,12 +30,11 @@ public class Turret1Block extends BaseTurretBlock {
     }
 
 
-
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        org.lingZero.m_defend.util.DebugLogger.info("创建 Turret1BlockEntity at: %s", pos);
-        return new Turret1BlockEntity(pos, state);
+        org.lingZero.m_defend.util.DebugLogger.info("创建 BasicBulletTurretV1BlockEntity at: %s", pos);
+        return new BasicBulletTurretV1BlockEntity(pos, state);
     }
     
     @Nullable
@@ -51,7 +50,7 @@ public class Turret1Block extends BaseTurretBlock {
         // 检查 BlockEntityType 是否匹配
         if (pBlockEntityType == ModBlockEntities.BASIC_BULLET_TURRET_V1_BLOCK_ENTITY.get()) {
             return (BlockEntityTicker<T>) (level, pos, state, blockEntity) -> {
-                if (blockEntity instanceof Turret1BlockEntity turret) {
+                if (blockEntity instanceof BasicBulletTurretV1BlockEntity turret) {
                     turret.tick();
                 }
             };
@@ -76,6 +75,6 @@ public class Turret1Block extends BaseTurretBlock {
      * @return 炮塔类型枚举
      */
     public TurretType getTurretType() {
-        return TurretType.LASER; // 测试炮塔1为激光炮塔
+        return TurretType.LASER; // 基础子弹炮塔V1为激光炮塔
     }
 }

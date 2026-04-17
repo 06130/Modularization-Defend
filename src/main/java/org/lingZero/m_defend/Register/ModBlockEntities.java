@@ -5,7 +5,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.lingZero.m_defend.Blocks.MultiblockFrame.AffiliateBlockEntity;
-import org.lingZero.m_defend.Blocks.Multiblock.Turret1BlockEntity;
+import org.lingZero.m_defend.Blocks.Multiblock.BasicBulletTurretV1BlockEntity;
 import org.lingZero.m_defend.Blocks.UpgradeCraftingTable;
 
 
@@ -40,12 +40,12 @@ public class ModBlockEntities {
             }
     );
     
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<Turret1BlockEntity>> BASIC_BULLET_TURRET_V1_BLOCK_ENTITY = BLOCK_ENTITIES.register(
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BasicBulletTurretV1BlockEntity>> BASIC_BULLET_TURRET_V1_BLOCK_ENTITY = BLOCK_ENTITIES.register(
             "basic_bullet_turret_v1_block_entity",
             () -> {
                 var block = ModBlocks.BASIC_BULLET_TURRET_V1_BLOCK.get();
                 return BlockEntityType.Builder.of(
-                                Turret1BlockEntity::new,
+                                BasicBulletTurretV1BlockEntity::new,
                                 block
                         )
                         .build(null);

@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.lingZero.m_defend.Blocks.MultiblockFrame.AffiliateBlock;
-import org.lingZero.m_defend.Blocks.Multiblock.Turret1Block;
+import org.lingZero.m_defend.Blocks.Multiblock.BasicBulletTurretV1Block;
 import org.lingZero.m_defend.Blocks.UpgradeCraftingTableBlock;
 import org.lingZero.m_defend.ModularizationDefend;
 
@@ -33,8 +33,8 @@ public class ModBlocks {
                     .noCollission()
             ));
     
-    public static final DeferredBlock<Turret1Block> BASIC_BULLET_TURRET_V1_BLOCK =
-            BLOCKS.register("basic_bullet_turret_v1_block", () -> new Turret1Block(BlockBehaviour.Properties.of()
+    public static final DeferredBlock<BasicBulletTurretV1Block> BASIC_BULLET_TURRET_V1_BLOCK =
+            BLOCKS.register("basic_bullet_turret_v1_block", () -> new BasicBulletTurretV1Block(BlockBehaviour.Properties.of()
                     .strength(-1, -1)
                     .sound(SoundType.METAL)
                     .requiresCorrectToolForDrops()

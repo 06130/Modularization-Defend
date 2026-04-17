@@ -15,12 +15,12 @@ import org.lingZero.m_defend.entity.EntityTrace.EntityTracker;
 import org.lingZero.m_defend.entity.EntityTrace.IEntitySearch;
 import org.lingZero.m_defend.util.DebugLogger;
 
-public class Turret1BlockEntity extends BaseTurretBlockEntity {
+public class BasicBulletTurretV1BlockEntity extends BaseTurretBlockEntity {
     
     // 实体追踪器
     private EntityTracker targetTracker;
     
-    public Turret1BlockEntity(BlockPos pos, BlockState state) {
+    public BasicBulletTurretV1BlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.BASIC_BULLET_TURRET_V1_BLOCK_ENTITY.get(), pos, state);
         // 设置默认触发间隔为 20 ticks (1秒)
         setTriggerInterval(20);
@@ -43,17 +43,17 @@ public class Turret1BlockEntity extends BaseTurretBlockEntity {
      */
     @Override
     protected void onTimerTrigger() {
-        DebugLogger.debug("[Turret1] onTimerTrigger 被调用, isActive=%s", isActive());
+        DebugLogger.debug("[BasicBulletTurretV1] onTimerTrigger 被调用, isActive=%s", isActive());
         
         // 检查是否激活
         if (!isActive()) {
-            DebugLogger.debug("[Turret1] 炮塔未激活，跳过攻击");
+            DebugLogger.debug("[BasicBulletTurretV1] 炮塔未激活，跳过攻击");
             return;
         }
         
         // 如果没有追踪器或丢失目标，尝试锁定新目标
         if (targetTracker == null || !targetTracker.isTracking()) {
-            DebugLogger.debug("[Turret1] 尝试锁定新目标...");
+            DebugLogger.debug("[BasicBulletTurretV1] 尝试锁定新目标...");
             lockNewTarget();
             return;
         }
@@ -87,7 +87,7 @@ public class Turret1BlockEntity extends BaseTurretBlockEntity {
      * 锁定新目标
      */
     private void lockNewTarget() {
-        DebugLogger.debug("[Turret1] lockNewTarget 被调用");
+        DebugLogger.debug("[BasicBulletTurretV1] lockNewTarget 被调用");
         
         // 从目标选择器槽位获取过滤器
         EntityFilter filter = getTargetFilter();
@@ -98,7 +98,7 @@ public class Turret1BlockEntity extends BaseTurretBlockEntity {
             return;
         }
         
-        DebugLogger.debug("[Turret1] 开始搜索目标, 半径=30, 高度=15");
+        DebugLogger.debug("[BasicBulletTurretV1] 开始搜索目标, 半径=30, 高度=15");
         
         targetTracker = IEntitySearch.createAndLockTracker(
                 getLevel(),
@@ -155,7 +155,7 @@ public class Turret1BlockEntity extends BaseTurretBlockEntity {
      * @param target 攻击目标
      */
     private void performAttack(Entity target) {
-        DebugLogger.debug("[Turret1] performAttack 被调用, 目标=%s", target.getType().getDescriptionId());
+        DebugLogger.debug("[BasicBulletTurretV1] performAttack 被调用, 目标=%s", target.getType().getDescriptionId());
         
         // 获取核心槽位的物品
         var coreStack = coreItem(null);
@@ -165,7 +165,7 @@ public class Turret1BlockEntity extends BaseTurretBlockEntity {
             return;
         }
         
-        DebugLogger.debug("[Turret1] 核心物品: %s", coreStack.getItem().getDescriptionId());
+        DebugLogger.debug("[BasicBulletTurretV1] 核心物品: %s", coreStack.getItem().getDescriptionId());
 
         // 检查是否为炮塔核心
         if (!(coreStack.getItem() instanceof TurretCore turretCore)) {
@@ -175,7 +175,7 @@ public class Turret1BlockEntity extends BaseTurretBlockEntity {
 
         // 获取炮塔类型（由炮塔方块决定）
         TurretType turretType = getTurretTypeFromBlock();
-        DebugLogger.debug("[Turret1] 炮塔类型: %s", turretType.getSerializedName());
+        DebugLogger.debug("[BasicBulletTurretV1] 炮塔类型: %s", turretType.getSerializedName());
         
         // 获取核心数据
         TurretCoreData coreData =
@@ -189,7 +189,7 @@ public class Turret1BlockEntity extends BaseTurretBlockEntity {
         Vec3 sourcePos = getBlockPos().getCenter();
         Vec3 targetPos = target.position();
         
-        DebugLogger.debug("[Turret1] 准备执行攻击, 起点=%s, 目标=%s", sourcePos, targetPos);
+        DebugLogger.debug("[BasicBulletTurretV1] 准备执行攻击, 起点=%s, 目标=%s", sourcePos, targetPos);
         
         // 执行攻击
         boolean success = turretCore.executeAttack(
