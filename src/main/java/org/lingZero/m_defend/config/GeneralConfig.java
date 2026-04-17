@@ -17,7 +17,6 @@ public class GeneralConfig {
     public final ModConfigSpec.IntValue heartbeatInterval;
     
     // 炮塔核心升级配置
-    public final ModConfigSpec.IntValue firingRateLevelMax;
     public final ModConfigSpec.IntValue harmLevelMax;
     public final ModConfigSpec.IntValue energyLevelMax;
     
@@ -45,10 +44,6 @@ public class GeneralConfig {
         
         // ==================== 炮塔核心升级配置 ====================
         builder.comment("炮塔核心升级配置").push("turret_core");
-        
-        firingRateLevelMax = builder
-                .comment("射速倍率上限")
-                .defineInRange("firing_rate_level_max", 16, 1, Integer.MAX_VALUE);
         
         harmLevelMax = builder
                 .comment("伤害倍率上限")

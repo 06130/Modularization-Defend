@@ -11,7 +11,6 @@ import net.minecraft.network.codec.StreamCodec;
  * 使用数据组件系统而不是NBT格式存储数据
  */
 public record DefendCoreData(
-    int firingRateLevel,      // 射速倍率等级 (0-4)
     int harmLevel,            // 伤害倍率等级 (0-4)
     int energyExpendLevel,    // 能量消耗倍率等级 (0-4)
     long energyMax,           // 能量存储上限
@@ -30,7 +29,6 @@ public record DefendCoreData(
      */
     public static DefendCoreData createDefault() {
         return new DefendCoreData(
-            0,      // 默认射速等级
             0,      // 默认伤害等级
             0,      // 默认能量消耗等级
             10000,  // 默认能量存储上限
@@ -58,7 +56,6 @@ public record DefendCoreData(
      */
     public DefendCoreData withEnergyCurrent(long newEnergy) {
         return new DefendCoreData(
-            firingRateLevel,
             harmLevel,
             energyExpendLevel,
             energyMax,
@@ -79,7 +76,6 @@ public record DefendCoreData(
      */
     public DefendCoreData withShieldActive(boolean active) {
         return new DefendCoreData(
-            firingRateLevel,
             harmLevel,
             energyExpendLevel,
             energyMax,
@@ -100,7 +96,6 @@ public record DefendCoreData(
      */
     public DefendCoreData withFortressCore(String core) {
         return new DefendCoreData(
-            firingRateLevel,
             harmLevel,
             energyExpendLevel,
             energyMax,
@@ -121,7 +116,6 @@ public record DefendCoreData(
      */
     public DefendCoreData withSpeedUpgradeLevel(int level) {
         return new DefendCoreData(
-            firingRateLevel,
             harmLevel,
             energyExpendLevel,
             energyMax,
@@ -142,7 +136,6 @@ public record DefendCoreData(
      */
     public DefendCoreData withEnergyUpgradeLevel(int level) {
         return new DefendCoreData(
-            firingRateLevel,
             harmLevel,
             energyExpendLevel,
             energyMax,
@@ -163,7 +156,6 @@ public record DefendCoreData(
      */
     public DefendCoreData withEfficiencyUpgradeLevel(int level) {
         return new DefendCoreData(
-            firingRateLevel,
             harmLevel,
             energyExpendLevel,
             energyMax,
@@ -184,7 +176,6 @@ public record DefendCoreData(
      */
     public DefendCoreData withCapacityUpgradeLevel(int level) {
         return new DefendCoreData(
-            firingRateLevel,
             harmLevel,
             energyExpendLevel,
             energyMax,
@@ -205,7 +196,6 @@ public record DefendCoreData(
      */
     public DefendCoreData withSecurityUpgradeLevel(int level) {
         return new DefendCoreData(
-            firingRateLevel,
             harmLevel,
             energyExpendLevel,
             energyMax,
@@ -225,11 +215,6 @@ public record DefendCoreData(
      * 根据升级等级计算属性值
      * 每级提供不同的加成
      */
-    public int getFiringRateMultiplier() {
-        // 速度升级：每级增加 10% 射速
-        return 100 + (speedUpgradeLevel * 10);
-    }
-    
     public int getHarmMultiplier() {
         // 伤害升级：每级增加 15% 伤害
         return 100 + (energyUpgradeLevel * 15);
@@ -250,7 +235,6 @@ public record DefendCoreData(
      * 持久化编解码器 - 用于磁盘存储
      */
     public static final Codec<DefendCoreData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.INT.fieldOf("firing_rate_level").forGetter(DefendCoreData::firingRateLevel),
             Codec.INT.fieldOf("harm_level").forGetter(DefendCoreData::harmLevel),
             Codec.INT.fieldOf("energy_expend_level").forGetter(DefendCoreData::energyExpendLevel),
             Codec.LONG.fieldOf("energy_max").forGetter(DefendCoreData::energyMax),

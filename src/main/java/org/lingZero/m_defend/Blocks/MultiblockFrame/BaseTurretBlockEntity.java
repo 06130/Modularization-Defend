@@ -150,30 +150,9 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
      * 子类可以重写此方法以自定义增益计算逻辑
      * 
      * @return 实际射击间隔（tick）
-     * 
-     * @example 示例子类实现：
-     * <pre>{@code
-     * @Override
-     * protected int getActualFireInterval() {
-     *     // 从核心槽位获取炮塔核心数据
-     *     ItemStack coreStack = getItemInSlot(SLOT_CORE);
-     *     if (coreStack.isEmpty() || !(coreStack.getItem() instanceof TurretCore)) {
-     *         return fireSystem.getBaseFireInterval(); // 没有核心时使用基础间隔
-     *     }
-     *     
-     *     TurretCoreData coreData = TurretCore.getData(coreStack);
-     *     int firingRateLevel = coreData.firingRateLevel(); // 射速等级
-     *     
-     *     // 应用增益：每级减少10%间隔
-     *     // 例如：baseInterval=40, level=3 -> 40 / (1 + 3*0.1) = 40 / 1.3 ≈ 30 ticks
-     *     double multiplier = 1.0 + (firingRateLevel * 0.1);
-     *     return Math.max(1, (int)(fireSystem.getBaseFireInterval() / multiplier));
-     * }
-     * }</pre>
      */
     protected int getActualFireInterval() {
         // 默认实现：直接返回基础间隔
-        // 子类应重写此方法，从炮塔核心读取射速等级并应用增益
         return fireSystem.getBaseFireInterval();
     }
     

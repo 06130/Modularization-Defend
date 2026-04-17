@@ -13,12 +13,6 @@ import net.minecraft.world.level.Level;
  * 
  * // 在tick中调用
  * fireSystem.tick();
- * 
- * // 重写增益计算方法
- * @Override
- * protected int getActualFireInterval() {
- *     return fireSystem.calculateFireIntervalWithBonus(baseInterval, firingRateLevel);
- * }
  * }</pre>
  */
 public class TurretFireSystem {

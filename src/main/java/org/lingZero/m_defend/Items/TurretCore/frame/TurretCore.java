@@ -158,15 +158,11 @@ public abstract class TurretCore extends Item {
 
         TurretCoreData data = getData(stack);
 
-        int firing_rate_level = data.firingRateLevel();
         int harm_level = data.harmLevel();
         int energy_level = data.energyLevel();
         TurretType type = data.turretType();
         CampType campType = getCampType();
 
-        tooltip.add(Component.translatable("tooltip.modularization_defend.turret_core.firing_rate_level", firing_rate_level)
-                .withStyle(style -> style.withColor(0xffdb00))
-        );
         tooltip.add(Component.translatable("tooltip.modularization_defend.turret_core.harm_level", harm_level)
                 .withStyle(style -> style.withColor(0x54fcfc))
         );

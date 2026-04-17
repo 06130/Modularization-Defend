@@ -44,10 +44,6 @@ public class Config {
     /**
      * 获取炮塔核心升级上限
      */
-    public static int getFiringRateLevelMax() {
-        return GENERAL.firingRateLevelMax.get();
-    }
-    
     public static int getHarmLevelMax() {
         return GENERAL.harmLevelMax.get();
     }
