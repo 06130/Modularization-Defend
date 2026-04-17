@@ -1,6 +1,5 @@
 package org.lingZero.m_defend;
 
-import com.mojang.logging.LogUtils;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -23,20 +22,18 @@ import org.lingZero.m_defend.Items.TargetFilter.EntityIdFilter;
 import org.lingZero.m_defend.Register.*;
 import org.lingZero.m_defend.util.DebugCommand;
 import org.lingZero.m_defend.util.DebugLogger;
-import org.slf4j.Logger;
 
 @Mod(ModularizationDefend.MODID)
 public class ModularizationDefend {
     public static final String MODID = "modularization_defend";
     public static final String MODVERSION = "§cA-0.1.2";
-    private static final Logger LOGGER = LogUtils.getLogger();
 
     // 模组类的构造函数是模组加载时运行的第一段代码。
     // FML 会自动识别某些参数类型（如 IEventBus 或 ModContainer）并自动传入它们
     public ModularizationDefend(IEventBus modEventBus, ModContainer modContainer) {
-        // 初始化调试日志系统
+        // 初始化调试日志系统（默认启用，DEBUG级别，等待配置加载后动态调整）
         DebugLogger.init();
-        DebugLogger.info("===== ModularizationDefend 初始化日志系统 =====");
+        DebugLogger.debug("===== ModularizationDefend 初始化日志系统 =====");
         
         // 注册通用设置方法以供模组加载时调用
         modEventBus.addListener(this::commonSetup);
@@ -58,7 +55,7 @@ public class ModularizationDefend {
         // 注册按键绑定（仅客户端）
         ModKeyBindings.register(modEventBus);
             
-        DebugLogger.info("所有注册表完成");
+        DebugLogger.debug("所有注册表完成");
     
         // 将我们自己注册到服务器和其他我们感兴趣的游戏事件中。
         // 注意，只有当我们希望*这个*类（modularization_defend）直接响应事件时才有必要这样做。
@@ -73,8 +70,8 @@ public class ModularizationDefend {
 
         // 注册 ModConfigSpec
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
-        DebugLogger.info("配置注册完成");
-        DebugLogger.info("===== ModularizationDefend 初始化完成 =====");
+        DebugLogger.debug("配置注册完成");
+        DebugLogger.debug("===== ModularizationDefend 初始化完成 =====");
     }
     private void commonSetup(final FMLCommonSetupEvent event) {
         // 一些通用设置代码
@@ -88,7 +85,7 @@ public class ModularizationDefend {
         // 为所有继承 BaseTurretBlockEntity 的方块实体注册物品处理器能力
         event.registerBlockEntity(
             Capabilities.ItemHandler.BLOCK,
-            ModBlockEntities.TURRET1_BLOCK_ENTITY.get(),
+            ModBlockEntities.BASIC_BULLET_TURRET_V1_BLOCK_ENTITY.get(),
             (blockEntity, context) -> blockEntity.getCapability(Capabilities.ItemHandler.BLOCK, context)
         );
         
@@ -99,7 +96,7 @@ public class ModularizationDefend {
             (blockEntity, context) -> blockEntity.getCapability(Capabilities.ItemHandler.BLOCK, context)
         );
         
-        DebugLogger.info("已注册炮塔方块的 ItemHandler 能力");
+        DebugLogger.debug("已注册炮塔方块的 ItemHandler 能力");
     }
     
     private void gatherData(final GatherDataEvent event) {

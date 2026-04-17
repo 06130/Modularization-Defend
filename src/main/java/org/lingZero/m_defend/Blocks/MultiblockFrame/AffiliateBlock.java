@@ -3,13 +3,20 @@ package org.lingZero.m_defend.Blocks.MultiblockFrame;
 
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lingZero.m_defend.Register.ModBlocks;
 import org.lingZero.m_defend.util.DebugLogger;
@@ -95,5 +102,83 @@ public class AffiliateBlock extends Block implements EntityBlock {
             }
             super.onRemove(state, level, pos, newState, movedByPiston);
         }
+    }
+    
+    /**
+     * 左键点击方块时的处理逻辑
+     * 重定向到主方块
+     */
+    @Override
+    protected void attack(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player) {
+        // 重定向到主方块
+        BlockPos mainBlockPos = redirectIfAffiliate(level, pos);
+        
+        // 如果重定向成功且不是原位置，调用主方块的 attack 方法
+        if (!mainBlockPos.equals(pos)) {
+            BlockState mainState = level.getBlockState(mainBlockPos);
+            if (mainState.getBlock() instanceof BaseTurretBlock) {
+                DebugLogger.debug("左键点击附属方块，重定向到主方块: " + mainBlockPos);
+                // 由于 attack 是 protected 方法，我们通过主方块实例来处理
+                // 这里暂时不处理，因为炮塔通常不需要左键交互
+                // 如果需要，可以在 BaseTurretBlock 中添加公共静态方法供调用
+            }
+        } else {
+            // 否则调用默认行为
+            super.attack(state, level, pos, player);
+        }
+    }
+    
+    /**
+     * 右键点击方块时的处理逻辑（带物品）
+     * 重定向到主方块
+     */
+    @Override
+    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, 
+                                                        @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, 
+                                                        @NotNull BlockHitResult hitResult) {
+        // 重定向到主方块
+        BlockPos mainBlockPos = redirectIfAffiliate(level, pos);
+        
+        // 如果重定向成功且不是原位置，调用主方块的交互逻辑
+        if (!mainBlockPos.equals(pos)) {
+            BlockEntity mainBE = level.getBlockEntity(mainBlockPos);
+            if (mainBE instanceof BaseTurretBlockEntity turretBE) {
+                DebugLogger.debug("右键点击附属方块（带物品），重定向到主方块: " + mainBlockPos);
+                // 使用公共静态方法处理交互
+                InteractionResult result = BaseTurretBlock.handleInteraction(turretBE, player, stack);
+                return result == InteractionResult.PASS ? 
+                    ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION : 
+                    ItemInteractionResult.sidedSuccess(level.isClientSide);
+            }
+        }
+        
+        // 否则调用默认行为
+        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+    }
+    
+    /**
+     * 右键点击方块时的处理逻辑（不带物品）
+     * 重定向到主方块
+     */
+    @Override
+    protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, 
+                                                         @NotNull Player player, @NotNull BlockHitResult hitResult) {
+        // 重定向到主方块
+        BlockPos mainBlockPos = redirectIfAffiliate(level, pos);
+        
+        // 如果重定向成功且不是原位置，调用主方块的交互逻辑
+        if (!mainBlockPos.equals(pos)) {
+            BlockEntity mainBE = level.getBlockEntity(mainBlockPos);
+            if (mainBE instanceof BaseTurretBlockEntity turretBE) {
+                DebugLogger.debug("右键点击附属方块（不带物品），重定向到主方块: " + mainBlockPos);
+                // 获取玩家手持物品
+                ItemStack heldItem = player.getItemInHand(InteractionHand.MAIN_HAND);
+                // 使用公共静态方法处理交互
+                return BaseTurretBlock.handleInteraction(turretBE, player, heldItem);
+            }
+        }
+        
+        // 否则调用默认行为
+        return super.useWithoutItem(state, level, pos, player, hitResult);
     }
 }

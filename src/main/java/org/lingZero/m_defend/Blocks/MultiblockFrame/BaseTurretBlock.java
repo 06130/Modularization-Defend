@@ -78,6 +78,24 @@ public abstract class BaseTurretBlock extends Block implements EntityBlock {
             return InteractionResult.PASS;
         }
         
+        // 委托给公共静态方法处理
+        return handleInteraction(turretBE, player, heldItem);
+    }
+    
+    /**
+     * 公共静态方法：处理炮塔交互逻辑
+     * 供 AffiliateBlock 等外部类调用
+     *
+     * @param turretBE 炮塔 BlockEntity
+     * @param player 玩家
+     * @param heldItem 手持物品
+     * @return 交互结果
+     */
+    public static InteractionResult handleInteraction(BaseTurretBlockEntity turretBE, Player player, ItemStack heldItem) {
+        if (turretBE == null || player == null || heldItem == null) {
+            return InteractionResult.PASS;
+        }
+        
         // 检查是否为炮塔核心
         if (heldItem.getItem() instanceof TurretCore) {
             return handleTurretCoreInstallation(turretBE, player, heldItem);
@@ -104,7 +122,7 @@ public abstract class BaseTurretBlock extends Block implements EntityBlock {
      * @param heldItem 手持物品
      * @return 交互结果
      */
-    private InteractionResult handleTurretCoreInstallation(BaseTurretBlockEntity turretBE, Player player, ItemStack heldItem) {
+    private static InteractionResult handleTurretCoreInstallation(BaseTurretBlockEntity turretBE, Player player, ItemStack heldItem) {
         // 获取当前核心槽的物品
         ItemStack currentCore = turretBE.coreItem(null);
         
@@ -153,7 +171,7 @@ public abstract class BaseTurretBlock extends Block implements EntityBlock {
      * @param heldItem 手持物品
      * @return 交互结果
      */
-    private InteractionResult handleFilterInstallation(BaseTurretBlockEntity turretBE, Player player, ItemStack heldItem) {
+    private static InteractionResult handleFilterInstallation(BaseTurretBlockEntity turretBE, Player player, ItemStack heldItem) {
         // 获取当前过滤器槽的物品
         ItemStack currentFilter = turretBE.targetSelectorItem(null);
         
@@ -202,7 +220,7 @@ public abstract class BaseTurretBlock extends Block implements EntityBlock {
      * @param heldItem 手持物品
      * @return 交互结果
      */
-    private InteractionResult handleGuidanceControlInstallation(BaseTurretBlockEntity turretBE, Player player, ItemStack heldItem) {
+    private static InteractionResult handleGuidanceControlInstallation(BaseTurretBlockEntity turretBE, Player player, ItemStack heldItem) {
         // 获取当前制导控制组件槽的物品
         ItemStack currentGuidance = turretBE.guidanceControlItem(null);
         

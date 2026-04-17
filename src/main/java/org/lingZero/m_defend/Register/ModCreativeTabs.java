@@ -28,11 +28,11 @@ public class ModCreativeTabs {
                                 // 方块物品
                                 output.accept(UPGRADE_CRAFTING_TABLE_ITEM.get());
                                 // 炮塔相关
-                                output.accept(TURRET_1_ITEM.get());
+                                output.accept(BASIC_BULLET_TURRET_V1.get());
                                 output.accept(TURRET_REMOVAL_TOOL.get());
                                 output.accept(GUIDANCE_CONTROL_COMPONENT.get());
                                 // 炮塔核心
-                                output.accept(TURRET_CORE.get());
+                                output.accept(TURRET_CORE_V_1.get());
                                 output.accept(TURRET_CORE_SHU.get());
                                 // 目标过滤器
                                 output.accept(HOSTILE_FILTER.get());

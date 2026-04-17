@@ -49,7 +49,7 @@ public class Turret1Block extends BaseTurretBlock {
             return null;
         }
         // 检查 BlockEntityType 是否匹配
-        if (pBlockEntityType == ModBlockEntities.TURRET1_BLOCK_ENTITY.get()) {
+        if (pBlockEntityType == ModBlockEntities.BASIC_BULLET_TURRET_V1_BLOCK_ENTITY.get()) {
             return (BlockEntityTicker<T>) (level, pos, state, blockEntity) -> {
                 if (blockEntity instanceof Turret1BlockEntity turret) {
                     turret.tick();
@@ -67,7 +67,7 @@ public class Turret1Block extends BaseTurretBlock {
      */
     @Override
     protected Item getTurretItem() {
-        return ModItems.TURRET_1_ITEM.get();
+        return ModItems.BASIC_BULLET_TURRET_V1.get();
     }
     
     /**

@@ -21,7 +21,7 @@ public class Turret1BlockEntity extends BaseTurretBlockEntity {
     private EntityTracker targetTracker;
     
     public Turret1BlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.TURRET1_BLOCK_ENTITY.get(), pos, state);
+        super(ModBlockEntities.BASIC_BULLET_TURRET_V1_BLOCK_ENTITY.get(), pos, state);
         // 设置默认触发间隔为 20 ticks (1秒)
         setTriggerInterval(20);
     }
@@ -64,7 +64,7 @@ public class Turret1BlockEntity extends BaseTurretBlockEntity {
             if (target != null) {
                 double distance = target.distanceToSqr(getBlockPos().getCenter());
                 
-                // 检查目标是否在射程内（假设射程 30 格）
+                // 检查目标是否在射程内（射程 30 格）
                 if (distance <= 900.0) {
                     DebugLogger.debug("炮塔射击！目标: %s, 距离: %.2f", 
                             target.getType().getDescriptionId(), 

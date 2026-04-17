@@ -44,6 +44,10 @@ public class Config {
     private static final ModConfigSpec.BooleanValue ENABLE_DEBUG_LOG = BUILDER
             .comment("启用调试模式")
             .define("enableDebug", true);
+    
+    private static final ModConfigSpec.ConfigValue<String> DEBUG_LOG_LEVEL = BUILDER
+            .comment("调试日志输出级别（TRACE/DEBUG/INFO/WARN/ERROR），低于此级别的日志将不会输出")
+            .define("debugLogLevel", "DEBUG");
 
     static final ModConfigSpec SPEC = BUILDER.build();
 
@@ -55,6 +59,7 @@ public class Config {
     public static int HARM_LEVEL_MAX;
     public static int ENERGY_LEVEL_MAX;
     public static boolean enableDebugLog;
+    public static String debugLogLevel;
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
@@ -70,10 +75,16 @@ public class Config {
         ENERGY_LEVEL_MAX = ENERGY_LEVEL_MAX_CONFIG.get();
         // 加载调试日志配置
         enableDebugLog = ENABLE_DEBUG_LOG.get();
+        debugLogLevel = DEBUG_LOG_LEVEL.get();
         
         // 如果未启用调试模式，关闭日志系统
         if (!enableDebugLog) {
             DebugLogger.shutdown();
+        } else {
+            // 如果启用了调试模式，更新日志级别
+            // 注意：由于配置加载晚于日志系统初始化，这里需要动态更新级别
+            DebugLogger.setLogLevel(debugLogLevel);
+            DebugLogger.info("配置已加载，日志级别: {}", debugLogLevel);
         }
     }
 

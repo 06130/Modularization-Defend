@@ -40,10 +40,10 @@ public class ModBlockEntities {
             }
     );
     
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<Turret1BlockEntity>> TURRET1_BLOCK_ENTITY = BLOCK_ENTITIES.register(
-            "turret1_block_entity",
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<Turret1BlockEntity>> BASIC_BULLET_TURRET_V1_BLOCK_ENTITY = BLOCK_ENTITIES.register(
+            "basic_bullet_turret_v1_block_entity",
             () -> {
-                var block = ModBlocks.TURRET1_BLOCK.get();
+                var block = ModBlocks.BASIC_BULLET_TURRET_V1_BLOCK.get();
                 return BlockEntityType.Builder.of(
                                 Turret1BlockEntity::new,
                                 block

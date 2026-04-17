@@ -12,7 +12,7 @@ import org.lingZero.m_defend.ldlibUI.DefendCoreGUI;
 
 /**
  * 调试命令处理器
- * 提供 /md_debug 命令用于快速测试LDLib UI
+ * 提供 /md_debug 命令
  */
 public class DebugCommand {
     

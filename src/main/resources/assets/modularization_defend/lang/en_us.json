@@ -3,6 +3,7 @@
 
   "block.modularization_defend.electricity_repeater_block": "Electricity Repeater",
   "block.modularization_defend.agreement_core_block": "Agreement Core",
+  "block.modularization_defend.basic_bullet_turret_v1_block": "Basic Bullet Turret V1",
 
   "item.modularization_defend.example_item": "Example Item",
   "item.modularization_defend.terminal_item": "Modular Terminal",
@@ -11,6 +12,7 @@
   "item.modularization_defend.agreement_core_item": "Agreement Core (Item)",
   "item.modularization_defend.portable_gun_turret_core_frame": "Portable Gun Turret Core Frame",
   "item.modularization_defend.defend_core": "Personal Defense Core",
+  "item.modularization_defend.basic_bullet_turret_v1": "Basic Bullet Turret V1",
   "item.modularization_defend.turret_removal_tool": "Turret Removal Tool",
 
   "key.modularization_defend.open_defend_core_gui": "Open Defend Core GUI",

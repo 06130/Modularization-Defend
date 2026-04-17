@@ -1,4 +1,4 @@
-package org.lingZero.m_defend.Items.TurretCore;
+package org.lingZero.m_defend.Items.TurretCore.BasicTurretCore;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
@@ -15,7 +15,7 @@ import org.lingZero.m_defend.util.DebugLogger;
 /**
  * 基础炮塔核心物品实现类
  */
-public class BasicTurretCore extends TurretCore {
+public class BasicTurretCore_V1 extends TurretCore {
 
 
     /**
@@ -50,7 +50,7 @@ public class BasicTurretCore extends TurretCore {
         Vec3 direction = targetPos.subtract(sourcePos).normalize();
         
         // 设置速度（快速直线飞行）
-        double speed = 0.5;
+        double speed = 1;
         
         // 计算基础伤害（8点）并根据伤害等级加成
         float baseDamage = 8.0F;
@@ -139,7 +139,7 @@ public class BasicTurretCore extends TurretCore {
         return false;
     }
 
-    public BasicTurretCore(Properties properties) {
+    public BasicTurretCore_V1(Properties properties) {
         super(properties);
     }
 }

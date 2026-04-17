@@ -35,10 +35,11 @@ public class TurretRemovalTool extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag flag) {
         super.appendHoverText(stack, context, tooltipComponents, flag);
-        
-        // 添加使用说明
+
         tooltipComponents.add(Component.translatable("tooltip.modularization_defend.turret_removal_tool.usage")
-                .withStyle(style -> style.withColor(0xAAAAAA)));
+                .withStyle(style -> style.withColor(0xffffff)));
+        tooltipComponents.add(Component.translatable("tooltip.modularization_defend.turret_removal_tool.usage2")
+                .withStyle(style -> style.withColor(0xffffff)));
     }
     
     /**
@@ -58,7 +59,7 @@ public class TurretRemovalTool extends Item {
         }
         
         // 只在服务端执行逻辑
-        if (!level.isClientSide && player != null) {
+        if (!level.isClientSide) {
             // 使用重定向方法获取目标坐标
             BlockPos targetPos = AffiliateBlock.redirectIfAffiliate(level, clickedPos);
             
@@ -89,7 +90,7 @@ public class TurretRemovalTool extends Item {
         }
         
         // 只在服务端执行逻辑
-        if (!level.isClientSide && player != null) {
+        if (!level.isClientSide) {
             // 使用重定向方法获取目标坐标
             BlockPos targetPos = AffiliateBlock.redirectIfAffiliate(level, clickedPos);
             

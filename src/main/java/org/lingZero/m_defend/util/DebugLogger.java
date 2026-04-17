@@ -21,6 +21,46 @@ public class DebugLogger {
     private static final Logger DEFAULT_LOGGER = LogManager.getLogger("Minecraft");
     private static Logger debugLogger;
     private static boolean initialized = false;
+    private static volatile boolean enabled = true; // 标记调试日志是否启用
+    
+    /**
+     * 日志级别枚举（按严重程度从低到高排序）
+     */
+    public enum LogLevel {
+        TRACE(0),   // 追踪级别，最详细
+        DEBUG(1),   // 调试级别
+        INFO(2),    // 信息级别
+        WARN(3),    // 警告级别
+        ERROR(4);   // 错误级别，最严重
+        
+        private final int level;
+        
+        LogLevel(int level) {
+            this.level = level;
+        }
+        
+        public int getLevel() {
+            return level;
+        }
+        
+        /**
+         * 从字符串解析日志级别
+         * @param name 级别名称
+         * @return 对应的LogLevel，如果无法识别则返回DEBUG
+         */
+        public static LogLevel fromString(String name) {
+            if (name == null) return DEBUG;
+            try {
+                return LogLevel.valueOf(name.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                DEFAULT_LOGGER.warn("未知的日志级别: {}，使用默认级别DEBUG", name);
+                return DEBUG;
+            }
+        }
+    }
+    
+    // 当前日志级别
+    private static volatile LogLevel currentLogLevel = LogLevel.DEBUG;
     
     // 日志写入队列和线程
     private static final BlockingQueue<LogEntry> LOG_QUEUE = new LinkedBlockingQueue<>();
@@ -65,7 +105,33 @@ public class DebugLogger {
      * 应在模组初始化早期调用
      */
     public static void init() {
+        init(true, "DEBUG");
+    }
+    
+    /**
+     * 初始化调试日志器（支持控制是否启用）
+     * @param enable 是否启用调试日志
+     */
+    public static void init(boolean enable) {
+        init(enable, "DEBUG");
+    }
+    
+    /**
+     * 初始化调试日志器（支持控制是否启用和日志级别）
+     * @param enable 是否启用调试日志
+     * @param logLevel 日志级别字符串（TRACE/DEBUG/INFO/WARN/ERROR）
+     */
+    public static void init(boolean enable, String logLevel) {
         if (initialized) {
+            return;
+        }
+        
+        enabled = enable;
+        currentLogLevel = LogLevel.fromString(logLevel);
+        
+        // 如果禁用，直接返回不启动任何资源
+        if (!enabled) {
+            DEFAULT_LOGGER.info("调试日志系统已禁用，跳过初始化");
             return;
         }
         
@@ -98,7 +164,7 @@ public class DebugLogger {
             DEFAULT_LOGGER.info("日志写入线程已启动：" + WRITER_THREAD.getName());
             
         } catch (Exception e) {
-            DEFAULT_LOGGER.error("调试日志系统初始化失败，将使用主日志文件", e);
+            DEFAULT_LOGGER.error("调试日志系统初始化失败", e);
             debugLogger = DEFAULT_LOGGER;
         }
     }
@@ -107,7 +173,8 @@ public class DebugLogger {
      * 将日志消息加入队列
      */
     private static void enqueueLog(String message) {
-        if (!RUNNING.get()) {
+        // 快速失败：未启用时立即返回，避免任何开销
+        if (!enabled || !RUNNING.get()) {
             return;
         }
         LOG_QUEUE.offer(new LogEntry(message));
@@ -134,6 +201,10 @@ public class DebugLogger {
             return;
         }
         
+        // 先设置enabled为false，阻止新的日志入队
+        enabled = false;
+        
+        // 停止运行标志
         RUNNING.set(false);
         WRITER_THREAD.interrupt();
         
@@ -152,8 +223,41 @@ public class DebugLogger {
         
         initialized = false;
         debugLogger = null;
+        currentLogLevel = LogLevel.DEBUG; // 重置日志级别
         
         DEFAULT_LOGGER.info("调试日志系统已关闭");
+    }
+    
+    /**
+     * 设置日志级别
+     * @param logLevel 日志级别字符串（TRACE/DEBUG/INFO/WARN/ERROR）
+     */
+    public static void setLogLevel(String logLevel) {
+        currentLogLevel = LogLevel.fromString(logLevel);
+        if (enabled && initialized) {
+            DEFAULT_LOGGER.info("调试日志级别已设置为: {}", currentLogLevel.name());
+        }
+    }
+    
+    /**
+     * 设置日志级别
+     * @param level 日志级别枚举
+     */
+    public static void setLogLevel(LogLevel level) {
+        if (level != null) {
+            currentLogLevel = level;
+            if (enabled && initialized) {
+                DEFAULT_LOGGER.info("调试日志级别已设置为: {}", currentLogLevel.name());
+            }
+        }
+    }
+    
+    /**
+     * 获取当前日志级别
+     * @return 当前日志级别
+     */
+    public static LogLevel getCurrentLogLevel() {
+        return currentLogLevel;
     }
     
     /**
@@ -169,7 +273,7 @@ public class DebugLogger {
      * @return true 如果调试日志已初始化并启用
      */
     public static boolean isDebugEnabled() {
-        return initialized;
+        return enabled && initialized;
     }
     
     /**
@@ -188,6 +292,7 @@ public class DebugLogger {
      * @param message 日志消息
      */
     public static void debug(String message) {
+        if (!enabled || currentLogLevel.level > LogLevel.DEBUG.level) return; // 快速失败，避免字符串格式化开销
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss.SSS"));
         String thread = Thread.currentThread().getName();
         enqueueLog(String.format("%s [%s] [DEBUG] ModularizationDefend_Debug - %s\n", timestamp, thread, message));
@@ -199,6 +304,7 @@ public class DebugLogger {
      * @param args 格式化参数
      */
     public static void debug(String message, Object... args) {
+        if (!enabled || currentLogLevel.level > LogLevel.DEBUG.level) return; // 快速失败，避免字符串格式化开销
         debug(String.format(message, args));
     }
     
@@ -207,6 +313,7 @@ public class DebugLogger {
      * @param message 日志消息
      */
     public static void info(String message) {
+        if (!enabled || currentLogLevel.level > LogLevel.INFO.level) return; // 快速失败，避免字符串格式化开销
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss.SSS"));
         String thread = Thread.currentThread().getName();
         enqueueLog(String.format("%s [%s] [INFO] ModularizationDefend_Debug - %s\n", timestamp, thread, message));
@@ -218,6 +325,7 @@ public class DebugLogger {
      * @param args 格式化参数
      */
     public static void info(String message, Object... args) {
+        if (!enabled || currentLogLevel.level > LogLevel.INFO.level) return; // 快速失败，避免字符串格式化开销
         info(String.format(message, args));
     }
     
@@ -226,6 +334,7 @@ public class DebugLogger {
      * @param message 日志消息
      */
     public static void warn(String message) {
+        if (!enabled || currentLogLevel.level > LogLevel.WARN.level) return; // 快速失败，避免字符串格式化开销
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss.SSS"));
         String thread = Thread.currentThread().getName();
         enqueueLog(String.format("%s [%s] [WARN] ModularizationDefend_Debug - %s\n", timestamp, thread, message));
@@ -237,6 +346,7 @@ public class DebugLogger {
      * @param args 格式化参数
      */
     public static void warn(String message, Object... args) {
+        if (!enabled || currentLogLevel.level > LogLevel.WARN.level) return; // 快速失败，避免字符串格式化开销
         warn(String.format(message, args));
     }
     
@@ -245,6 +355,7 @@ public class DebugLogger {
      * @param message 日志消息
      */
     public static void error(String message) {
+        if (!enabled || currentLogLevel.level > LogLevel.ERROR.level) return; // 快速失败，避免字符串格式化开销
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss.SSS"));
         String thread = Thread.currentThread().getName();
         enqueueLog(String.format("%s [%s] [ERROR] ModularizationDefend_Debug - %s\n", timestamp, thread, message));
@@ -256,6 +367,7 @@ public class DebugLogger {
      * @param args 格式化参数
      */
     public static void error(String message, Object... args) {
+        if (!enabled || currentLogLevel.level > LogLevel.ERROR.level) return; // 快速失败，避免字符串格式化开销
         error(String.format(message, args));
     }
     
@@ -265,6 +377,7 @@ public class DebugLogger {
      * @param throwable 异常对象
      */
     public static void error(String message, Throwable throwable) {
+        if (!enabled || currentLogLevel.level > LogLevel.ERROR.level) return; // 快速失败，避免字符串格式化开销
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss.SSS"));
         String thread = Thread.currentThread().getName();
         StringBuilder sb = new StringBuilder();
@@ -281,6 +394,7 @@ public class DebugLogger {
      * @param message 日志消息
      */
     public static void trace(String message) {
+        if (!enabled || currentLogLevel.level > LogLevel.TRACE.level) return; // 快速失败，避免字符串格式化开销
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss.SSS"));
         String thread = Thread.currentThread().getName();
         enqueueLog(String.format("%s [%s] [TRACE] ModularizationDefend_Debug - %s\n", timestamp, thread, message));
@@ -292,6 +406,7 @@ public class DebugLogger {
      * @param args 格式化参数
      */
     public static void trace(String message, Object... args) {
+        if (!enabled || currentLogLevel.level > LogLevel.TRACE.level) return; // 快速失败，避免字符串格式化开销
         trace(String.format(message, args));
     }
 }

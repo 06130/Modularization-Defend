@@ -3,6 +3,11 @@
 
   "block.modularization_defend.electricity_repeater_block": "中继塔",
   "block.modularization_defend.agreement_core_block": "协议核心",
+  
+  "block.modularization_defend.basic_bullet_turret_v1_block": "一级实弹炮塔",
+
+  "block.modularization_defend.affiliate_block": "结构方块",
+
 
   "item.modularization_defend.example_item": "Example Item",
   "item.modularization_defend.terminal_item": "模块化终端",
@@ -12,8 +17,10 @@
   "item.modularization_defend.portable_gun_turret_core_frame": "便携式炮塔核心框架",
   "item.modularization_defend.defend_core": "个人防护核心",
 
-  "item.modularization_defend.basic_turret_core": "测试炮塔核心1",
+  "item.modularization_defend.basic_turret_core_V1": "基础炮塔核心-1",
   "item.modularization_defend.turret_core_shu": "权能核心-黍-因果",
+  
+  "item.modularization_defend.basic_bullet_turret_v1": "一级实弹炮塔",
 
   "item.modularization_defend.turret_removal_tool": "炮塔拆除工具",
   
@@ -73,6 +80,7 @@
   "tooltip.modularization_defend.turret_core.camp_type": "分类",
 
   "tooltip.modularization_defend.turret_removal_tool.usage": "左键拆除炮塔",
+  "tooltip.modularization_defend.turret_removal_tool.usage2": "右键弹出已安装模块",
   
   "tooltip.modularization_defend.guidance_control.description": "用于炮塔的制导控制系统",
   

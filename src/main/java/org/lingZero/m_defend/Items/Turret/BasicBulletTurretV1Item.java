@@ -4,16 +4,16 @@ import net.minecraft.world.level.block.Block;
 import org.lingZero.m_defend.Register.ModBlocks;
 
 /**
- * 测试炮塔1的物品
+ * 一级实弹炮塔物品
  */
-public class Turret1Item extends BaseTurretItem {
+public class BasicBulletTurretV1Item extends BaseTurretItem {
     
-    public Turret1Item(Properties properties) {
+    public BasicBulletTurretV1Item(Properties properties) {
         super(properties);
     }
     
     @Override
     protected Block getTurretBlock() {
-        return ModBlocks.TURRET1_BLOCK.get();
+        return ModBlocks.BASIC_BULLET_TURRET_V1_BLOCK.get();
     }
 }

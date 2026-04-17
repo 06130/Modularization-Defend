@@ -15,8 +15,8 @@ import org.lingZero.m_defend.Items.TargetFilter.FriendlyFilter;
 import org.lingZero.m_defend.Items.TargetFilter.HostileFilter;
 import org.lingZero.m_defend.Items.TargetFilter.NeutralFilter;
 import org.lingZero.m_defend.Items.TargetFilter.PlayerFilter;
-import org.lingZero.m_defend.Items.Turret.Turret1Item;
-import org.lingZero.m_defend.Items.TurretCore.BasicTurretCore;
+import org.lingZero.m_defend.Items.Turret.BasicBulletTurretV1Item;
+import org.lingZero.m_defend.Items.TurretCore.BasicTurretCore.BasicTurretCore_V1;
 import org.lingZero.m_defend.Items.TurretCore.Shu;
 import org.lingZero.m_defend.Items.TurretRemovalTool;
 import org.lingZero.m_defend.ModularizationDefend;
@@ -46,17 +46,17 @@ public class ModItems {
                             .stacksTo(1)
                             .rarity(Rarity.EPIC)
             );
-    public static final DeferredItem<Item> TURRET_1_ITEM =
-            ITEMS.registerItem("turret_1_item",
-                    Turret1Item::new,
+    public static final DeferredItem<Item> BASIC_BULLET_TURRET_V1 =
+            ITEMS.registerItem("basic_bullet_turret_v1",
+                    BasicBulletTurretV1Item::new,
                     new Item.Properties()
                             .stacksTo(64)
             );
 
     //TurretCore
-    public static final DeferredItem<Item> TURRET_CORE =
-            ITEMS.registerItem("basic_turret_core",
-                     properties -> new BasicTurretCore(properties
+    public static final DeferredItem<Item> TURRET_CORE_V_1 =
+            ITEMS.registerItem("basic_turret_core_V1",
+                     properties -> new BasicTurretCore_V1(properties
                           .component(ModDataComponents.TURRET_CORE_DATA.get(), TurretCoreData.createDefault())),
                      new Item.Properties()
                          .stacksTo(1)
