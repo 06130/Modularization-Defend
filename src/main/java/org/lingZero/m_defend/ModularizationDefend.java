@@ -17,6 +17,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.lingZero.m_defend.Blocks.MultiblockFrame.AffiliateBlock;
+import org.lingZero.m_defend.Client.Render.LaserProjectileRenderer;
 import org.lingZero.m_defend.Data.ModBlockTagsProvider;
 import org.lingZero.m_defend.Items.TargetFilter.EntityIdFilter;
 import org.lingZero.m_defend.Register.*;
@@ -142,7 +143,7 @@ public class ModularizationDefend {
             // 注册简化激光子弹实体渲染器
             event.registerEntityRenderer(
                 ModEntities.SIMPLE_LASER_PROJECTILE.get(),
-                org.lingZero.m_defend.Client.Render.SimpleLaserProjectileRenderer::new
+                LaserProjectileRenderer::new
             );
         }
         

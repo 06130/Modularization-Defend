@@ -2,8 +2,9 @@ package org.lingZero.m_defend.Blocks.Multiblock;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
+import org.lingZero.m_defend.Blocks.MultiblockFrame.BaseTurretBlock;
 import org.lingZero.m_defend.Blocks.MultiblockFrame.BaseTurretBlockEntity;
 import org.lingZero.m_defend.Config;
 import org.lingZero.m_defend.DataComponents.TargetFilterData;
@@ -11,270 +12,198 @@ import org.lingZero.m_defend.DataComponents.TurretCoreData;
 import org.lingZero.m_defend.DataComponents.TurretType;
 import org.lingZero.m_defend.Items.TurretCore.frame.TurretCore;
 import org.lingZero.m_defend.Register.ModBlockEntities;
-import org.lingZero.m_defend.entity.EntityTrace.EntityFilter;
-import org.lingZero.m_defend.entity.EntityTrace.EntityTracker;
-import org.lingZero.m_defend.entity.EntityTrace.IEntitySearch;
-import org.lingZero.m_defend.util.DebugLogger;
+import org.lingZero.m_defend.entity.EntityTrace.*;
 
 public class BasicBulletTurretV1BlockEntity extends BaseTurretBlockEntity {
     
     // 实体追踪器
     private EntityTracker targetTracker;
     
+    // 重新搜索冷却（tick）
+    private long lastSearchTick = 0;
+    private static final int SEARCH_COOLDOWN = 40; // 2秒
+    
     public BasicBulletTurretV1BlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.BASIC_BULLET_TURRET_V1_BLOCK_ENTITY.get(), pos, state);
         // 从配置读取基础射速，转换为 tick 间隔
         int baseInterval = (int) (20.0 / Config.TURRET.basicBulletV1.fireRate.get());
-        setTriggerInterval(Math.max(1, baseInterval));
+        fireSystem.setBaseFireInterval(Math.max(1, baseInterval));
     }
     
     /**
      * 自定义 tick 逻辑
-     * 更新实体追踪器状态
+     * 更新实体追踪器状态，并在目标丢失时自动重锁定（仅一次）
      */
     @Override
     protected void onCustomTick() {
-        if (targetTracker != null) {
-            targetTracker.update();
-        }
-    }
-    
-    /**
-     * 计时器触发回调
-     * 根据 triggerInterval 设置的间隔自动调用
-     */
-    @Override
-    protected void onTimerTrigger() {
-        DebugLogger.debug("[BasicBulletTurretV1] onTimerTrigger 被调用, isActive=%s", isActive());
-        
-        // 检查是否激活
-        if (!isActive()) {
-            DebugLogger.debug("[BasicBulletTurretV1] 炮塔未激活，跳过攻击");
+        if (targetTracker == null) {
             return;
         }
         
-        // 如果没有追踪器或丢失目标，尝试锁定新目标
-        if (targetTracker == null || !targetTracker.isTracking()) {
-            DebugLogger.debug("[BasicBulletTurretV1] 尝试锁定新目标...");
-            lockNewTarget();
-            return;
-        }
+        IEntityTracker.TrackingState state = targetTracker.update();
         
-        // 如果正在追踪目标，执行攻击
-        if (targetTracker.isTracking()) {
-            Entity target = targetTracker.getTrackedEntity();
-            if (target != null) {
-                double distance = target.distanceToSqr(getBlockPos().getCenter());
-                
-                // 检查目标是否在射程内（从配置读取）
-                int range = Config.TURRET.basicBulletV1.range.get();
-                double maxRangeSq = range * range;
-                if (distance <= maxRangeSq) {
-                    DebugLogger.debug("炮塔射击！目标: %s, 距离: %.2f", 
-                            target.getType().getDescriptionId(), 
-                            Math.sqrt(distance));
-                    performAttack(target);
-                } else {
-                    DebugLogger.debug("目标超出射程 (%.2f > %d)，释放锁定", 
-                            Math.sqrt(distance), range);
-                    targetTracker.release();
-                    targetTracker = null;
-                }
-            } else {
-                // 实体引用丢失，重新搜索
-                DebugLogger.debug("目标实体引用丢失，重新搜索...");
+        // 如果目标丢失，立即尝试重新锁定（只触发一次）
+        if (state == IEntityTracker.TrackingState.LOST) {
+            boolean relocked = targetTracker.tryLock();
+            
+            // 如果重新锁定失败，释放追踪器，等待下次计时器触发时重新搜索
+            if (!relocked) {
+                targetTracker.release();
                 targetTracker = null;
             }
         }
     }
     
     /**
-     * 锁定新目标
+     * 计时器触发回调
+     * 负责目标搜索和攻击执行
      */
-    private void lockNewTarget() {
-        DebugLogger.debug("[BasicBulletTurretV1] lockNewTarget 被调用");
-        
-        // 从目标选择器槽位获取过滤器
-        EntityFilter filter = getTargetFilter();
-        
-        // 如果没有安装过滤器，不锁定任何目标
-        if (filter == null) {
-            DebugLogger.debug("未安装目标选择器，无法锁定目标");
+    @Override
+    protected void onTimerTrigger() {
+        if (!isActive()) {
             return;
         }
         
-        DebugLogger.debug("[BasicBulletTurretV1] 开始搜索目标, 半径=%d, 高度=%d", 
-                Config.TURRET.basicBulletV1.range.get(), Config.TURRET.basicBulletV1.searchHeight.get());
+        // 如果没有追踪器，尝试锁定新目标（自动锁定跟随计时器）
+        if (targetTracker == null) {
+            tryLockNewTarget();
+            return;
+        }
+        
+        // 如果未追踪到目标，尝试重新搜索
+        if (!targetTracker.isTracking()) {
+            tryLockNewTarget();
+            return;
+        }
+        
+        // 执行攻击
+        Entity target = targetTracker.getTrackedEntity();
+        if (target != null) {
+            double distance = target.distanceToSqr(getBlockPos().getCenter());
+            int range = Config.TURRET.basicBulletV1.range.get();
+            
+            if (distance <= range * range) {
+                performAttack(target);
+            } else {
+                // 目标超出射程，释放锁定
+                targetTracker.release();
+                targetTracker = null;
+            }
+        } else {
+            // 实体引用丢失
+            targetTracker = null;
+        }
+    }
+    
+    /**
+     * 尝试锁定新目标（带冷却检查）
+     */
+    private void tryLockNewTarget() {
+        long currentTick = level != null ? level.getGameTime() : 0;
+        if (currentTick - lastSearchTick < SEARCH_COOLDOWN) {
+            return;
+        }
+        
+        EntityFilter filter = getTargetFilter();
+        if (filter == null) {
+            return;
+        }
         
         targetTracker = IEntitySearch.createAndLockTracker(
                 getLevel(),
                 getBlockPos(),
-                Config.TURRET.basicBulletV1.range.get(),           // 从配置读取搜索半径
-                Config.TURRET.basicBulletV1.searchHeight.get(),   // 从配置读取搜索高度
+                Config.TURRET.basicBulletV1.range.get(),
+                Config.TURRET.basicBulletV1.searchHeight.get(),
                 filter
         );
         
-        if (targetTracker.isTracking()) {
-            DebugLogger.info("炮塔锁定新目标: %s", 
-                    targetTracker.getTrackedEntity().getType().getDescriptionId());
-        } else {
-            DebugLogger.debug("未找到可锁定的目标");
+        if (level != null) {
+            lastSearchTick = level.getGameTime();
+        }
+        
+        if (targetTracker != null) {
+            targetTracker.onTargetLost(this::onTargetLost);
         }
     }
     
     /**
      * 从目标选择器槽位获取实体过滤器
-     * 使用持久化的过滤器数据创建对应的 EntityFilter
-     * 
-     * @return 实体过滤器，如果未安装或无效则返回 null
      */
     private EntityFilter getTargetFilter() {
-        // 获取缓存的过滤器数据
         TargetFilterData filterData = getCachedFilterData();
-        
         if (filterData == null) {
             return null;
         }
         
-        // 根据过滤器类型创建对应的 EntityFilter
         return switch (filterData.filterType()) {
-            case HOSTILE -> org.lingZero.m_defend.entity.EntityTrace.EntityFilters.hostileMobs();
-            case NEUTRAL -> org.lingZero.m_defend.entity.EntityTrace.EntityFilters.neutralMobs();
-            case FRIENDLY -> org.lingZero.m_defend.entity.EntityTrace.EntityFilters.friendlyMobs();
-            case PLAYER -> org.lingZero.m_defend.entity.EntityTrace.EntityFilters.players();
-            case ENTITY_ID -> {
-                // 实体ID过滤器，需要从 Optional 中获取 ID
-                if (filterData.entityId().isPresent()) {
-                    yield org.lingZero.m_defend.entity.EntityTrace.EntityFilters.byEntityId(
-                        filterData.entityId().get()
-                    );
-                } else {
-                    yield null;
-                }
-            }
+            case HOSTILE -> EntityFilters.hostileMobs();
+            case NEUTRAL -> EntityFilters.neutralMobs();
+            case FRIENDLY -> EntityFilters.friendlyMobs();
+            case PLAYER -> EntityFilters.players();
+            case ENTITY_ID -> filterData.entityId()
+                    .map(EntityFilters::byEntityId)
+                    .orElse(null);
         };
     }
     
     /**
      * 执行攻击逻辑
-     * 
-     * @param target 攻击目标
      */
     private void performAttack(Entity target) {
-        DebugLogger.debug("[BasicBulletTurretV1] performAttack 被调用, 目标=%s", target.getType().getDescriptionId());
-        
-        // 获取核心槽位的物品
         var coreStack = coreItem(null);
-        
-        if (coreStack.isEmpty()) {
-            DebugLogger.debug("炮塔核心槽位为空，无法攻击");
-            return;
-        }
-        
-        DebugLogger.debug("[BasicBulletTurretV1] 核心物品: %s", coreStack.getItem().getDescriptionId());
-
-        // 检查是否为炮塔核心
-        if (!(coreStack.getItem() instanceof TurretCore turretCore)) {
-            DebugLogger.debug("核心槽位物品不是有效的炮塔核心");
+        if (coreStack.isEmpty() || !(coreStack.getItem() instanceof TurretCore turretCore)) {
             return;
         }
 
-        // 获取炮塔类型（由炮塔方块决定）
         TurretType turretType = getTurretTypeFromBlock();
-        DebugLogger.debug("[BasicBulletTurretV1] 炮塔类型: %s", turretType.getSerializedName());
+        TurretCoreData modifiedData = TurretCore.getData(coreStack).withTurretType(turretType);
         
-        // 获取核心数据
-        TurretCoreData coreData =
-            org.lingZero.m_defend.Items.TurretCore.frame.TurretCore.getData(coreStack);
-        
-        // 创建临时的核心数据副本，设置正确的炮塔类型
-       TurretCoreData modifiedData =
-            coreData.withTurretType(turretType);
-        
-        // 计算炮塔位置和目标位置
-        Vec3 sourcePos = getBlockPos().getCenter();
-        Vec3 targetPos = target.position();
-        
-        DebugLogger.debug("[BasicBulletTurretV1] 准备执行攻击, 起点=%s, 目标=%s", sourcePos, targetPos);
-        
-        // 执行攻击
-        boolean success = turretCore.executeAttack(
+        turretCore.executeAttack(
             getLevel(),
             modifiedData,
-            sourcePos,
-            target instanceof net.minecraft.world.entity.LivingEntity livingTarget ? livingTarget : null,
-            targetPos
+            getBlockPos().getCenter(),
+            target instanceof LivingEntity livingTarget ? livingTarget : null,
+            target.position()
         );
-
-        if (success) {
-            DebugLogger.debug("炮塔攻击成功");
-        } else {
-            DebugLogger.debug("炮塔攻击失败");
-        }
     }
     
     /**
      * 从炮塔方块获取炮塔类型
-     * 
-     * @return 炮塔类型
      */
-    private org.lingZero.m_defend.DataComponents.TurretType getTurretTypeFromBlock() {
+    private TurretType getTurretTypeFromBlock() {
         if (getLevel() != null) {
             var blockState = getLevel().getBlockState(getBlockPos());
-            if (blockState.getBlock() instanceof org.lingZero.m_defend.Blocks.MultiblockFrame.BaseTurretBlock turretBlock) {
+            if (blockState.getBlock() instanceof BaseTurretBlock turretBlock) {
                 return turretBlock.getTurretType();
             }
         }
-        return org.lingZero.m_defend.DataComponents.TurretType.NONE;
+        return TurretType.LASER;
     }
     
     /**
-     * 设置射击频率
-     * 
-     * @param shotsPerSecond 每秒射击次数
+     * 重写激活状态变化回调
      */
-    public void setShotsPerSecond(double shotsPerSecond) {
-        if (shotsPerSecond > 0) {
-            // 将每秒射击次数转换为 tick 间隔
-            int interval = (int) (20.0 / shotsPerSecond);
-            setTriggerInterval(Math.max(1, interval)); // 至少 1 tick
-            DebugLogger.info("设置射击频率: %.1f 发/秒 (间隔: %d ticks)", 
-                    shotsPerSecond, interval);
-        }
-    }
-    
-    /**
-     * 获取当前射击频率
-     * 
-     * @return 每秒射击次数
-     */
-    public double getShotsPerSecond() {
-        return 20.0 / getTriggerInterval();
-    }
-    
-    /**
-     * 手动开火（立即触发一次攻击）
-     */
-    public void manualFire() {
-        if (isActive() && targetTracker != null && targetTracker.isTracking()) {
-            Entity target = targetTracker.getTrackedEntity();
-            if (target != null) {
-                DebugLogger.info("手动开火！目标: %s", 
-                        target.getType().getDescriptionId());
-                performAttack(target);
+    @Override
+    protected void onActiveStateChanged(boolean active) {
+        super.onActiveStateChanged(active);
+        
+        if (!active) {
+            // 停用时释放追踪器
+            if (targetTracker != null) {
+                targetTracker.release();
+                targetTracker = null;
             }
         }
+        // 不在这里自动搜索，等待计时器触发时再搜索
     }
     
     /**
-     * 停止追踪并重置
+     * 重写目标丢失回调处理
+     * 注意：不要将 targetTracker 设为 null，让 tryLock() 处理状态转换
      */
-    public void stopAndReset() {
-        if (targetTracker != null) {
-            targetTracker.release();
-            targetTracker = null;
-        }
-        resetTimer();
-        DebugLogger.info("炮塔已停止并重置");
+    @Override
+    protected void onTargetLost(String reason) {
+        fireSystem.releaseTarget();
+        // 不调用 targetTracker = null，保持追踪器对象以便重新锁定
     }
 }

@@ -22,23 +22,23 @@ import org.lingZero.m_defend.util.DebugLogger;
 import java.util.UUID;
 
 /**
- * 基础投射物实体 - 完全参考 Iron's Spells 'n Spellbooks 的实现
+ * 基础投射物实体 <p>
  * 
- * 关键特性：
- * 1. 调用 super.tick() 处理基本逻辑
- * 2. 手动调用 setPos(position().add(getDeltaMovement())) 更新位置
- * 3. 使用 ProjectileUtil.getHitResultOnMoveVector 进行碰撞检测
- * 4. 自动支持客户端平滑插值（基于 Minecraft 内置机制）
- * 
- * 使用说明：
- * - 子类只需重写 onHitEntity() 和 onHitBlock() 方法处理命中逻辑
- * - 通过 shoot() 方法设置初始速度和方向
- * - 可选：通过 setHomingTarget() 设置制导目标
- * 
- * 平滑移动机制：
- * - 服务端：每tick更新位置和速度，保存旧位置到 xo/yo/zo
- * - 客户端：Minecraft自动在旧位置和新位置之间插值渲染
- * - 无需额外代码，基类已处理所有细节
+ * 关键特性：<p>
+ * 1. 调用 super.tick() 处理基本逻辑<p>
+ * 2. 手动调用 setPos(position().add(getDeltaMovement())) 更新位置<p>
+ * 3. 使用 ProjectileUtil.getHitResultOnMoveVector 进行碰撞检测<p>
+ * 4. 自动支持客户端平滑插值（基于 Minecraft 内置机制）<p>
+ * <p>
+ * 使用说明：<p>
+ * - 子类只需重写 onHitEntity() 和 onHitBlock() 方法处理命中逻辑<p>
+ * - 通过 shoot() 方法设置初始速度和方向<p>
+ * - 可选：通过 setHomingTarget() 设置制导目标<p>
+ * <p>
+ * 平滑移动机制：<p>
+ * - 服务端：每tick更新位置和速度，保存旧位置到 xo/yo/zo<p>
+ * - 客户端：Minecraft自动在旧位置和新位置之间插值渲染<p>
+ * - 无需额外代码，基类已处理所有细节<p>
  */
 public abstract class Projectile extends net.minecraft.world.entity.projectile.Projectile implements IEntityWithComplexSpawn {
 
@@ -58,13 +58,13 @@ public abstract class Projectile extends net.minecraft.world.entity.projectile.P
     
     /**
      * 旧的速度向量，用于客户端插值
-     * 参考 Iron's Spells 的实现，防止第一帧闪烁
+     * 防止第一帧闪烁
      */
     protected Vec3 deltaMovementOld = Vec3.ZERO;
     
     /**
      * 构造函数
-     * 
+     *
      * @param entityType 实体类型
      * @param level 世界实例
      */
@@ -92,7 +92,6 @@ public abstract class Projectile extends net.minecraft.world.entity.projectile.P
         hasImpulse = true;
         
         // 关键：立即初始化 deltaMovementOld，防止第一帧插值错误
-        // 参考 Iron's Spells 第96-98行的逻辑，但提前到创建时执行
         deltaMovementOld = motion;
     }
     

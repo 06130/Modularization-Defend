@@ -1,6 +1,7 @@
 package org.lingZero.m_defend.entity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -9,25 +10,44 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.lingZero.m_defend.ModularizationDefend;
 import org.lingZero.m_defend.util.DebugLogger;
+import org.lingZero.m_defend.util.FxHelper;
 
 /**
- * 激光弹 - 简化版本，完全参考 Iron's Spells 实现
- * 
- * 特性：
- * - 直线飞行，无制导（性能优化）
- * - 击中实体或方块后立即销毁
- * - 使用魔法伤害类型
- * 
- * 注意：继承自 Projectile，自动获得平滑移动支持
+ * 激光弹
+ * <p>
+ * 特性：<p>
+ * - 直线飞行，无制导（性能优化）<p>
+ * - 击中实体或方块后立即销毁<p>
+ * - 使用魔法伤害类型<p>
+ * - 客户端自动绑定 Photon FX 特效<p>
+ * <p>
+ * 注意：继承自 Projectile，自动获得平滑移动支持<p>
  */
 public class LaserProjectile extends Projectile {
     
     /** 激光弹默认伤害值 */
     private static final float LASER_DAMAGE = 8.0f;
     
+    /** Photon FX 资源位置 */
+    private static final ResourceLocation FX_LOCATION = 
+        ResourceLocation.fromNamespaceAndPath(ModularizationDefend.MODID, "LaserProjectile");
+    
     public LaserProjectile(EntityType<? extends LaserProjectile> entityType, Level level) {
         super(entityType, level);
+    }
+    
+    /**
+     * 客户端tick回调<p>
+     * 在此处绑定 Photon FX 特效（仅在首次生成时）
+     */
+    @Override
+    protected void onClientTick() {
+        // 在首个tick绑定FX特效
+        if (tickCount == 1) {
+            FxHelper.bindEntityFx(this, FX_LOCATION);
+        }
     }
     
     /**

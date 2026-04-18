@@ -41,11 +41,7 @@ public class EntitySearchUtil {
             double radius,
             double height,
             @NotNull EntityFilter filter) {
-        
-        if (level.isClientSide()) {
-            DebugLogger.warn("在客户端调用实体查找方法，这可能导致不一致的结果");
-        }
-        
+
         // 计算搜索区域的边界框
         AABB searchBox = createSearchBox(centerPos, radius, height);
         

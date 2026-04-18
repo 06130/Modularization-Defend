@@ -25,7 +25,6 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
 
     // 默认TAG条目：是否激活
     protected boolean isActive = false;
-    
 
     // NeoForge物品处理器（3个槽位）
     protected final IItemHandler itemHandler = createItemHandler();
@@ -168,9 +167,6 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
     
     /**
      * 设置目标锁定状态
-     * 优化：自动启用/禁用射击计时器
-     * 
-     * @param locked 是否锁定目标
      */
     public void setTargetLocked(boolean locked) {
         fireSystem.setTargetLocked(locked);
@@ -178,8 +174,6 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
     
     /**
      * 检查是否锁定目标
-     * 
-     * @return 是否锁定目标
      */
     public boolean hasTarget() {
         return fireSystem.hasTarget();
@@ -187,8 +181,6 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
     
     /**
      * 获取激活状态
-     *
-     * @return 是否激活
      */
     public boolean isActive() {
         return isActive;
@@ -196,12 +188,31 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
     
     /**
      * 设置激活状态
-     *
-     * @param active 激活状态
+     * 当激活状态变化时，自动处理所有相关功能的启停
      */
     public void setActive(boolean active) {
+        if (this.isActive == active) {
+            return;
+        }
+        
         this.isActive = active;
+        
+        if (active) {
+            fireSystem.setFireTimerEnabled(true);
+        } else {
+            fireSystem.releaseTarget();
+        }
+        
+        onActiveStateChanged(active);
         setChanged();
+    }
+    
+    /**
+     * 激活状态变化回调
+     * 子类可以重写此方法以在激活/停用时执行自定义逻辑
+     */
+    protected void onActiveStateChanged(boolean active) {
+        // 默认实现为空
     }
     
     /**
@@ -288,7 +299,7 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
             }
         }
         
-        // 根据检查结果设置激活状态
+        // 根据检查结果设置激活状态（setActive 会自动处理相关功能的启停）
         if (allSlotsFilled && !isActive) {
             setActive(true);
             org.lingZero.m_defend.util.DebugLogger.info("炮塔已自动激活（所有槽位已安装）");
@@ -300,7 +311,6 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
     
     /**
      * 更新过滤器数据缓存
-     * 从目标选择器槽的物品中读取过滤器配置并缓存
      */
     protected void updateFilterDataCache() {
         ItemStack filterItem = getItemInSlot(SLOT_TARGET_SELECTOR);
@@ -310,23 +320,18 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
             return;
         }
         
-        // 从物品的 DataComponent 中读取过滤器数据
         TargetFilterData data = filterItem.get(
             org.lingZero.m_defend.Register.ModDataComponents.TARGET_FILTER_DATA.get()
         );
         
+        cachedFilterData = data;
         if (data != null) {
-            cachedFilterData = data;
-            setChanged();  // 标记数据已更改，需要保存
-        } else {
-            cachedFilterData = null;
+            setChanged();
         }
     }
     
     /**
      * 获取缓存的过滤器数据
-     * 
-     * @return 过滤器数据，如果未安装则返回 null
      */
     @Nullable
     public TargetFilterData getCachedFilterData() {
@@ -335,8 +340,6 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
     
     /**
      * 更新计时器
-     * 应在子类的 serverTick() 方法中调用
-     * 使用世界游戏刻进行计时，达到间隔时自动触发 onTimerTrigger()
      */
     protected void updateTimer() {
         if (!timerEnabled || !isActive || level == null) {
@@ -344,36 +347,27 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
         }
         
         long currentTick = level.getGameTime();
-        
-        // 检查是否达到触发间隔
         if (currentTick - lastTriggerTick >= triggerInterval) {
-            lastTriggerTick = currentTick;  // 更新上次触发时间
-            onTimerTrigger();               // 触发回调
+            lastTriggerTick = currentTick;
+            onTimerTrigger();
         }
     }
 
     /**
      * BlockEntity tick 方法
-     * 每个游戏刻调用一次，由 Minecraft 自动调用
      */
     public void tick() {
         if (level == null || level.isClientSide) {
             return;
         }
         
-        // 调用子类的自定义 tick 逻辑
         onCustomTick();
-        
-        // 更新计时器（激活时会自动触发 onTimerTrigger）
         updateTimer();
-        
-        // 更新射击系统（如果锁定目标且达到射击间隔则自动射击）
         fireSystem.tick();
     }
     
     /**
      * 自定义 tick 逻辑
-     * 子类可以重写此方法添加额外的 tick 处理
      */
     protected void onCustomTick() {
         // 默认实现为空
@@ -381,89 +375,24 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
 
     /**
      * 计时器触发回调
-     * 子类应重写此方法以实现定时触发的逻辑
-     * 例如：炮塔射击、扫描目标、发射弹药等
      */
     protected void onTimerTrigger() {
-        // 默认实现为空，子类应重写此方法
+        // 默认实现为空
     }
     
     /**
-     * 获取上次触发的游戏刻
-     *
-     * @return 上次触发的刻数
+     * 目标丢失回调处理
      */
-    public long getLastTriggerTick() {
-        return lastTriggerTick;
+    protected void onTargetLost(String reason) {
+        fireSystem.releaseTarget();
     }
+
+
     
-    /**
-     * 获取触发间隔（tick）
-     *
-     * @return 触发间隔
-     */
-    public int getTriggerInterval() {
-        return triggerInterval;
-    }
-    
-    /**
-     * 设置触发间隔
-     *
-     * @param interval 新的触发间隔（tick），必须大于 0
-     */
-    public void setTriggerInterval(int interval) {
-        if (interval > 0) {
-            this.triggerInterval = interval;
-            setChanged();
-        }
-    }
-    
-    /**
-     * 检查计时器是否启用
-     *
-     * @return 是否启用
-     */
-    public boolean isTimerEnabled() {
-        return timerEnabled;
-    }
-    
-    /**
-     * 设置计时器启用状态
-     *
-     * @param enabled 是否启用
-     */
-    public void setTimerEnabled(boolean enabled) {
-        this.timerEnabled = enabled;
-        if (!enabled && level != null) {
-            lastTriggerTick = level.getGameTime(); // 禁用时重置为当前时间
-        }
-        setChanged();
-    }
-    
-    /**
-     * 手动重置计时器
-     * 将下次触发时间设置为当前时间 + 间隔
-     */
-    public void resetTimer() {
-        if (level != null) {
-            lastTriggerTick = level.getGameTime();
-        }
-    }
-    
-    /**
-     * 立即触发一次计时器事件
-     * 不会重置计数器
-     */
-    protected void triggerNow() {
-        onTimerTrigger();
-    }
-    
-    // ==================== 射击系统 API（委托给 fireSystem）====================
+    // ==================== 射击系统 API ====================
     
     /**
      * 获取基础射击间隔
-     * 
-     * @return 基础射击间隔（tick）
      */
     public int getBaseFireInterval() {
         return fireSystem.getBaseFireInterval();
@@ -471,35 +400,20 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
     
     /**
      * 设置基础射击间隔
-     * 
-     * @param interval 新的基础射击间隔（tick），必须大于 0
      */
     public void setBaseFireInterval(int interval) {
         fireSystem.setBaseFireInterval(interval);
     }
     
     /**
-     * 获取实际射击间隔（应用增益后）
-     * 
-     * @return 实际射击间隔（tick）
+     * 获取实际射击间隔
      */
     public int getCurrentFireInterval() {
         return fireSystem.getActualFireInterval();
     }
     
     /**
-     * 获取上次射击的游戏刻
-     * 
-     * @return 上次射击的刻数
-     */
-    public long getLastFireTick() {
-        return fireSystem.getLastFireTick();
-    }
-    
-    /**
      * 检查射击计时器是否启用
-     * 
-     * @return 是否启用
      */
     public boolean isFireTimerEnabled() {
         return fireSystem.isFireTimerEnabled();
@@ -507,8 +421,6 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
     
     /**
      * 设置射击计时器启用状态
-     * 
-     * @param enabled 是否启用
      */
     public void setFireTimerEnabled(boolean enabled) {
         fireSystem.setFireTimerEnabled(enabled);
@@ -516,25 +428,8 @@ public abstract class BaseTurretBlockEntity extends BlockEntity {
     
     /**
      * 手动重置射击计时器
-     * 将下次射击时间设置为当前时间 + 间隔
      */
     public void resetFireTimer() {
         fireSystem.resetFireTimer();
-    }
-    
-    /**
-     * 立即触发一次射击
-     * 不会重置计数器，也不会检查间隔
-     */
-    protected void fireNow() {
-        fireSystem.fireNow();
-    }
-    
-    /**
-     * 服务端 tick 方法
-     * 子类应重写此方法并在其中调用 super.serverTick()
-     */
-    public void serverTick() {
-        // 默认实现为空，子类可以重写
     }
 }

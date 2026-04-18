@@ -4,6 +4,8 @@ import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Consumer;
+
 /**
  * 实体追踪器接口
  * 用于持续追踪已锁定的实体，支持状态管理和自动更新
@@ -62,6 +64,23 @@ public interface IEntityTracker {
      * 重置追踪器状态
      */
     void release();
+    
+    /**
+     * 注册目标丢失回调监听器
+     * 当追踪的实体离开范围或无法找到时触发
+     * 
+     * @param callback 回调函数，接收丢失原因（"out_of_range" 或 "not_found"）
+     */
+    void onTargetLost(Consumer<String> callback);
+    
+    /**
+     * 手动触发重新锁定
+     * 用于特殊情况下强制重新搜索目标（如炮塔特殊技能、模式切换等）
+     * 会释放当前目标并立即尝试锁定新目标
+     * 
+     * @return true 如果成功锁定新目标
+     */
+    boolean forceRelock();
     
     /**
      * 获取追踪状态枚举
