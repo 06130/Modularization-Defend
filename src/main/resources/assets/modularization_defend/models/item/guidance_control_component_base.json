@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "modularization_defend:item/guidance_control_component_base"
+  }
+}
