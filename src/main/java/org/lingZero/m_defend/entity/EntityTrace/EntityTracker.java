@@ -30,11 +30,11 @@ public class EntityTracker implements IEntityTracker {
     private final EntityFilter filter;
     
     // 性能优化：预计算的值
-    private final double searchRadiusSq;      // searchRadius 的平方，避免重复计算
+    private final float searchRadiusSq;      // searchRadius 的平方，使用float避免double运算
     private final AABB searchBox;             // 缓存搜索框，避免重复创建
-    private final double sourceCenterX;       // 缓存源点中心 X 坐标
-    private final double sourceCenterY;       // 缓存源点中心 Y 坐标
-    private final double sourceCenterZ;       // 缓存源点中心 Z 坐标
+    private final float sourceCenterX;       // 缓存源点中心 X 坐标（float）
+    private final float sourceCenterY;       // 缓存源点中心 Y 坐标（float）
+    private final float sourceCenterZ;       // 缓存源点中心 Z 坐标（float）
     
     // 追踪状态
     private UUID trackedEntityUUID;
@@ -75,8 +75,8 @@ public class EntityTracker implements IEntityTracker {
         this.lostTicks = 0;
         this.targetLostCallback = null;
         
-        // 预计算优化值
-        this.searchRadiusSq = searchRadius * searchRadius;
+        // 预计算优化值 - 使用float提升性能
+        this.searchRadiusSq = (float)(searchRadius * searchRadius);
         this.searchBox = new AABB(
                 sourcePos.getX() - searchRadius,
                 sourcePos.getY() - searchHeight,
@@ -86,9 +86,9 @@ public class EntityTracker implements IEntityTracker {
                 sourcePos.getZ() + searchRadius + 1
         );
         Vec3 center = sourcePos.getCenter();
-        this.sourceCenterX = center.x;
-        this.sourceCenterY = center.y;
-        this.sourceCenterZ = center.z;
+        this.sourceCenterX = (float)center.x;
+        this.sourceCenterY = (float)center.y;
+        this.sourceCenterZ = (float)center.z;
     }
     
     /**
@@ -181,16 +181,14 @@ public class EntityTracker implements IEntityTracker {
         Entity currentEntity = getTrackedEntity();
         
         if (currentEntity != null && currentEntity.isAlive()) {
-            // 检查是否在搜索范围内（使用缓存的中心坐标）
-            double dx = currentEntity.getX() - sourceCenterX;
-            double dy = currentEntity.getY() - sourceCenterY;
-            double dz = currentEntity.getZ() - sourceCenterZ;
-            double distanceSq = dx * dx + dy * dy + dz * dz;
+            // 检查是否在搜索范围内（使用float计算以提升性能）
+            float dx = (float)currentEntity.getX() - sourceCenterX;
+            float dy = (float)currentEntity.getY() - sourceCenterY;
+            float dz = (float)currentEntity.getZ() - sourceCenterZ;
+            float distanceSq = dx * dx + dy * dy + dz * dz;
             
             if (distanceSq > searchRadiusSq) {
                 // 实体离开范围
-                DebugLogger.debug("实体追踪器：目标离开范围 (距离: %.2f > %.2f)", 
-                        Math.sqrt(distanceSq), searchRadius);
                 triggerTargetLostCallback("out_of_range");
                 state = TrackingState.LOST;
                 lostTicks++;
@@ -204,7 +202,6 @@ public class EntityTracker implements IEntityTracker {
         } else {
             // 实体无法找到（UUID查找失败或已完全移除）
             // 立即触发回调，让炮塔重新搜索
-            DebugLogger.debug("实体追踪器：目标无法找到，触发重新锁定");
             triggerTargetLostCallback("not_found");
             state = TrackingState.LOST;
             lostTicks = 0; // 重置计数，因为已经触发回调
@@ -292,7 +289,8 @@ public class EntityTracker implements IEntityTracker {
         
         // 在缓存的搜索框内查找具有匹配 UUID 的实体
         for (Entity entity : level.getEntities(null, searchBox)) {
-            if (entity.getUUID().equals(trackedEntityUUID) && entity.isAlive()) {
+            // 先比较引用再比较UUID，减少equals调用
+            if (entity.isAlive() && entity.getUUID().equals(trackedEntityUUID)) {
                 return entity;
             }
         }

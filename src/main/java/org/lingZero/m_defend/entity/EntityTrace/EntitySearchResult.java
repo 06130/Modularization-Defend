@@ -13,6 +13,10 @@ import java.util.List;
  */
 public class EntitySearchResult {
     
+    // 预定义的空结果实例，避免重复创建
+    public static final EntitySearchResult EMPTY = new EntitySearchResult((Entity) null);
+    public static final EntitySearchResult EMPTY_LIST = new EntitySearchResult(List.of());
+    
     private final List<Entity> entities;
     private final Entity nearestEntity;
     private final int totalCount;

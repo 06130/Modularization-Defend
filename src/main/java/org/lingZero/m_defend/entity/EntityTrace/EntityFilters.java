@@ -76,7 +76,7 @@ public class EntityFilters {
      */
     public static EntityFilter byEntityId(@NotNull String entityId) {
         ResourceLocation location = ResourceLocation.parse(entityId);
-        return entity -> BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()).equals(location);
+        return entity -> BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()) == location;
     }
     
     /**
@@ -86,6 +86,7 @@ public class EntityFilters {
      * @return 匹配任一指定实体ID的过滤器
      */
     public static EntityFilter byEntityIds(@NotNull Set<String> entityIds) {
+        // 预解析所有ResourceLocation，避免每次调用时重复解析
         Set<ResourceLocation> locations = entityIds.stream()
                 .map(ResourceLocation::parse)
                 .collect(java.util.stream.Collectors.toSet());

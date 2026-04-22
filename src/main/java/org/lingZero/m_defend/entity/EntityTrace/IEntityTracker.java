@@ -4,6 +4,7 @@ import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
@@ -27,7 +28,7 @@ public interface IEntityTracker {
      * @return 实体 UUID，未锁定时返回 null
      */
     @Nullable
-    java.util.UUID getTrackedEntityUUID();
+    UUID getTrackedEntityUUID();
     
     /**
      * 更新追踪状态

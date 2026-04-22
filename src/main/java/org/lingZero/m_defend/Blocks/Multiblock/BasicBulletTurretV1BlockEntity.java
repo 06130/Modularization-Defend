@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.lingZero.m_defend.Blocks.MultiblockFrame.AutoRelockManager;
 import org.lingZero.m_defend.Blocks.MultiblockFrame.BaseTurretBlock;
 import org.lingZero.m_defend.Blocks.MultiblockFrame.BaseTurretBlockEntity;
 import org.lingZero.m_defend.Config;
@@ -19,7 +20,10 @@ public class BasicBulletTurretV1BlockEntity extends BaseTurretBlockEntity {
     // 实体追踪器
     private EntityTracker targetTracker;
     
-    // 重新搜索冷却（tick）
+    // 自动重锁定管理器（框架层提供）
+    private final AutoRelockManager relockManager = new AutoRelockManager();
+    
+    // 搜索冷却（tick）
     private long lastSearchTick = 0;
     private static final int SEARCH_COOLDOWN = 40; // 2秒
     
@@ -32,26 +36,11 @@ public class BasicBulletTurretV1BlockEntity extends BaseTurretBlockEntity {
     
     /**
      * 自定义 tick 逻辑
-     * 更新实体追踪器状态，并在目标丢失时自动重锁定（仅一次）
+     * 使用自动重锁定管理器检测目标丢失并立即重锁定（无视冷却）
      */
     @Override
     protected void onCustomTick() {
-        if (targetTracker == null) {
-            return;
-        }
-        
-        IEntityTracker.TrackingState state = targetTracker.update();
-        
-        // 如果目标丢失，立即尝试重新锁定（只触发一次）
-        if (state == IEntityTracker.TrackingState.LOST) {
-            boolean relocked = targetTracker.tryLock();
-            
-            // 如果重新锁定失败，释放追踪器，等待下次计时器触发时重新搜索
-            if (!relocked) {
-                targetTracker.release();
-                targetTracker = null;
-            }
-        }
+        relockManager.update(() -> targetTracker);
     }
     
     /**
@@ -64,20 +53,14 @@ public class BasicBulletTurretV1BlockEntity extends BaseTurretBlockEntity {
             return;
         }
         
-        // 如果没有追踪器，尝试锁定新目标（自动锁定跟随计时器）
-        if (targetTracker == null) {
-            tryLockNewTarget();
-            return;
-        }
-        
-        // 如果未追踪到目标，尝试重新搜索
-        if (!targetTracker.isTracking()) {
-            tryLockNewTarget();
+        // 如果没有追踪器或不在追踪状态，尝试锁定新目标（带冷却）
+        if (!relockManager.isTracking(() -> targetTracker)) {
+            tryLockWithCooldown();
             return;
         }
         
         // 执行攻击
-        Entity target = targetTracker.getTrackedEntity();
+        Entity target = relockManager.getTrackedEntity(() -> targetTracker);
         if (target != null) {
             double distance = target.distanceToSqr(getBlockPos().getCenter());
             int range = Config.TURRET.basicBulletV1.range.get();
@@ -86,19 +69,18 @@ public class BasicBulletTurretV1BlockEntity extends BaseTurretBlockEntity {
                 performAttack(target);
             } else {
                 // 目标超出射程，释放锁定
-                targetTracker.release();
-                targetTracker = null;
+                relockManager.release(t -> targetTracker = t, () -> targetTracker);
             }
         } else {
             // 实体引用丢失
-            targetTracker = null;
+            relockManager.release(t -> targetTracker = t, () -> targetTracker);
         }
     }
     
     /**
      * 尝试锁定新目标（带冷却检查）
      */
-    private void tryLockNewTarget() {
+    private void tryLockWithCooldown() {
         long currentTick = level != null ? level.getGameTime() : 0;
         if (currentTick - lastSearchTick < SEARCH_COOLDOWN) {
             return;
@@ -119,10 +101,6 @@ public class BasicBulletTurretV1BlockEntity extends BaseTurretBlockEntity {
         
         if (level != null) {
             lastSearchTick = level.getGameTime();
-        }
-        
-        if (targetTracker != null) {
-            targetTracker.onTargetLost(this::onTargetLost);
         }
     }
     
@@ -189,12 +167,8 @@ public class BasicBulletTurretV1BlockEntity extends BaseTurretBlockEntity {
         
         if (!active) {
             // 停用时释放追踪器
-            if (targetTracker != null) {
-                targetTracker.release();
-                targetTracker = null;
-            }
+            relockManager.release(t -> targetTracker = t, () -> targetTracker);
         }
-        // 不在这里自动搜索，等待计时器触发时再搜索
     }
     
     /**

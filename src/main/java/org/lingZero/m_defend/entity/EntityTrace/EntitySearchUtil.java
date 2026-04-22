@@ -5,7 +5,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
-import org.lingZero.m_defend.util.DebugLogger;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -49,15 +48,17 @@ public class EntitySearchUtil {
         List<Entity> allEntities = level.getEntities(null, searchBox);
         
         if (allEntities.isEmpty()) {
-            return new EntitySearchResult((Entity) null);
+            return EntitySearchResult.EMPTY;
         }
+        
+        // 预计算中心坐标为float，减少double运算
+        float centerX = (float)centerPos.getX() + 0.5f;
+        float centerY = (float)centerPos.getY() + 0.5f;
+        float centerZ = (float)centerPos.getZ() + 0.5f;
         
         // 查找最近的符合条件的实体
         Entity nearestEntity = null;
-        double nearestDistanceSq = Double.MAX_VALUE;
-        double centerX = centerPos.getX() + 0.5;
-        double centerY = centerPos.getY() + 0.5;
-        double centerZ = centerPos.getZ() + 0.5;
+        float nearestDistanceSq = Float.MAX_VALUE;
         
         for (Entity entity : allEntities) {
             // 快速排除不符合条件的实体
@@ -65,22 +66,14 @@ public class EntitySearchUtil {
                 continue;
             }
             
-            // 使用距离平方进行比较，避免开方运算
-            double distanceSq = getDistanceSquared(entity, centerX, centerY, centerZ);
+            // 使用float距离平方进行比较，避免开方运算和double精度开销
+            float distanceSq = getDistanceSquaredFloat(entity, centerX, centerY, centerZ);
             
             // 更新最近的实体
             if (distanceSq < nearestDistanceSq) {
                 nearestDistanceSq = distanceSq;
                 nearestEntity = entity;
             }
-        }
-        
-        if (nearestEntity != null) {
-            DebugLogger.debug("找到最近实体: %s, 距离: %.2f", 
-                    nearestEntity.getType().getDescriptionId(), 
-                    Math.sqrt(nearestDistanceSq));
-        } else {
-            DebugLogger.debug("未找到符合条件的实体");
         }
         
         return new EntitySearchResult(nearestEntity);
@@ -104,10 +97,6 @@ public class EntitySearchUtil {
             double height,
             @NotNull EntityFilter filter) {
         
-        if (level.isClientSide()) {
-            DebugLogger.warn("在客户端调用实体查找方法，这可能导致不一致的结果");
-        }
-        
         // 计算搜索区域的边界框
         AABB searchBox = createSearchBox(centerPos, radius, height);
         
@@ -115,21 +104,26 @@ public class EntitySearchUtil {
         List<Entity> allEntities = level.getEntities(null, searchBox);
         
         if (allEntities.isEmpty()) {
-            return new EntitySearchResult(List.of());
+            return EntitySearchResult.EMPTY_LIST;
         }
         
-        // 过滤并计算距离
-        double centerX = centerPos.getX() + 0.5;
-        double centerY = centerPos.getY() + 0.5;
-        double centerZ = centerPos.getZ() + 0.5;
+        // 预计算中心坐标为float
+        float centerX = (float)centerPos.getX() + 0.5f;
+        float centerY = (float)centerPos.getY() + 0.5f;
+        float centerZ = (float)centerPos.getZ() + 0.5f;
         
+        // 过滤并计算距离
         List<EntityWithDistance> filteredEntities = new ArrayList<>();
         
         for (Entity entity : allEntities) {
             if (filter.test(entity)) {
-                double distanceSq = getDistanceSquared(entity, centerX, centerY, centerZ);
+                float distanceSq = getDistanceSquaredFloat(entity, centerX, centerY, centerZ);
                 filteredEntities.add(new EntityWithDistance(entity, distanceSq));
             }
+        }
+        
+        if (filteredEntities.isEmpty()) {
+            return EntitySearchResult.EMPTY_LIST;
         }
         
         // 按距离排序
@@ -140,8 +134,6 @@ public class EntitySearchUtil {
         for (EntityWithDistance ewd : filteredEntities) {
             resultEntities.add(ewd.entity);
         }
-        
-        DebugLogger.debug("找到 %d 个符合条件的实体", resultEntities.size());
         
         return new EntitySearchResult(resultEntities);
     }
@@ -209,7 +201,7 @@ public class EntitySearchUtil {
     }
     
     /**
-     * 计算实体到中心点的距离平方
+     * 计算实体到中心点的距离平方（使用float以提升性能）
      * 
      * @param entity 实体
      * @param centerX 中心点 X 坐标
@@ -217,10 +209,10 @@ public class EntitySearchUtil {
      * @param centerZ 中心点 Z 坐标
      * @return 距离的平方
      */
-    private static double getDistanceSquared(@NotNull Entity entity, double centerX, double centerY, double centerZ) {
-        double dx = entity.getX() - centerX;
-        double dy = entity.getY() - centerY;
-        double dz = entity.getZ() - centerZ;
+    private static float getDistanceSquaredFloat(@NotNull Entity entity, float centerX, float centerY, float centerZ) {
+        float dx = (float)entity.getX() - centerX;
+        float dy = (float)entity.getY() - centerY;
+        float dz = (float)entity.getZ() - centerZ;
         return dx * dx + dy * dy + dz * dz;
     }
     
@@ -230,9 +222,9 @@ public class EntitySearchUtil {
      */
     private static class EntityWithDistance {
         final Entity entity;
-        final double distanceSq;
+        final float distanceSq;  // 使用float替代double提升性能
         
-        EntityWithDistance(Entity entity, double distanceSq) {
+        EntityWithDistance(Entity entity, float distanceSq) {
             this.entity = entity;
             this.distanceSq = distanceSq;
         }
