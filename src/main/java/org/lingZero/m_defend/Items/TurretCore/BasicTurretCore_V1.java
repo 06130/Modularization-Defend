@@ -1,4 +1,4 @@
-package org.lingZero.m_defend.Items.TurretCore.BasicTurretCore;
+package org.lingZero.m_defend.Items.TurretCore;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
@@ -7,16 +7,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lingZero.m_defend.DataComponents.TurretCoreData;
 import org.lingZero.m_defend.Items.TurretCore.frame.CampType;
-import org.lingZero.m_defend.Items.TurretCore.frame.TurretCore;
+import org.lingZero.m_defend.Items.TurretCore.frame.TurretCoreItem;
 import org.lingZero.m_defend.Register.ModEntities;
 import org.lingZero.m_defend.entity.LaserProjectile;
-import org.lingZero.m_defend.util.DebugLogger;
 
 /**
  * 基础炮塔核心物品实现类
  */
-public class BasicTurretCore_V1 extends TurretCore {
-
+public class BasicTurretCore_V1 extends TurretCoreItem {
 
     /**
      * 获取该炮塔核心的阵营类型
@@ -53,11 +51,11 @@ public class BasicTurretCore_V1 extends TurretCore {
         double speed = 3;
         
         // 计算基础伤害（8点）并根据伤害等级加成
-        float baseDamage = 8.0F;
+        float baseDamage = 2.0F;
         float damageMultiplier = 1.0F + (data.harmLevel() * 0.15F);  // 每级增加15%伤害
         float finalDamage = baseDamage * damageMultiplier;
         
-        // 使用简化版本创建激光弹
+        // 创建激光弹
         LaserProjectile projectile = LaserProjectile.create(
             ModEntities.SIMPLE_LASER_PROJECTILE.get(),
             level,
@@ -73,18 +71,10 @@ public class BasicTurretCore_V1 extends TurretCore {
         if (target != null) {
             projectile.setHomingTarget(target);
         }
-        
+
         // 生成实体到世界中
         level.addFreshEntity(projectile);
-        
-        DebugLogger.debug("发射激光子弹: 起点=%s, 目标=%s, 速度=%.2f, 伤害=%.1f (等级%d, 倍率%.0f%%)", 
-            sourcePos.toString(), 
-            targetPos.toString(),
-            speed,
-            finalDamage,
-            data.harmLevel(),
-            damageMultiplier * 100);
-        
+
         return true;
     }
 

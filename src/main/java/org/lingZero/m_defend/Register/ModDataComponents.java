@@ -27,7 +27,7 @@ public class ModDataComponents {
                             .networkSynchronized(DefendCoreData.STREAM_CODEC)  // 用于网络同步的流编解码器
                     );
 
-    //TurretCore
+    //TurretCoreItem
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<TurretCoreData>> TURRET_CORE_DATA =
             REGISTRAR.registerComponentType("turret_core_data",
                     builder -> builder

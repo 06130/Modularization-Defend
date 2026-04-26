@@ -19,9 +19,9 @@ import java.util.List;
  * 炮塔核心物品抽象基类
  * 提供获取数据组件的通用方法
  */
-public abstract class TurretCore extends Item {
+public abstract class TurretCoreItem extends Item {
 
-    public TurretCore(Properties properties) {
+    public TurretCoreItem(Properties properties) {
         super(properties);
     }
 
@@ -37,7 +37,6 @@ public abstract class TurretCore extends Item {
 
     /**
      * 获取炮塔核心的阵营类型
-     * 子类可以重写此方法以返回不同的阵营类型
      * @return 阵营类型
      */
     public CampType getCampType() {
@@ -70,7 +69,6 @@ public abstract class TurretCore extends Item {
             case MISSILE -> attackWithMissile(level, data, sourcePos, target, targetPos);
             case HOWITZER -> attackWithHowitzer(level, data, sourcePos, target, targetPos);
             case RANGE -> attackWithRange(level, data, sourcePos, target, targetPos);
-            case NONE -> false;  // 无类型，无法攻击
         };
     }
     

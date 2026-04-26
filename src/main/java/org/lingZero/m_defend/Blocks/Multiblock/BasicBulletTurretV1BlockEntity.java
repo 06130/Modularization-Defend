@@ -11,7 +11,7 @@ import org.lingZero.m_defend.Config;
 import org.lingZero.m_defend.DataComponents.TargetFilterData;
 import org.lingZero.m_defend.DataComponents.TurretCoreData;
 import org.lingZero.m_defend.DataComponents.TurretType;
-import org.lingZero.m_defend.Items.TurretCore.frame.TurretCore;
+import org.lingZero.m_defend.Items.TurretCore.frame.TurretCoreItem;
 import org.lingZero.m_defend.Register.ModBlockEntities;
 import org.lingZero.m_defend.entity.EntityTrace.*;
 
@@ -129,14 +129,14 @@ public class BasicBulletTurretV1BlockEntity extends BaseTurretBlockEntity {
      */
     private void performAttack(Entity target) {
         var coreStack = coreItem(null);
-        if (coreStack.isEmpty() || !(coreStack.getItem() instanceof TurretCore turretCore)) {
+        if (coreStack.isEmpty() || !(coreStack.getItem() instanceof TurretCoreItem turretCoreItem)) {
             return;
         }
 
         TurretType turretType = getTurretTypeFromBlock();
-        TurretCoreData modifiedData = TurretCore.getData(coreStack).withTurretType(turretType);
+        TurretCoreData modifiedData = TurretCoreItem.getData(coreStack).withTurretType(turretType);
         
-        turretCore.executeAttack(
+        turretCoreItem.executeAttack(
             getLevel(),
             modifiedData,
             getBlockPos().getCenter(),

@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.lingZero.m_defend.DataComponents.TurretType;
 import org.lingZero.m_defend.Items.GuidanceControl.GuidanceControlComponent;
 import org.lingZero.m_defend.Items.TargetFilter.BaseTargetFilter;
-import org.lingZero.m_defend.Items.TurretCore.frame.TurretCore;
+import org.lingZero.m_defend.Items.TurretCore.frame.TurretCoreItem;
 import org.lingZero.m_defend.util.DebugLogger;
 
 /**
@@ -97,7 +97,7 @@ public abstract class BaseTurretBlock extends Block implements EntityBlock {
         }
         
         // 检查是否为炮塔核心
-        if (heldItem.getItem() instanceof TurretCore) {
+        if (heldItem.getItem() instanceof TurretCoreItem) {
             return handleTurretCoreInstallation(turretBE, player, heldItem);
         }
         

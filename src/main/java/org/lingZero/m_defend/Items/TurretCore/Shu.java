@@ -7,9 +7,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lingZero.m_defend.DataComponents.TurretCoreData;
 import org.lingZero.m_defend.Items.TurretCore.frame.CampType;
-import org.lingZero.m_defend.Items.TurretCore.frame.TurretCore;
+import org.lingZero.m_defend.Items.TurretCore.frame.TurretCoreItem;
 
-public class Shu extends TurretCore {
+public class Shu extends TurretCoreItem {
 
     @Override
     public CampType getCampType() {

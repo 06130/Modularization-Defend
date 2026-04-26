@@ -22,7 +22,6 @@ import java.util.function.IntFunction;
 @IndexedEnum  // 支持基于索引的映射
 @NamedEnum(1)  // 支持命名枚举
 public enum TurretType implements StringRepresentable, IExtensibleEnum {
-    NONE(0, "turret_type.modularization_defend.none"),      // 无类型（默认值）
     LASER(1, "turret_type.modularization_defend.laser"),    // 能量激光炮塔
     MISSILE(2, "turret_type.modularization_defend.missile"),// 导弹炮塔
     HOWITZER(3, "turret_type.modularization_defend.howitzer"),  // 榴弹炮塔

@@ -71,12 +71,9 @@ public class Config {
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
         // 只在配置重载时更新调试日志系统（首次加载时 DebugLogger 已在 ModularizationDefend 构造函数中初始化）
-        if (event instanceof ModConfigEvent.Reloading) {
+        if(event instanceof ModConfigEvent.Reloading)
+        {
             updateDebugLogger();
-            DebugLogger.info("配置已重载");
-        } else if (event instanceof ModConfigEvent.Loading) {
-            // 首次加载时，延迟更新调试日志（等待配置完全加载）
-            DebugLogger.debug("配置首次加载，将在下一 tick 更新调试日志");
         }
     }
     

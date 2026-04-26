@@ -39,7 +39,7 @@ public class ModularizationDefend {
         // 注册通用设置方法以供模组加载时调用
         modEventBus.addListener(this::commonSetup);
         
-        // 注册能力（Capability）
+        // 注册Capability
         modEventBus.addListener(this::registerCapabilities);
         
         // 注册数据生成器
@@ -73,8 +73,7 @@ public class ModularizationDefend {
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.GENERAL.getSpec(), "modularization_defend/general.toml");
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.TURRET.getSpec(), "modularization_defend/turret.toml");
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.DEBUG.getSpec(), "modularization_defend/debug.toml");
-        
-        DebugLogger.debug("配置注册完成");
+
         DebugLogger.debug("===== ModularizationDefend 初始化完成 =====");
     }
     private void commonSetup(final FMLCommonSetupEvent event) {
@@ -99,8 +98,6 @@ public class ModularizationDefend {
             ModBlockEntities.AFFILIATE_BLOCK_ENTITY.get(),
             (blockEntity, context) -> blockEntity.getCapability(Capabilities.ItemHandler.BLOCK, context)
         );
-        
-        DebugLogger.debug("已注册炮塔方块的 ItemHandler 能力");
     }
     
     private void gatherData(final GatherDataEvent event) {

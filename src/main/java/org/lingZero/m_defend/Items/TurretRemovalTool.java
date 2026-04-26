@@ -23,15 +23,6 @@ public class TurretRemovalTool extends Item {
     public TurretRemovalTool(Properties properties) {
         super(properties);
     }
-    
-    /**
-     * 添加物品悬浮提示（Tooltip）
-     *
-     * @param stack              物品堆栈
-     * @param context            提示上下文
-     * @param tooltipComponents  提示组件列表
-     * @param flag               提示标志
-     */
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag flag) {
         super.appendHoverText(stack, context, tooltipComponents, flag);

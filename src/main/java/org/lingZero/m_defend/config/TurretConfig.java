@@ -44,7 +44,7 @@ public class TurretConfig {
             builder.comment("一级实弹炮塔基础属性").push("basic_bullet_v1");
             
             fireRate = builder
-                    .comment("基础射速（发/秒）", "警告：过高的射速会导致卡顿")
+                    .comment("基础射速（发/秒）", "警告：过大的值可能导致性能问题")
                     .defineInRange("fire_rate", 1, 1, 20);
             
             damage = builder
@@ -56,7 +56,7 @@ public class TurretConfig {
                     .defineInRange("range", 30, 1, Integer.MAX_VALUE);
             
             energyCapacity = builder
-                    .comment("能量缓冲区大小（FE）")
+                    .comment("能量缓冲区大小")
                     .defineInRange("energy_capacity", 1000L, 1L, Long.MAX_VALUE);
             
             searchHeight = builder

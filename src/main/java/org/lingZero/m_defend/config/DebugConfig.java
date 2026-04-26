@@ -23,7 +23,7 @@ public class DebugConfig {
                 .define("enabled", true);
         
         logLevel = builder
-                .comment("调试日志输出级别（TRACE/DEBUG/INFO/WARN/ERROR）", "低于此级别的日志将不会输出")
+                .comment("调试日志输出级别（TRACE/DEBUG/INFO/WARN/ERROR）")
                 .define("log_level", "DEBUG");
         
         spec = builder.build();

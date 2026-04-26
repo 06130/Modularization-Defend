@@ -16,7 +16,7 @@ import org.lingZero.m_defend.Items.TargetFilter.HostileFilter;
 import org.lingZero.m_defend.Items.TargetFilter.NeutralFilter;
 import org.lingZero.m_defend.Items.TargetFilter.PlayerFilter;
 import org.lingZero.m_defend.Items.Turret.BasicBulletTurretV1Item;
-import org.lingZero.m_defend.Items.TurretCore.BasicTurretCore.BasicTurretCore_V1;
+import org.lingZero.m_defend.Items.TurretCore.BasicTurretCore_V1;
 import org.lingZero.m_defend.Items.TurretCore.Shu;
 import org.lingZero.m_defend.Items.TurretRemovalTool;
 import org.lingZero.m_defend.ModularizationDefend;
@@ -53,7 +53,7 @@ public class ModItems {
                             .stacksTo(64)
             );
 
-    //TurretCore
+    //TurretCoreItem
     public static final DeferredItem<Item> TURRET_CORE_V_1 =
             ITEMS.registerItem("basic_turret_core_V1",
                      properties -> new BasicTurretCore_V1(properties

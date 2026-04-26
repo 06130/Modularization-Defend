@@ -74,7 +74,7 @@
 
   "tooltip.modularization_defend.turret_core.energy_level": "能耗减免：%s",
   "tooltip.modularization_defend.turret_core.harm_level": "伤害倍率：%s",
-  "tooltip.modularization_defend.turret_core.type": "炮塔同调类型",
+  "tooltip.modularization_defend.turret_core.type": "炮塔同调",
   "tooltip.modularization_defend.turret_core.camp_type": "分类",
 
   "tooltip.modularization_defend.turret.base_fire_rate": "§b基础射速：§f%d 发/秒",

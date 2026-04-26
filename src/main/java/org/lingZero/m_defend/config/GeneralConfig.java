@@ -27,7 +27,7 @@ public class GeneralConfig {
         builder.comment("电网配置").push("network");
         
         maxConnectionDistance = builder
-                .comment("电网配置工具的最大连接距离", "警告：不要设置过大，可能导致未知问题")
+                .comment("电网配置工具的最大连接距离", "警告：设置过大可能导致未知问题")
                 .defineInRange("max_connection_distance", 64.0, 1.0, Double.MAX_VALUE);
         
         builder.pop();
