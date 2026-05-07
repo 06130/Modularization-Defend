@@ -25,7 +25,7 @@ public record TurretCoreData(
         return new TurretCoreData(
                 0,              // 默认伤害等级
                 0,              // 默认能量消耗减免等级
-                TurretType.NONE, // 默认炮塔核心类型
+                TurretType.LASER, // 默认炮塔核心类型
                 0L,             // 默认当前能量
                 100L              // 默认最大能量
         );
@@ -64,7 +64,7 @@ public record TurretCoreData(
         return new TurretCoreData(
                 harmLevel,
                 energyLevel,
-                type != null ? type : TurretType.NONE,
+                type != null ? type : TurretType.LASER,
                 energy,
                 maxEnergy
         );

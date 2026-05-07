@@ -1,12 +1,9 @@
 {
   "itemGroup.modularization_defend": "模块化防御",
 
-  "block.modularization_defend.electricity_repeater_block": "中继塔",
-  "block.modularization_defend.agreement_core_block": "协议核心",
-  
   "block.modularization_defend.basic_bullet_turret_v1_block": "一级实弹炮塔",
 
-  "block.modularization_defend.affiliate_block": "结构方块",
+  "block.modularization_defend.affiliate_block": "多方块结构方块",
 
   "item.modularization_defend.example_item": "Example Item",
   "item.modularization_defend.terminal_item": "模块化终端",

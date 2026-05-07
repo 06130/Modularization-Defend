@@ -28,6 +28,7 @@ public class EntityTracker implements IEntityTracker {
     private final double searchRadius;
     private final double searchHeight;
     private final EntityFilter filter;
+    private final boolean fastMode;
     
     // 性能优化：预计算的值
     private final float searchRadiusSq;      // searchRadius 的平方，使用float避免double运算
@@ -49,7 +50,7 @@ public class EntityTracker implements IEntityTracker {
     private static final int MAX_LOST_TICKS = 100; // 最大丢失 tick 数，超过后自动释放
     
     /**
-     * 构造函数
+     * 构造函数（默认标准模式）
      * 
      * @param level 世界对象
      * @param sourcePos 搜索源点坐标
@@ -63,12 +64,33 @@ public class EntityTracker implements IEntityTracker {
             double searchRadius,
             double searchHeight,
             @NotNull EntityFilter filter) {
+        this(level, sourcePos, searchRadius, searchHeight, filter, false);
+    }
+
+    /**
+     * 构造函数
+     * 
+     * @param level 世界对象
+     * @param sourcePos 搜索源点坐标
+     * @param searchRadius 水平搜索半径
+     * @param searchHeight 垂直搜索高度
+     * @param filter 实体过滤器
+     * @param fastMode 是否启用快速模式
+     */
+    public EntityTracker(
+            @NotNull Level level,
+            @NotNull BlockPos sourcePos,
+            double searchRadius,
+            double searchHeight,
+            @NotNull EntityFilter filter,
+            boolean fastMode) {
         
         this.level = level;
         this.sourcePos = sourcePos;
         this.searchRadius = searchRadius;
         this.searchHeight = searchHeight;
         this.filter = filter;
+        this.fastMode = fastMode;
         this.trackedEntityUUID = null;
         this.cachedEntity = null;
         this.state = TrackingState.UNLOCKED;
@@ -104,9 +126,16 @@ public class EntityTracker implements IEntityTracker {
         }
         
         // 搜索最近的实体
-        EntitySearchResult result = EntitySearchUtil.findNearestEntity(
-                level, sourcePos, searchRadius, searchHeight, filter
-        );
+        EntitySearchResult result;
+        if (fastMode) {
+            result = EntitySearchUtil.findNearestEntityFast(
+                    level, sourcePos, searchRadius, searchHeight, filter
+            );
+        } else {
+            result = EntitySearchUtil.findNearestEntity(
+                    level, sourcePos, searchRadius, searchHeight, filter
+            );
+        }
         
         Entity target = result.getNearestEntity();
         if (target != null && target.isAlive()) {

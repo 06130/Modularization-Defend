@@ -22,10 +22,10 @@ import java.util.function.IntFunction;
 @IndexedEnum  // 支持基于索引的映射
 @NamedEnum(1)  // 支持命名枚举
 public enum TurretType implements StringRepresentable, IExtensibleEnum {
-    LASER(1, "turret_type.modularization_defend.laser"),    // 能量激光炮塔
-    MISSILE(2, "turret_type.modularization_defend.missile"),// 导弹炮塔
-    HOWITZER(3, "turret_type.modularization_defend.howitzer"),  // 榴弹炮塔
-    RANGE(4, "turret_type.modularization_defend.range"); // 范围法术炮塔
+    LASER(0, "turret_type.modularization_defend.laser"),    // 能量激光炮塔
+    MISSILE(1, "turret_type.modularization_defend.missile"),// 导弹炮塔
+    HOWITZER(2, "turret_type.modularization_defend.howitzer"),  // 榴弹炮塔
+    RANGE(3, "turret_type.modularization_defend.range"); // 范围法术炮塔
 
     /** 编解码器 - 用于磁盘持久化存储，通过字符串名称序列化 */
     public static final Codec<TurretType> CODEC = StringRepresentable.fromValues(TurretType::values);

@@ -107,6 +107,23 @@ public interface IEntitySearch {
     }
     
     /**
+     * 使用自定义过滤器查找最近的实体（快速模式）
+     * 
+     * @param level 世界对象
+     * @param centerPos 中心坐标
+     * @param radius 水平查找半径
+     * @param height 垂直查找高度
+     * @param filter 实体过滤器
+     * @return 最近的实体，未找到返回 null
+     */
+    @Nullable
+    static Entity findNearestFast(Level level, BlockPos centerPos, double radius, double height, EntityFilter filter) {
+        return EntitySearchUtil.findNearestEntityFast(
+                level, centerPos, radius, height, filter
+        ).getNearestEntity();
+    }
+
+    /**
      * 使用自定义过滤器查找所有实体
      * 
      * @param level 世界对象

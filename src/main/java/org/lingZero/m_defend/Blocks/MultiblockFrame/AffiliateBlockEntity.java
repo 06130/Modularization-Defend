@@ -88,7 +88,7 @@ public class AffiliateBlockEntity extends BlockEntity {
         if (capability != Capabilities.ItemHandler.BLOCK) {
             return null;
         }
-        
+
         Level level = getLevel();
         if (level == null || level.isClientSide) {
             return null;
