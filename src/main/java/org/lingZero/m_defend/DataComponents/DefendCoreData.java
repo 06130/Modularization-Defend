@@ -15,7 +15,8 @@ public record DefendCoreData(
     int energyExpendLevel,    // 能量消耗倍率等级 (0-4)
     long energyMax,           // 能量存储上限
     long energyCurrent,       // 当前能量
-    double shieldCapacity,    // 护盾容量
+    long shieldMax,           // 护盾容量上限
+    long shieldCapacity,      // 护盾当前容量
     boolean shieldActive,     // 护盾系统状态
     String fortressCore,      // 炮台核心类型
     int speedUpgradeLevel,    // 速度升级等级 (0-4)
@@ -33,7 +34,8 @@ public record DefendCoreData(
             0,      // 默认能量消耗等级
             10000,  // 默认能量存储上限
             0,      // 默认当前能量
-            0.0,    // 默认护盾容量
+            1,  // 默认护盾容量上限
+            0,      // 默认护盾当前容量
             false,  // 护盾系统默认关闭
             "none", // 炮台核心类型
             0,      // 默认速度升级等级
@@ -59,7 +61,8 @@ public record DefendCoreData(
             harmLevel,
             energyExpendLevel,
             energyMax,
-            Math.max(0, Math.min(newEnergy, energyMax)), // 确保在有效范围内
+            Math.max(0, Math.min(newEnergy, energyMax)),
+            shieldMax,
             shieldCapacity,
             shieldActive,
             fortressCore,
@@ -74,12 +77,49 @@ public record DefendCoreData(
     /**
      * 更新护盾状态
      */
+    public DefendCoreData withShieldCapacity(long newCapacity) {
+        return new DefendCoreData(
+            harmLevel,
+            energyExpendLevel,
+            energyMax,
+            energyCurrent,
+            shieldMax,
+            Math.max(0, Math.min(newCapacity, shieldMax)),
+            shieldActive,
+            fortressCore,
+            speedUpgradeLevel,
+            energyUpgradeLevel,
+            efficiencyUpgradeLevel,
+            capacityUpgradeLevel,
+            securityUpgradeLevel
+        );
+    }
+
+    public DefendCoreData withShieldMax(long newMax) {
+        return new DefendCoreData(
+            harmLevel,
+            energyExpendLevel,
+            energyMax,
+            energyCurrent,
+            newMax,
+            Math.min(shieldCapacity, newMax),
+            shieldActive,
+            fortressCore,
+            speedUpgradeLevel,
+            energyUpgradeLevel,
+            efficiencyUpgradeLevel,
+            capacityUpgradeLevel,
+            securityUpgradeLevel
+        );
+    }
+
     public DefendCoreData withShieldActive(boolean active) {
         return new DefendCoreData(
             harmLevel,
             energyExpendLevel,
             energyMax,
             energyCurrent,
+            shieldMax,
             shieldCapacity,
             active,
             fortressCore,
@@ -100,6 +140,7 @@ public record DefendCoreData(
             energyExpendLevel,
             energyMax,
             energyCurrent,
+            shieldMax,
             shieldCapacity,
             shieldActive,
             core,
@@ -110,7 +151,7 @@ public record DefendCoreData(
             securityUpgradeLevel
         );
     }
-    
+
     /**
      * 更新速度升级等级
      */
@@ -120,6 +161,7 @@ public record DefendCoreData(
             energyExpendLevel,
             energyMax,
             energyCurrent,
+            shieldMax,
             shieldCapacity,
             shieldActive,
             fortressCore,
@@ -130,7 +172,7 @@ public record DefendCoreData(
             securityUpgradeLevel
         );
     }
-    
+
     /**
      * 更新能量升级等级
      */
@@ -140,6 +182,7 @@ public record DefendCoreData(
             energyExpendLevel,
             energyMax,
             energyCurrent,
+            shieldMax,
             shieldCapacity,
             shieldActive,
             fortressCore,
@@ -150,7 +193,7 @@ public record DefendCoreData(
             securityUpgradeLevel
         );
     }
-    
+
     /**
      * 更新效率升级等级
      */
@@ -160,6 +203,7 @@ public record DefendCoreData(
             energyExpendLevel,
             energyMax,
             energyCurrent,
+            shieldMax,
             shieldCapacity,
             shieldActive,
             fortressCore,
@@ -170,7 +214,7 @@ public record DefendCoreData(
             securityUpgradeLevel
         );
     }
-    
+
     /**
      * 更新容量升级等级
      */
@@ -180,6 +224,7 @@ public record DefendCoreData(
             energyExpendLevel,
             energyMax,
             energyCurrent,
+            shieldMax,
             shieldCapacity,
             shieldActive,
             fortressCore,
@@ -190,7 +235,7 @@ public record DefendCoreData(
             securityUpgradeLevel
         );
     }
-    
+
     /**
      * 更新安全升级等级
      */
@@ -200,6 +245,7 @@ public record DefendCoreData(
             energyExpendLevel,
             energyMax,
             energyCurrent,
+            shieldMax,
             shieldCapacity,
             shieldActive,
             fortressCore,
@@ -239,7 +285,8 @@ public record DefendCoreData(
             Codec.INT.fieldOf("energy_expend_level").forGetter(DefendCoreData::energyExpendLevel),
             Codec.LONG.fieldOf("energy_max").forGetter(DefendCoreData::energyMax),
             Codec.LONG.fieldOf("energy_current").forGetter(DefendCoreData::energyCurrent),
-            Codec.DOUBLE.fieldOf("shield_capacity").forGetter(DefendCoreData::shieldCapacity),
+            Codec.LONG.fieldOf("shield_max").forGetter(DefendCoreData::shieldMax),
+            Codec.LONG.fieldOf("shield_capacity").forGetter(DefendCoreData::shieldCapacity),
             Codec.BOOL.fieldOf("shield_active").forGetter(DefendCoreData::shieldActive),
             Codec.STRING.fieldOf("fortress_core").forGetter(DefendCoreData::fortressCore),
             Codec.INT.fieldOf("speed_upgrade_level").forGetter(DefendCoreData::speedUpgradeLevel),

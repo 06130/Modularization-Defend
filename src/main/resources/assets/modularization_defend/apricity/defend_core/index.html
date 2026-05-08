@@ -1,30 +1,27 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Defend Core</title>
-    <link rel="stylesheet" href="modularization_defend:defend_core/style.css"/>
-</head>
 <body>
     <div id="root">
-        <!-- 标题 -->
         <div id="header">
-            <div id="header-title">Defend Core</div>
-            <div id="header-subtitle">Modularization Defend</div>
+            <div id="header-title">个人防护核心</div>
         </div>
 
-        <!-- 分隔线 -->
         <div id="divider"></div>
 
-        <!-- 能量信息 -->
         <div id="energy-section">
-            <div class="section-label">Energy</div>
+            <div class="section-label">能量缓存</div>
             <div id="energy-bar-bg">
                 <div id="energy-bar-fill"></div>
             </div>
             <div id="energy-text">0 / 0 FE</div>
         </div>
 
-        <!-- 状态面板 -->
+        <div id="shield-section">
+            <div class="section-label">护盾容量</div>
+            <div id="shield-bar-bg">
+                <div id="shield-bar-fill"></div>
+            </div>
+            <div id="shield-text">0 / 0</div>
+        </div>
+
         <div id="status-section">
             <div class="section-label">Status</div>
             <div id="status-list">
@@ -47,42 +44,173 @@
             </div>
         </div>
 
-        <!-- 升级等级 -->
-        <div id="upgrades-section">
-            <div class="section-label">Upgrades</div>
-            <div id="upgrades-grid">
-                <div class="upgrade-item">
-                    <div class="upgrade-name">Speed</div>
-                    <div class="upgrade-bar-bg"><div class="upgrade-bar-fill" id="upg-speed"></div></div>
-                    <div class="upgrade-val" id="upg-speed-val">0/4</div>
-                </div>
-                <div class="upgrade-item">
-                    <div class="upgrade-name">Energy</div>
-                    <div class="upgrade-bar-bg"><div class="upgrade-bar-fill" id="upg-energy"></div></div>
-                    <div class="upgrade-val" id="upg-energy-val">0/4</div>
-                </div>
-                <div class="upgrade-item">
-                    <div class="upgrade-name">Efficiency</div>
-                    <div class="upgrade-bar-bg"><div class="upgrade-bar-fill" id="upg-efficiency"></div></div>
-                    <div class="upgrade-val" id="upg-efficiency-val">0/4</div>
-                </div>
-                <div class="upgrade-item">
-                    <div class="upgrade-name">Capacity</div>
-                    <div class="upgrade-bar-bg"><div class="upgrade-bar-fill" id="upg-capacity"></div></div>
-                    <div class="upgrade-val" id="upg-capacity-val">0/4</div>
-                </div>
-                <div class="upgrade-item">
-                    <div class="upgrade-name">Security</div>
-                    <div class="upgrade-bar-bg"><div class="upgrade-bar-fill" id="upg-security"></div></div>
-                    <div class="upgrade-val" id="upg-security-val">0/4</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 关闭按钮 -->
-        <div id="close-btn" class="btn">Close</div>
     </div>
-
-    <script src="modularization_defend:defend_core/script.js"></script>
 </body>
-</html>
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        font-family: sans-serif;
+    }
+
+    #root {
+        display: flex;
+        flex-direction: column;
+        width: 220px;
+        padding: 16px;
+        background-color: rgba(12, 12, 20, 0.94);
+        border: 1px solid rgba(0, 180, 220, 0.35);
+        box-shadow: 0 0 12px rgba(0, 160, 220, 0.15);
+    }
+
+    #header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 6px;
+    }
+
+    #header-title {
+        font-size: 16px;
+        font-weight: bold;
+        color: #00c8ff;
+        letter-spacing: 2px;
+    }
+
+    #divider {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(0, 180, 220, 0.3), transparent);
+        margin: 8px 0;
+    }
+
+    .section-label {
+        font-size: 10px;
+        font-weight: bold;
+        color: rgba(0, 200, 255, 0.5);
+        letter-spacing: 1px;
+        margin-bottom: 4px;
+    }
+
+    #energy-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    #energy-bar-bg {
+        width: 100%;
+        height: 10px;
+        background-color: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    #energy-bar-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #00a0e0, #00e0ff);
+    }
+
+    #energy-text {
+        font-size: 10px;
+        color: #aac8d8;
+        margin-top: 3px;
+        text-align: right;
+    }
+
+    #shield-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    #shield-bar-bg {
+        width: 100%;
+        height: 10px;
+        background-color: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    #shield-bar-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #00b080, #00ffc0);
+    }
+
+    #shield-text {
+        font-size: 10px;
+        color: #aac8d8;
+        margin-top: 3px;
+        text-align: right;
+    }
+
+    #status-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .status-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+        padding: 3px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .status-key {
+        font-size: 10px;
+        color: rgba(170, 200, 216, 0.7);
+    }
+
+    .status-val {
+        font-size: 10px;
+        color: #00c8ff;
+        font-weight: bold;
+    }
+
+</style>
+<script>
+    document.addEventListener('load', function () {
+        console.log('DefendCore menu loaded');
+    });
+
+    function setText(id, text) {
+        var el = document.getElementById(id);
+        if (el) el.innerText = String(text);
+    }
+
+    function formatEnergy(value) {
+        if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
+        if (value >= 1000) return (value / 1000).toFixed(1) + 'K';
+        return String(value);
+    }
+
+    window.defendCoreMenu = {
+        updateEnergy: function (current, max) {
+            var fill = document.getElementById('energy-bar-fill');
+            var text = document.getElementById('energy-text');
+            if (fill) fill.setAttribute('style', 'width: ' + (max > 0 ? Math.min(100, (current / max) * 100) : 0) + '%;');
+            if (text) text.innerText = formatEnergy(current) + ' / ' + formatEnergy(max) + ' FE';
+        },
+        updateStatus: function (data) {
+            setText('val-harm', data.harm);
+            setText('val-efficiency', data.efficiency);
+            setText('val-shield', data.shield ? 'Active' : 'Inactive');
+            setText('val-core', data.core);
+        },
+        updateShield: function (current, max) {
+            var fill = document.getElementById('shield-bar-fill');
+            var text = document.getElementById('shield-text');
+            if (fill) fill.setAttribute('style', 'width: ' + (max > 0 ? Math.min(100, (current / max) * 100) : 0) + '%;');
+            if (text) text.innerText = formatEnergy(current) + ' / ' + formatEnergy(max);
+        }
+    };
+</script>

@@ -7,7 +7,6 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import org.lingZero.m_defend.ModularizationDefend;
 
 /**
  * 调试命令处理器
@@ -89,7 +88,7 @@ public class DebugCommand {
     public static int openScreenUI(CommandContext<CommandSourceStack> context) {
         var player = context.getSource().getPlayer();
         if (player != null) {
-            ApricityUI.openScreen(ModularizationDefend.MODID + ":defend_core/index.html");
+            ApricityUI.openScreen("defend_core/index.html");
         }
         return Command.SINGLE_SUCCESS;
     }

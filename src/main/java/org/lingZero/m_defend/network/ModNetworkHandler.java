@@ -26,7 +26,14 @@ public class ModNetworkHandler {
             OpenDefendCoreGUIMessage.STREAM_CODEC,
             OpenDefendCoreGUIMessage::handle
         );
-        
+
+        // 注册同步 DefendCore 数据到客户端 GUI 的消息（服务端 -> 客户端）
+        registrar.playToClient(
+            SyncDefendCoreDataMessage.TYPE,
+            SyncDefendCoreDataMessage.STREAM_CODEC,
+            SyncDefendCoreDataMessage::handle
+        );
+
         DebugLogger.info("网络消息注册完成");
     }
 }

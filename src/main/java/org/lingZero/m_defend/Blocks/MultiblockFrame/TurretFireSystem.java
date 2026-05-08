@@ -48,11 +48,15 @@ public class TurretFireSystem {
             return;
         }
 
-        // 1. 处理已有目标的丢失/重锁定
-        if (hasTarget) {
-            if (targetTracker == null || !targetTracker.isTracking()) {
+        // 1. 每 tick 验证已锁定目标是否仍在索敌范围内
+        if (hasTarget && targetTracker != null) {
+            targetTracker.update(); // 执行距离验证，若超出范围则自动标记 LOST
+            if (!targetTracker.isTracking()) {
                 handleTargetLost();
             }
+        } else if (hasTarget) {
+            // targetTracker 意外为 null
+            setTargetLocked(false);
         }
 
         // 2. 如果没有目标，尝试搜索

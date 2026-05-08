@@ -145,21 +145,30 @@ public class EntityTracker implements IEntityTracker {
     @Override
     @NotNull
     public TrackingState update() {
-        switch (state) {
-            case INVALID -> { return TrackingState.INVALID; }
-            case UNLOCKED -> { return TrackingState.UNLOCKED; }
-            // TRACKING 和 LOST 需要进一步检查
-            default -> { }
+        // INVALID 和 UNLOCKED 不需要验证
+        if (state == TrackingState.INVALID) {
+            return TrackingState.INVALID;
+        }
+        if (state == TrackingState.UNLOCKED) {
+            return TrackingState.UNLOCKED;
+        }
+        // LOST 状态直接返回，避免重复触发回调
+        if (state == TrackingState.LOST) {
+            return TrackingState.LOST;
         }
 
         Entity currentEntity = getTrackedEntity();
 
         if (currentEntity != null && currentEntity.isAlive()) {
-            float dx = (float) currentEntity.getX() - sourceCenterX;
-            float dy = (float) currentEntity.getY() - sourceCenterY;
-            float dz = (float) currentEntity.getZ() - sourceCenterZ;
+            // 圆柱体距离检查：水平距离 vs searchRadius，垂直距离 vs searchHeight
+            double dx = currentEntity.getX() - sourceCenterX;
+            double dz = currentEntity.getZ() - sourceCenterZ;
+            double dy = Math.abs(currentEntity.getY() - sourceCenterY);
 
-            if (dx * dx + dy * dy + dz * dz > searchRadiusSq) {
+            double horizontalDistSq = dx * dx + dz * dz;
+
+            if (horizontalDistSq > searchRadiusSq || dy > searchHeight) {
+                cachedEntity = null;
                 triggerTargetLostCallback("out_of_range");
                 state = TrackingState.LOST;
                 return TrackingState.LOST;
@@ -168,6 +177,7 @@ public class EntityTracker implements IEntityTracker {
             state = TrackingState.TRACKING;
             return TrackingState.TRACKING;
         } else {
+            cachedEntity = null;
             triggerTargetLostCallback("not_found");
             state = TrackingState.LOST;
             return TrackingState.LOST;

@@ -11,6 +11,7 @@ import org.lingZero.m_defend.Items.DefendCore;
 import org.lingZero.m_defend.ModularizationDefend;
 import org.lingZero.m_defend.Register.ModKeyBindings;
 import org.lingZero.m_defend.network.OpenDefendCoreGUIMessage;
+import org.lingZero.m_defend.network.SyncDefendCoreDataMessage;
 import org.lingZero.m_defend.util.DebugLogger;
 import top.theillusivec4.curios.api.CuriosApi;
 
@@ -36,10 +37,13 @@ public class ClientKeyInputHandler {
     public static void onClientTick(ClientTickEvent.Pre event) {
         Minecraft minecraft = Minecraft.getInstance();
         Player player = minecraft.player;
-        
+
+        // 处理待应用的 DefendCore GUI 数据
+        SyncDefendCoreDataMessage.PendingDataHolder.tick();
+
         // 检查按键是否被按下
         boolean isKeyDown = ModKeyBindings.openTurretGuiKey.isDown();
-        
+
         // 检测按键按下的瞬间（从松开到按下）
         if (isKeyDown && !wasKeyDown) {
             handleKeyPress(player);
