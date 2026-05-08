@@ -1,14 +1,13 @@
 package org.lingZero.m_defend.util;
 
-import com.lowdragmc.lowdraglib2.gui.holder.ModularUIScreen;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.client.Minecraft;
+import com.sighs.apricityui.ApricityUI;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import org.lingZero.m_defend.ldlibUI.DefendCoreGUI;
+import org.lingZero.m_defend.ModularizationDefend;
 
 /**
  * 调试命令处理器
@@ -85,16 +84,13 @@ public class DebugCommand {
         return Command.SINGLE_SUCCESS;
     }
     /**
-     * 打开测试UI界面
+     * 打开 DefendCore GUI 菜单（通过 ApricityUI 引擎）
      */
     public static int openScreenUI(CommandContext<CommandSourceStack> context) {
         var player = context.getSource().getPlayer();
         if (player != null) {
-            var minecraft = Minecraft.getInstance();
-            var modularUI = DefendCoreGUI.createModularUI(player);
-            minecraft.setScreen(new ModularUIScreen(modularUI, Component.empty()));
+            ApricityUI.openScreen(ModularizationDefend.MODID + ":defend_core/index.html");
         }
-
         return Command.SINGLE_SUCCESS;
     }
 }

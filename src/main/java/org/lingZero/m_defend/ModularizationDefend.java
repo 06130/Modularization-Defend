@@ -12,7 +12,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
@@ -51,7 +51,6 @@ public class ModularizationDefend {
         ModItems.ITEMS.register(modEventBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModCreativeTabs.CREATIVE_TABS.register(modEventBus);
-        ModMenuTypes.MENUS.register(modEventBus);
         ModEntities.ENTITIES.register(modEventBus);
         // 注册按键绑定（仅客户端）
         ModKeyBindings.register(modEventBus);
@@ -120,18 +119,6 @@ public class ModularizationDefend {
     // 你可以使用 EventBusSubscriber 自动注册此类中所有用 @SubscribeEvent 注解的静态方法
     @EventBusSubscriber(modid = MODID, value = Dist.CLIENT)
     public static class ClientModEvents {
-        /**
-         * 注册 GUI Screen
-         */
-        @SubscribeEvent
-        public static void registerMenuScreens(RegisterMenuScreensEvent event) {
-            // 注册 DefendCore GUI Screen
-            event.register(
-                ModMenuTypes.DEFEND_CORE_MENU.get(),
-                org.lingZero.m_defend.ldlibUI.NewUIScreen::new
-            );
-        }
-        
         /**
          * 注册方块实体渲染器
          */
