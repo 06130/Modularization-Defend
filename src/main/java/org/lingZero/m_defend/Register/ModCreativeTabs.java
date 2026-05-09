@@ -40,6 +40,8 @@ public class ModCreativeTabs {
                                 output.accept(FRIENDLY_FILTER.get());
                                 output.accept(PLAYER_FILTER.get());
                                 output.accept(ENTITY_ID_FILTER.get());
+                                // 触发箭矢
+                                output.accept(TRIGGER_ARROW.get());
                             }
                     )
                     .build());

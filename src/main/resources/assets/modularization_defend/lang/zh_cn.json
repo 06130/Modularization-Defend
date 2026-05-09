@@ -25,6 +25,9 @@
   "item.modularization_defend.friendly_filter": "友好生物过滤器",
   "item.modularization_defend.player_filter": "玩家过滤器",
   "item.modularization_defend.entity_id_filter": "实体ID过滤器",
+  "item.modularization_defend.trigger_arrow": "触发箭矢",
+
+  "entity.modularization_defend.trigger_arrow": "触发箭矢",
 
   "key.modularization_defend.open_defend_core_gui": "打开防御核心GUI",
 

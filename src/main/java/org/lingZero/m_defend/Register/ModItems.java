@@ -16,6 +16,7 @@ import org.lingZero.m_defend.Items.TargetFilter.HostileFilter;
 import org.lingZero.m_defend.Items.TargetFilter.NeutralFilter;
 import org.lingZero.m_defend.Items.TargetFilter.PlayerFilter;
 import org.lingZero.m_defend.Items.Turret.BasicBulletTurretV1Item;
+import org.lingZero.m_defend.Items.TriggerArrowItem;
 import org.lingZero.m_defend.Items.TurretCore.BasicTurretCore_V1;
 import org.lingZero.m_defend.Items.TurretCore.Shu;
 import org.lingZero.m_defend.Items.TurretRemovalTool;
@@ -125,6 +126,14 @@ public class ModItems {
             ITEMS.registerItem("entity_id_filter",
                     properties -> new EntityIdFilter(properties
                             .component(ModDataComponents.TARGET_FILTER_DATA.get(), TargetFilterData.entityId("minecraft:zombie"))),
+                    new Item.Properties()
+                            .stacksTo(64)
+            );
+
+    // 触发箭矢
+    public static final DeferredItem<Item> TRIGGER_ARROW =
+            ITEMS.registerItem("trigger_arrow",
+                    TriggerArrowItem::new,
                     new Item.Properties()
                             .stacksTo(64)
             );

@@ -12,6 +12,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import org.lingZero.m_defend.Client.Render.TriggerArrowRenderer;
 
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
@@ -128,6 +129,11 @@ public class ModularizationDefend {
             event.registerEntityRenderer(
                 ModEntities.SIMPLE_LASER_PROJECTILE.get(),
                 LaserProjectileRenderer::new
+            );
+            // 注册触发箭矢实体渲染器
+            event.registerEntityRenderer(
+                ModEntities.TRIGGER_ARROW.get(),
+                TriggerArrowRenderer::new
             );
         }
         
