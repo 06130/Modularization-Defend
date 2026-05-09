@@ -121,4 +121,4 @@ runs/
 blockbench
 *.bbmodel
 
-libs
+libs/
