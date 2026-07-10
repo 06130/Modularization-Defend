@@ -15,6 +15,7 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import org.lingZero.modularization_defend.Block.ModBlockEntities;
 import org.lingZero.modularization_defend.Block.ModBlocks;
 import org.lingZero.modularization_defend.CreativeTab.ModCreativeTabs;
 import org.lingZero.modularization_defend.Item.ModItems;
@@ -34,9 +35,10 @@ public class modularization_defend {
         // 注册通用设置（commonSetup）到模组事件总线
         modEventBus.addListener(this::commonSetup);
 
-        // 分别向模组事件总线注册方块、物品和创造模式标签的延迟注册表
+        // 分别向模组事件总线注册方块、物品、BlockEntity和创造模式标签的延迟注册表
         ModBlocks.BLOCKS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
+        ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModCreativeTabs.CREATIVE_MODE_TABS.register(modEventBus);
 
         // 将本类注册到 NeoForge 事件总线，使其能响应服务端等游戏事件
