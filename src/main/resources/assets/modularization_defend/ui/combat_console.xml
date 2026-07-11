@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ldlib2-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/Low-Drag-MC/LDLib2/refs/heads/1.21/ldlib2-ui.xsd">
+
+    <style>
+        .col { flex-direction: column; }
+        .row { flex-direction: row; }
+        .grow { flex: 1; }
+        .card {
+            flex: 1;
+            padding-horizontal: 4;
+            padding-vertical: 8;
+            align-items: center;
+            justify-content: center;
+        }
+        .card text { font-size: 10; horizontal-align: center; }
+        .divider { width: 100%; }
+        .dot { width: 6px; height: 6px; }
+        .squad-box {
+            width: 32px; height: 32px;
+            align-items: center; justify-content: center;
+        }
+        .squad-box text { horizontal-align: center; vertical-align: center; }
+        .sec-label text { font-size: 10; text-color: #FF2563EB; }
+        .trait-btn text { font-size: 9; }
+        .setting-text { font-size: 10; }
+    </style>
+
+    <root id="root" class="col"
+          style="width: 280; padding-all: 10; gap-all: 6; background: rect(#FFF8FAFC, 4);">
+
+        <!-- 标题 -->
+        <element class="row" style="align-items: flex-end; justify-content: space-between;">
+            <text style="font-size: 16; text-color: #FF2563EB;">集成战略</text>
+            <text style="font-size: 11; text-color: #FFD4A853;">战前配置</text>
+        </element>
+
+        <!-- 分隔线(金色粗线) -->
+        <element class="divider" style="height: 2px; background: #FF2563EB; margin-top: 8; margin-bottom: 4;"/>
+
+        <!-- 模式选择 -->
+        <element class="row" style="gap-all: 4;">
+            <element class="card" style="background: rect(#FFFFFFFF, 4, 1, #FFE2E8F0);">
+                <text style="text-color: #FF94A3B8;">危机合约</text>
+            </element>
+            <element class="card" style="background: rect(#FFFFFFFF, 4, 2, #FF2563EB);">
+                <text style="text-color: #FF1E293B;">探索模式</text>
+            </element>
+            <element class="card" style="background: rect(#FFFFFFFF, 4, 1, #FFE2E8F0);">
+                <text style="text-color: #FF94A3B8;">联合作战</text>
+            </element>
+        </element>
+
+        <!-- 分隔线 -->
+        <element class="divider" style="height: 1px; background: #FFE2E8F0;"/>
+
+        <!-- 设定 + 词条 -->
+        <element class="row" style="gap-all: 8;">
+            <element class="col grow" style="gap-all: 3;">
+                <text class="sec-label">设定</text>
+                <element class="row" style="align-items: center; gap-all: 4;">
+                    <element class="dot" style="background: #FF2563EB;"/>
+                    <text class="setting-text" style="text-color: #FF1E293B;">多人·组队</text>
+                </element>
+                <element class="row" style="align-items: center; gap-all: 4;">
+                    <element class="dot" style="background: #FFCBD5E1;"/>
+                    <text class="setting-text" style="text-color: #FFCBD5E1;">单人·锁定</text>
+                </element>
+            </element>
+            <element class="col grow" style="gap-all: 3;">
+                <text class="sec-label">词条配置</text>
+                <button class="trait-btn" text="敌方强化I"
+                        style="padding-horizontal: 5; padding-vertical: 3;"/>
+                <button class="trait-btn" text="资源限制"
+                        style="padding-horizontal: 5; padding-vertical: 3;"/>
+                <button class="trait-btn" text="限时作战"
+                        style="padding-horizontal: 5; padding-vertical: 3;"/>
+                <button class="trait-btn" text="精英敌人"
+                        style="padding-horizontal: 5; padding-vertical: 3;"/>
+            </element>
+        </element>
+
+        <!-- 分隔线 -->
+        <element class="divider" style="height: 1px; background: #FFE2E8F0;"/>
+
+        <!-- 干员编队 -->
+        <element class="col grow" style="gap-all: 3;">
+            <text class="sec-label">干员编队 2/6</text>
+            <element class="row" style="gap-all: 3;">
+                <element class="squad-box" style="background: rect(#FF2563EB, 4);">
+                    <text style="font-size: 12; text-color: #FFFFFFFF;">A</text>
+                </element>
+                <element class="squad-box" style="background: rect(#FF2563EB, 4);">
+                    <text style="font-size: 12; text-color: #FFFFFFFF;">B</text>
+                </element>
+                <element class="squad-box"
+                        style="background: rect(#FFF8FAFC, 4, 1, #FFCBD5E1);">
+                    <text style="font-size: 16; text-color: #FF94A3B8;">+</text>
+                </element>
+                <element class="squad-box"
+                        style="background: rect(#FFF8FAFC, 4, 1, #FFCBD5E1);">
+                    <text style="font-size: 16; text-color: #FF94A3B8;">+</text>
+                </element>
+                <element class="squad-box"
+                        style="background: rect(#FFF8FAFC, 4, 1, #FFCBD5E1);">
+                    <text style="font-size: 16; text-color: #FF94A3B8;">+</text>
+                </element>
+                <element class="squad-box"
+                        style="background: rect(#FFF8FAFC, 4, 1, #FFCBD5E1);">
+                    <text style="font-size: 16; text-color: #FF94A3B8;">+</text>
+                </element>
+            </element>
+        </element>
+
+        <!-- 分隔线 -->
+        <element class="divider" style="height: 1px; background: #FFE2E8F0;"/>
+
+        <!-- 增益物品 -->
+        <element class="col grow" style="gap-all: 3;">
+            <text class="sec-label">增益物品</text>
+            <element style="padding-vertical: 6; background: rect(#FFF8FAFC, 4, 1, #FFE2E8F0);">
+                <text style="font-size: 10; text-color: #FF94A3B8; horizontal-align: center;">暂无可用增益物品</text>
+            </element>
+        </element>
+
+    </root>
+</ldlib2-ui>

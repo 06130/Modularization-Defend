@@ -1,6 +1,7 @@
 package org.lingZero.modularization_defend.Block.example;
 
-import com.sighs.apricityui.util.kjs.ApricityUIServerUtil;
+import com.lowdragmc.lowdraglib2.gui.factory.BlockUIMenuType;
+import com.lowdragmc.lowdraglib2.gui.ui.ModularUI;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -28,18 +29,12 @@ import org.lingZero.modularization_defend.Block.bounding.BoundingHelper;
 
 /**
  * 作战控制台——2 格高的竖直柱体多方块结构。
- * <p>
  * 放置时自动在上方生成 1 个占位方块，破坏时自动清理。
- * 右键点击打开 ApricityUI 监控面板界面。
+ * 右键通过 LDLib2 打开配置面板。
  */
-public class CombatConsoleBlock extends Block implements EntityBlock {
+public class CombatConsoleBlock extends Block implements EntityBlock, BlockUIMenuType.BlockUI {
 
-    /** 占位方块相对于主方块的偏移坐标（上方 1 格） */
-    private static final BlockPos[] BOUNDING_OFFSETS = {
-            new BlockPos(0, 1, 0),
-    };
-
-    /** 覆盖整个多方块结构的碰撞箱（10×10 宽立柱，2 格高） */
+    private static final BlockPos[] BOUNDING_OFFSETS = { new BlockPos(0, 1, 0) };
     private static final VoxelShape SHAPE = Block.box(3, 0, 3, 13, 32, 13);
 
     public CombatConsoleBlock() {
@@ -98,20 +93,24 @@ public class CombatConsoleBlock extends Block implements EntityBlock {
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
-    /** 右键打开 ApricityUI 作战控制台监控面板 */
+    // ==================== LDLib2 BlockUI ====================
+
     @NotNull
     @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
-            ApricityUIServerUtil.openScreen(serverPlayer, "apricity/combat_console/index.html",
-                    ApricityUIServerUtil.bind()
-                            .templatePath("apricity/combat_console/index.html")
-                            .build());
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
+                                                Player player, BlockHitResult hitResult) {
+        if (!level.isClientSide && player instanceof ServerPlayer sp) {
+            BlockUIMenuType.openUI(sp, pos);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
-    // ==================== 碰撞箱（覆盖整个多方块结构） ====================
+    @Override
+    public ModularUI createUI(BlockUIMenuType.BlockUIHolder holder) {
+        return CombatConsoleUI.createUI(holder);
+    }
+
+    // ==================== 碰撞箱 ====================
 
     @NotNull
     @Override
