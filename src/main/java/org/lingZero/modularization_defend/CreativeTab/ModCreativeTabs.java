@@ -25,7 +25,7 @@ public class ModCreativeTabs {
                     .icon(() -> ModItems.EXAMPLE_ITEM.get().getDefaultInstance())
                     .displayItems((parameters, output) -> {
                         output.accept(ModItems.EXAMPLE_ITEM.get());
-                        output.accept(ModItems.EXAMPLE_MULTIBLOCK_ITEM.get());
+                        output.accept(ModItems.COMBAT_CONSOLE_ITEM.get());
                         output.accept(ModItems.GHOST_MULTIBLOCK_ITEM.get());
                         output.accept(ModItems.ENTITY_SELECTOR.get());
                     }).build());

@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "modularization_defend:example_multiblock"
+          "name": "modularization_defend:combat_console"
         }
       ],
       "conditions": [

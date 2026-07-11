@@ -26,18 +26,17 @@ import org.lingZero.modularization_defend.Block.ModBlockEntities;
 import org.lingZero.modularization_defend.Block.bounding.BoundingHelper;
 
 /**
- * 示例多方块结构的主方块。
+ * 作战控制台——4 格高的竖直柱体多方块结构。
  * <p>
- * 放置时自动在偏移位置生成占位方块，破坏时自动清理。
- * 结构为一个竖直柱体：主方块上方 3 个占位方块（共4格高）。
+ * 放置时自动在上方生成 3 个占位方块，破坏时自动清理。
  * <p>
  * 右键点击（主方块或任意占位方块）可查看 tick 计数。
  */
-public class ExampleMultiblockBlock extends Block implements EntityBlock {
+public class CombatConsoleBlock extends Block implements EntityBlock {
 
     /**
      * 占位方块相对于主方块的偏移坐标。
-     * 此处定义了一个 3 格高的竖直柱体。
+     * 定义了一个 3 格高的竖直柱体。
      */
     private static final BlockPos[] BOUNDING_OFFSETS = {
             new BlockPos(0, 1, 0),
@@ -51,7 +50,7 @@ public class ExampleMultiblockBlock extends Block implements EntityBlock {
      */
     private static final VoxelShape SHAPE = Block.box(3, 0, 3, 13, 64, 13);
 
-    public ExampleMultiblockBlock() {
+    public CombatConsoleBlock() {
         super(BlockBehaviour.Properties.of()
                 .mapColor(MapColor.STONE)
                 .strength(3.5F, 3600000.0F));
@@ -59,7 +58,7 @@ public class ExampleMultiblockBlock extends Block implements EntityBlock {
 
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new ExampleMultiblockBlockEntity(pos, state);
+        return new CombatConsoleBlockEntity(pos, state);
     }
 
     /**
@@ -81,10 +80,10 @@ public class ExampleMultiblockBlock extends Block implements EntityBlock {
         if (level.isClientSide) {
             return null;
         }
-        if (type == ModBlockEntities.EXAMPLE_MULTIBLOCK.get()) {
+        if (type == ModBlockEntities.COMBAT_CONSOLE.get()) {
             @SuppressWarnings("unchecked")
             BlockEntityTicker<T> ticker = (BlockEntityTicker<T>) (level1, pos1, state1, be) ->
-                    ExampleMultiblockBlockEntity.serverTick(level1, pos1, state1, (ExampleMultiblockBlockEntity) be);
+                    CombatConsoleBlockEntity.serverTick(level1, pos1, state1, (CombatConsoleBlockEntity) be);
             return ticker;
         }
         return null;
@@ -120,9 +119,9 @@ public class ExampleMultiblockBlock extends Block implements EntityBlock {
     @NotNull
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof ExampleMultiblockBlockEntity be) {
+        if (!level.isClientSide && level.getBlockEntity(pos) instanceof CombatConsoleBlockEntity be) {
             player.sendSystemMessage(Component.literal(
-                    "[ExampleMultiblock] Tick count: " + be.getTickCount()));
+                    "[CombatConsole] Tick count: " + be.getTickCount()));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

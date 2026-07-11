@@ -2,7 +2,7 @@
   "itemGroup.modularization_defend": "模块化防御",
   "block.modularization_defend.example_block": "Example Block",
   "item.modularization_defend.example_item": "Example Item",
-  "block.modularization_defend.example_multiblock": "示例多方块结构",
+  "block.modularization_defend.combat_console": "作战控制台",
   "block.modularization_defend.ghost_multiblock": "幽灵多方块（可穿过）",
   "block.modularization_defend.ghost_multiblock.entity_added": "已将实体 %s 添加到幽灵方块的实体列表",
   "block.modularization_defend.ghost_multiblock.entities_cleared": "已清空幽灵方块的实体列表",

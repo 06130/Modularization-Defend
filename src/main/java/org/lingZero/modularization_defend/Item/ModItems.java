@@ -19,9 +19,9 @@ public class ModItems {
     public static final DeferredItem<BlockItem> EXAMPLE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("example_block",
             ModBlocks.EXAMPLE_BLOCK);
 
-    // 示例多方块结构的方块物品
-    public static final DeferredItem<BlockItem> EXAMPLE_MULTIBLOCK_ITEM = ITEMS.registerSimpleBlockItem("example_multiblock",
-            ModBlocks.EXAMPLE_MULTIBLOCK);
+    // 作战控制台的方块物品
+    public static final DeferredItem<BlockItem> COMBAT_CONSOLE_ITEM = ITEMS.registerSimpleBlockItem("combat_console",
+            ModBlocks.COMBAT_CONSOLE);
 
     // 幽灵多方块结构的方块物品
     public static final DeferredItem<BlockItem> GHOST_MULTIBLOCK_ITEM = ITEMS.registerSimpleBlockItem("ghost_multiblock",
