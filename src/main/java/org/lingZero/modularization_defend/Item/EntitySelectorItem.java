@@ -86,6 +86,12 @@ public class EntitySelectorItem extends Item {
      */
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        // 使用说明
+        tooltip.add(Component.literal("§7§o潜行+右键实体 → 捕获实体ID"));
+        tooltip.add(Component.literal("§7§o右键方块 → 清除已存储的ID"));
+        tooltip.add(Component.literal("§7§o手持此物右键幽灵方块 → 写入/清除实体列表"));
+        tooltip.add(Component.empty());
+
         if (!stack.has(ModDataComponents.STORED_ENTITY_ID.get())) {
             tooltip.add(Component.translatable("item.modularization_defend.entity_selector.empty"));
             return;

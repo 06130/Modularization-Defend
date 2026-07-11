@@ -4,6 +4,8 @@
   "item.modularization_defend.example_item": "Example Item",
   "block.modularization_defend.example_multiblock": "Example Multiblock",
   "block.modularization_defend.ghost_multiblock": "Ghost Multiblock (Passable)",
+  "block.modularization_defend.ghost_multiblock.entity_added": "Added entity %s to ghost block entity list",
+  "block.modularization_defend.ghost_multiblock.entities_cleared": "Cleared ghost block entity list",
   "block.modularization_defend.bounding_block": "Bounding Block (Internal)",
   "item.modularization_defend.entity_selector": "Entity Selector",
   "item.modularization_defend.entity_selector.captured": "Captured entity ID: %s",

@@ -2,7 +2,9 @@ package org.lingZero.modularization_defend.Block.example;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -12,8 +14,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
@@ -23,8 +23,9 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.lingZero.modularization_defend.Block.ModBlockEntities;
 import org.lingZero.modularization_defend.Block.bounding.BoundingHelper;
+import org.lingZero.modularization_defend.DataComponents.ModDataComponents;
+import org.lingZero.modularization_defend.Item.EntitySelectorItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,7 @@ import java.util.List;
  * <ul>
  *   <li>getShape() 返回完整 3x3x3 立方体轮廓——玩家可以瞄准结构任意位置进行交互</li>
  *   <li>getCollisionShape() 返回 Shapes.empty()——玩家和实体可以自由穿过</li>
- *   <li>右键点击任意位置（主方块或占位方块）累加点击计数</li>
+ *   <li>手持实体选取器右键可写入/清除实体列表</li>
  * </ul>
  */
 public class GhostMultiblockBlock extends Block implements EntityBlock {
@@ -80,19 +81,6 @@ public class GhostMultiblockBlock extends Block implements EntityBlock {
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        if (level.isClientSide) return null;
-        if (type == ModBlockEntities.GHOST_MULTIBLOCK.get()) {
-            @SuppressWarnings("unchecked")
-            BlockEntityTicker<T> ticker = (BlockEntityTicker<T>) (level1, pos1, state1, be) ->
-                    GhostMultiblockBlockEntity.serverTick(level1, pos1, state1, (GhostMultiblockBlockEntity) be);
-            return ticker;
-        }
-        return null;
-    }
-
-    @Nullable
-    @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         if (!BoundingHelper.canPlaceBoundingBlocks(context.getLevel(), context.getClickedPos(), BOUNDING_OFFSETS)) {
             return null;
@@ -125,13 +113,32 @@ public class GhostMultiblockBlock extends Block implements EntityBlock {
 
     @NotNull
     @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof GhostMultiblockBlockEntity be) {
-            be.incrementClickCount();
-            player.sendSystemMessage(Component.literal(
-                    "[GhostMultiblock] 已点击 " + be.getClickCount() + " 次"));
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
+                                              Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if (!(stack.getItem() instanceof EntitySelectorItem)) {
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        if (level.isClientSide) {
+            return ItemInteractionResult.sidedSuccess(true);
+        }
+        if (!(level.getBlockEntity(pos) instanceof GhostMultiblockBlockEntity be)) {
+            return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+        }
+
+        ResourceLocation storedId = stack.get(ModDataComponents.STORED_ENTITY_ID.get());
+        if (storedId != null) {
+            // 实体选取器存有 ID → 写入 GhostMultiblock
+            be.addEntityId(storedId);
+            player.sendSystemMessage(Component.translatable(
+                    "block.modularization_defend.ghost_multiblock.entity_added",
+                    storedId.toString()));
+        } else {
+            // 实体选取器无 ID → 清空 GhostMultiblock 的实体列表
+            be.clearEntityIds();
+            player.sendSystemMessage(Component.translatable(
+                    "block.modularization_defend.ghost_multiblock.entities_cleared"));
+        }
+        return ItemInteractionResult.sidedSuccess(false);
     }
 
     // ==================== 碰撞箱：可瞄准，无碰撞 ====================
