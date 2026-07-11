@@ -24,6 +24,8 @@ import org.lingZero.modularization_defend.CreativeTab.ModCreativeTabs;
 import org.lingZero.modularization_defend.DataComponents.ModDataComponents;
 import org.lingZero.modularization_defend.Event.EntitySelectorHandler;
 import org.lingZero.modularization_defend.Item.ModItems;
+import org.lingZero.modularization_defend.trait.ModTraits;
+import org.lingZero.modularization_defend.trait.TraitCommand;
 import org.lingZero.modularization_defend.util.DebugDumpComponentsCommand;
 import org.slf4j.Logger;
 
@@ -47,6 +49,11 @@ public class modularization_defend {
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModDataComponents.DATA_COMPONENTS.register(modEventBus);
         ModCreativeTabs.CREATIVE_MODE_TABS.register(modEventBus);
+
+        // 创建自定义词条注册表并注册词条延迟注册表
+        modEventBus.addListener(ModTraits::onNewRegistry);
+        ModTraits.TRAITS.register(modEventBus);
+        ModTraits.ATTACHMENT_TYPES.register(modEventBus);
 
         // 将本类和 EntitySelectorHandler 注册到 NeoForge 事件总线
         NeoForge.EVENT_BUS.register(this);
@@ -78,6 +85,7 @@ public class modularization_defend {
     @SubscribeEvent
     public void onRegisterCommands(RegisterCommandsEvent event) {
         DebugDumpComponentsCommand.register(event.getDispatcher());
+        TraitCommand.register(event.getDispatcher());
     }
 
     // 自动注册内部所有 @SubscribeEvent 静态方法（仅客户端侧）
@@ -91,7 +99,7 @@ public class modularization_defend {
 
         /**
          * 注册本模组的BlockEntity渲染器。
-         * 使用GeckoLib的GeoBlockRenderer渲染幽灵传送门的动画模型。
+         * 使用GeckoLib的GeoBlockRenderer渲染门的动画模型。
          */
         @SubscribeEvent
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {

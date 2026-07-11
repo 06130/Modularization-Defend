@@ -13,5 +13,14 @@
   "item.modularization_defend.entity_selector.cleared": "Entity ID cleared",
   "item.modularization_defend.entity_selector.tooltip": "Stored entity: %s (%s)",
   "item.modularization_defend.entity_selector.tooltip_unknown": "Stored entity: %s (unknown)",
-  "item.modularization_defend.entity_selector.empty": "No entity selected"
+  "item.modularization_defend.entity_selector.empty": "No entity selected",
+
+  "trait.modularization_defend.attack_damage": "Attack Boost",
+  "trait.modularization_defend.movement_speed": "Swiftness",
+  "command.modularization_defend.traits.empty": "%s has no traits",
+  "command.modularization_defend.traits.header": "=== Traits of %s (%d total) ===",
+  "command.modularization_defend.traits.list_header": "=== Registered Traits (%d total) ===",
+  "command.modularization_defend.traits.not_found": "Trait %s not found",
+  "command.modularization_defend.traits.given": "Granted trait %s (level %d) to %d entities",
+  "command.modularization_defend.traits.removed": "Removed trait %s from %d entities"
 }

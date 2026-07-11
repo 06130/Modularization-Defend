@@ -13,5 +13,14 @@
   "item.modularization_defend.entity_selector.cleared": "已清除实体ID",
   "item.modularization_defend.entity_selector.tooltip": "存储的实体: %s (%s)",
   "item.modularization_defend.entity_selector.tooltip_unknown": "存储的实体: %s（未知实体）",
-  "item.modularization_defend.entity_selector.empty": "尚未选取实体"
+  "item.modularization_defend.entity_selector.empty": "尚未选取实体",
+
+  "trait.modularization_defend.attack_damage": "攻击增幅",
+  "trait.modularization_defend.movement_speed": "疾速",
+  "command.modularization_defend.traits.empty": "%s 身上没有任何词条",
+  "command.modularization_defend.traits.header": "=== %s 的词条（共 %d 个） ===",
+  "command.modularization_defend.traits.list_header": "=== 已注册词条类型（共 %d 个） ===",
+  "command.modularization_defend.traits.not_found": "词条 %s 未找到",
+  "command.modularization_defend.traits.given": "已为 %d 个实体赋予词条 %s (等级 %d)",
+  "command.modularization_defend.traits.removed": "已从 %d 个实体移除词条 %s"
 }
