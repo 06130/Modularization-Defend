@@ -27,7 +27,7 @@ public class ModCreativeTabs {
                     .displayItems((parameters, output) -> {
                         output.accept(ModItems.EXAMPLE_ITEM.get());
                         output.accept(ModItems.EXAMPLE_MULTIBLOCK_ITEM.get());
-                        output.accept(ModItems.GHOST_MULTIBLOCK_ITEM.get());
+                        output.accept(ModItems.BLUE_DOOR_ITEM.get());
                     }).build());
 
     /**

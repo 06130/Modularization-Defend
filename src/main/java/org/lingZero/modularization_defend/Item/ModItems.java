@@ -23,9 +23,9 @@ public class ModItems {
     public static final DeferredItem<BlockItem> EXAMPLE_MULTIBLOCK_ITEM = ITEMS.registerSimpleBlockItem("example_multiblock",
             ModBlocks.EXAMPLE_MULTIBLOCK);
 
-    // 幽灵多方块结构的方块物品
-    public static final DeferredItem<BlockItem> GHOST_MULTIBLOCK_ITEM = ITEMS.registerSimpleBlockItem("ghost_multiblock",
-            ModBlocks.GHOST_MULTIBLOCK);
+    // 蓝门多方块结构的方块物品
+    public static final DeferredItem<BlockItem> BLUE_DOOR_ITEM = ITEMS.registerSimpleBlockItem("bluedoor",
+            ModBlocks.BLUE_DOOR);
 
     // 示例食物物品，ID 为 "modularization_defend:example_item"，始终可食用，营养值 1，饱和度 2
     public static final DeferredItem<Item> EXAMPLE_ITEM = ITEMS.registerSimpleItem("example_item",

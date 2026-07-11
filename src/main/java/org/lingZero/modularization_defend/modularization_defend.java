@@ -13,10 +13,12 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.lingZero.modularization_defend.Block.ModBlockEntities;
 import org.lingZero.modularization_defend.Block.ModBlocks;
+import org.lingZero.modularization_defend.Block.render.bluedoor.BlueDoorRenderer;
 import org.lingZero.modularization_defend.CreativeTab.ModCreativeTabs;
 import org.lingZero.modularization_defend.Item.ModItems;
 import org.slf4j.Logger;
@@ -74,6 +76,18 @@ public class modularization_defend {
         public static void onClientSetup(FMLClientSetupEvent event) {
             LOGGER.info("HELLO FROM CLIENT SETUP");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+        }
+
+        /**
+         * 注册本模组的BlockEntity渲染器。
+         * 使用GeckoLib的GeoBlockRenderer渲染幽灵传送门的动画模型。
+         */
+        @SubscribeEvent
+        public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+            event.registerBlockEntityRenderer(
+                    ModBlockEntities.BLUE_DOOR.get(),
+                    context -> new BlueDoorRenderer()
+            );
         }
     }
 }

@@ -3,6 +3,6 @@
   "block.modularization_defend.example_block": "Example Block",
   "item.modularization_defend.example_item": "Example Item",
   "block.modularization_defend.example_multiblock": "Example Multiblock",
-  "block.modularization_defend.ghost_multiblock": "Ghost Multiblock (Passable)",
+  "block.modularization_defend.bluedoor": "Blue Door",
   "block.modularization_defend.bounding_block": "Bounding Block (Internal)"
 }

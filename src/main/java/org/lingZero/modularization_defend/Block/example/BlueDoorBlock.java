@@ -11,6 +11,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -30,16 +31,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 幽灵多方块结构——3x3x3 立方体，主方块位于底面中心。
+ * 蓝门多方块结构——3x3x3 立方体，主方块位于底面中心。
+ * 灵感来源于明日方舟"蓝门"，使用GeckoLib渲染蓝色传送门视觉效果。
  * <p>
  * 关键特性：
  * <ul>
  *   <li>getShape() 返回完整 3x3x3 立方体轮廓——玩家可以瞄准结构任意位置进行交互</li>
  *   <li>getCollisionShape() 返回 Shapes.empty()——玩家和实体可以自由穿过</li>
  *   <li>右键点击任意位置（主方块或占位方块）累加点击计数</li>
+ *   <li>自带发光效果（lightLevel=7），黑暗中可见</li>
  * </ul>
  */
-public class GhostMultiblockBlock extends Block implements EntityBlock {
+public class BlueDoorBlock extends Block implements EntityBlock {
 
     /**
      * 3x3x3 立方体的所有 26 个占位方块偏移（排除主方块自身的 (0,0,0)）。
@@ -66,27 +69,35 @@ public class GhostMultiblockBlock extends Block implements EntityBlock {
         return offsets.toArray(BlockPos[]::new);
     }
 
-    public GhostMultiblockBlock() {
+    public BlueDoorBlock() {
         super(BlockBehaviour.Properties.of()
                 .mapColor(MapColor.COLOR_LIGHT_BLUE)
                 .strength(3.5F, 6.0F)
                 .noOcclusion()
+                .lightLevel(state -> 7)
                 .requiresCorrectToolForDrops());
     }
 
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new GhostMultiblockBlockEntity(pos, state);
+        return new BlueDoorBlockEntity(pos, state);
+    }
+
+    @NotNull
+    @Override
+    protected RenderShape getRenderShape(BlockState state) {
+        // 使用自定义BlockEntity渲染器（GeckoLib），而非原版方块模型JSON
+        return RenderShape.ENTITYBLOCK_ANIMATED;
     }
 
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         if (level.isClientSide) return null;
-        if (type == ModBlockEntities.GHOST_MULTIBLOCK.get()) {
+        if (type == ModBlockEntities.BLUE_DOOR.get()) {
             @SuppressWarnings("unchecked")
             BlockEntityTicker<T> ticker = (BlockEntityTicker<T>) (level1, pos1, state1, be) ->
-                    GhostMultiblockBlockEntity.serverTick(level1, pos1, state1, (GhostMultiblockBlockEntity) be);
+                    BlueDoorBlockEntity.serverTick(level1, pos1, state1, (BlueDoorBlockEntity) be);
             return ticker;
         }
         return null;
@@ -127,10 +138,10 @@ public class GhostMultiblockBlock extends Block implements EntityBlock {
     @NotNull
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof GhostMultiblockBlockEntity be) {
+        if (!level.isClientSide && level.getBlockEntity(pos) instanceof BlueDoorBlockEntity be) {
             be.incrementClickCount();
             player.sendSystemMessage(Component.literal(
-                    "[GhostMultiblock] 已点击 " + be.getClickCount() + " 次"));
+                    "[BlueDoor] 已点击 " + be.getClickCount() + " 次"));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
