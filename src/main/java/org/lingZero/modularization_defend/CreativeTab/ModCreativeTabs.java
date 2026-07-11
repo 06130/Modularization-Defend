@@ -18,16 +18,16 @@ public class ModCreativeTabs {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister
             .create(Registries.CREATIVE_MODE_TAB, "modularization_defend");
 
-    // 示例标签页：标题为 "itemGroup.modularization_defend"，排在战斗标签之前，图标使用示例物品
+    // 示例标签页：标题为 "itemGroup.modularization_defend"，图标使用示例物品
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> EXAMPLE_TAB = CREATIVE_MODE_TABS.register(
             "example_tab", () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.modularization_defend"))
-                    .withTabsBefore(CreativeModeTabs.COMBAT)
                     .icon(() -> ModItems.EXAMPLE_ITEM.get().getDefaultInstance())
                     .displayItems((parameters, output) -> {
                         output.accept(ModItems.EXAMPLE_ITEM.get());
-                        output.accept(ModItems.EXAMPLE_MULTIBLOCK_ITEM.get());
+                        output.accept(ModItems.COMBAT_CONSOLE_ITEM.get());
                         output.accept(ModItems.BLUE_DOOR_ITEM.get());
+                        output.accept(ModItems.ENTITY_SELECTOR.get());
                     }).build());
 
     /**

@@ -6,7 +6,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.lingZero.modularization_defend.Block.bounding.BoundingBlockEntity;
 import org.lingZero.modularization_defend.Block.example.BlueDoorBlockEntity;
-import org.lingZero.modularization_defend.Block.example.ExampleMultiblockBlockEntity;
+import org.lingZero.modularization_defend.Block.example.CombatConsoleBlockEntity;
 
 /**
  * 模组 BlockEntity 类型注册中心。
@@ -24,11 +24,11 @@ public class ModBlockEntities {
                     () -> BlockEntityType.Builder.of(BoundingBlockEntity::new, ModBlocks.BOUNDING_BLOCK.get()).build(null));
 
     /**
-     * 示例多方块结构的 BlockEntity 类型。
+     * 作战控制台的 BlockEntity 类型。
      */
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ExampleMultiblockBlockEntity>> EXAMPLE_MULTIBLOCK =
-            BLOCK_ENTITIES.register("example_multiblock",
-                    () -> BlockEntityType.Builder.of(ExampleMultiblockBlockEntity::new, ModBlocks.EXAMPLE_MULTIBLOCK.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CombatConsoleBlockEntity>> COMBAT_CONSOLE =
+            BLOCK_ENTITIES.register("combat_console",
+                    () -> BlockEntityType.Builder.of(CombatConsoleBlockEntity::new, ModBlocks.COMBAT_CONSOLE.get()).build(null));
 
     /**
      * 蓝门多方块结构的 BlockEntity 类型。

@@ -3,6 +3,15 @@
   "block.modularization_defend.example_block": "Example Block",
   "item.modularization_defend.example_item": "Example Item",
   "block.modularization_defend.example_multiblock": "Example Multiblock",
+  "block.modularization_defend.combat_console": "Combat Console",
   "block.modularization_defend.bluedoor": "Blue Door",
-  "block.modularization_defend.bounding_block": "Bounding Block (Internal)"
+  "block.modularization_defend.bluedoor.entity_added": "Added entity %s to blue door entity list",
+  "block.modularization_defend.bluedoor.entities_cleared": "Cleared blue door entity list",
+  "block.modularization_defend.bounding_block": "Bounding Block (Internal)",
+  "item.modularization_defend.entity_selector": "Entity Selector",
+  "item.modularization_defend.entity_selector.captured": "Captured entity ID: %s",
+  "item.modularization_defend.entity_selector.cleared": "Entity ID cleared",
+  "item.modularization_defend.entity_selector.tooltip": "Stored entity: %s (%s)",
+  "item.modularization_defend.entity_selector.tooltip_unknown": "Stored entity: %s (unknown)",
+  "item.modularization_defend.entity_selector.empty": "No entity selected"
 }

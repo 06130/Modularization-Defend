@@ -10,18 +10,18 @@ import org.lingZero.modularization_defend.Block.ModBlockEntities;
 import org.lingZero.modularization_defend.Block.bounding.IBoundingBlock;
 
 /**
- * 示例多方块结构的BlockEntity。
+ * 作战控制台的BlockEntity。
  * 实现IBoundingBlock以接收来自占位方块的代理调用。
  */
-public class ExampleMultiblockBlockEntity extends BlockEntity implements IBoundingBlock {
+public class CombatConsoleBlockEntity extends BlockEntity implements IBoundingBlock {
 
     private long tickCount;
 
-    public ExampleMultiblockBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.EXAMPLE_MULTIBLOCK.get(), pos, state);
+    public CombatConsoleBlockEntity(BlockPos pos, BlockState state) {
+        super(ModBlockEntities.COMBAT_CONSOLE.get(), pos, state);
     }
 
-    public static void serverTick(Level level, BlockPos pos, BlockState state, ExampleMultiblockBlockEntity be) {
+    public static void serverTick(Level level, BlockPos pos, BlockState state, CombatConsoleBlockEntity be) {
         be.tickCount++;
     }
 

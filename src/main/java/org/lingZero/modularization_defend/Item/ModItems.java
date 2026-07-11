@@ -19,9 +19,9 @@ public class ModItems {
     public static final DeferredItem<BlockItem> EXAMPLE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem("example_block",
             ModBlocks.EXAMPLE_BLOCK);
 
-    // 示例多方块结构的方块物品
-    public static final DeferredItem<BlockItem> EXAMPLE_MULTIBLOCK_ITEM = ITEMS.registerSimpleBlockItem("example_multiblock",
-            ModBlocks.EXAMPLE_MULTIBLOCK);
+    // 作战控制台的方块物品
+    public static final DeferredItem<BlockItem> COMBAT_CONSOLE_ITEM = ITEMS.registerSimpleBlockItem("combat_console",
+            ModBlocks.COMBAT_CONSOLE);
 
     // 蓝门多方块结构的方块物品
     public static final DeferredItem<BlockItem> BLUE_DOOR_ITEM = ITEMS.registerSimpleBlockItem("bluedoor",
@@ -31,4 +31,8 @@ public class ModItems {
     public static final DeferredItem<Item> EXAMPLE_ITEM = ITEMS.registerSimpleItem("example_item",
             new Item.Properties().food(new FoodProperties.Builder()
                     .alwaysEdible().nutrition(1).saturationModifier(2f).build()));
+
+    // 实体选取器——右键实体存储其类型 ID
+    public static final DeferredItem<EntitySelectorItem> ENTITY_SELECTOR = ITEMS.registerItem("entity_selector",
+            EntitySelectorItem::new);
 }

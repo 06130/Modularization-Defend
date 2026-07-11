@@ -7,7 +7,7 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.lingZero.modularization_defend.Block.bounding.BoundingBlock;
 import org.lingZero.modularization_defend.Block.example.BlueDoorBlock;
-import org.lingZero.modularization_defend.Block.example.ExampleMultiblockBlock;
+import org.lingZero.modularization_defend.Block.example.CombatConsoleBlock;
 
 /**
  * 模组方块注册中心，统一管理本模组所有方块的注册定义。
@@ -30,10 +30,10 @@ public class ModBlocks {
             BoundingBlock::new);
 
     /**
-     * 示例多方块结构的主方块。放置时自动在周围生成占位方块。
+     * 作战控制台——4 格高竖直柱体多方块结构。
      */
-    public static final DeferredBlock<ExampleMultiblockBlock> EXAMPLE_MULTIBLOCK = BLOCKS.register("example_multiblock",
-            ExampleMultiblockBlock::new);
+    public static final DeferredBlock<CombatConsoleBlock> COMBAT_CONSOLE = BLOCKS.register("combat_console",
+            CombatConsoleBlock::new);
 
     /**
      * 蓝门多方块结构——3x3x3 立方体，GeckoLib动画渲染，可瞄准交互但无碰撞（可穿过）。
