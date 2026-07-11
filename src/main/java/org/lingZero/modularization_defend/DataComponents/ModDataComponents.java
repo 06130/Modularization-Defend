@@ -27,4 +27,24 @@ public class ModDataComponents {
                             .persistent(ResourceLocation.CODEC)
                             .networkSynchronized(ResourceLocation.STREAM_CODEC)
                             .build());
+
+    /**
+     * 存储玩家名称的数据组件（用于玩家ID卡）。
+     */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> STORED_PLAYER_NAME =
+            DATA_COMPONENTS.register("stored_player_name",
+                    () -> DataComponentType.<String>builder()
+                            .persistent(Codec.STRING)
+                            .networkSynchronized(ByteBufCodecs.STRING_UTF8)
+                            .build());
+
+    /**
+     * 存储玩家 UUID 的数据组件（用于玩家ID卡，以字符串形式存储）。
+     */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> STORED_PLAYER_UUID =
+            DATA_COMPONENTS.register("stored_player_uuid",
+                    () -> DataComponentType.<String>builder()
+                            .persistent(Codec.STRING)
+                            .networkSynchronized(ByteBufCodecs.STRING_UTF8)
+                            .build());
 }
