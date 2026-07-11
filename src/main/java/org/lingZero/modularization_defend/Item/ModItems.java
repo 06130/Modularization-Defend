@@ -31,4 +31,8 @@ public class ModItems {
     public static final DeferredItem<Item> EXAMPLE_ITEM = ITEMS.registerSimpleItem("example_item",
             new Item.Properties().food(new FoodProperties.Builder()
                     .alwaysEdible().nutrition(1).saturationModifier(2f).build()));
+
+    // 实体选取器——右键实体存储其类型 ID
+    public static final DeferredItem<EntitySelectorItem> ENTITY_SELECTOR = ITEMS.registerItem("entity_selector",
+            EntitySelectorItem::new);
 }

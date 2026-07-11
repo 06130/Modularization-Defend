@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "modularization_defend:item/entity_id_filter"
+    "layer0": "minecraft:item/name_tag"
   }
 }

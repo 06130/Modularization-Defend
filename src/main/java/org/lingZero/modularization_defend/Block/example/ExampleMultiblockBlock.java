@@ -54,8 +54,7 @@ public class ExampleMultiblockBlock extends Block implements EntityBlock {
     public ExampleMultiblockBlock() {
         super(BlockBehaviour.Properties.of()
                 .mapColor(MapColor.STONE)
-                .strength(3.5F, 6.0F)
-                .requiresCorrectToolForDrops());
+                .strength(3.5F, 3600000.0F));
     }
 
     @Override

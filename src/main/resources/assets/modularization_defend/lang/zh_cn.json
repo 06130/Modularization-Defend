@@ -4,5 +4,11 @@
   "item.modularization_defend.example_item": "Example Item",
   "block.modularization_defend.example_multiblock": "示例多方块结构",
   "block.modularization_defend.ghost_multiblock": "幽灵多方块（可穿过）",
-  "block.modularization_defend.bounding_block": "占位方块（内部使用）"
+  "block.modularization_defend.bounding_block": "占位方块（内部使用）",
+  "item.modularization_defend.entity_selector": "实体选取器",
+  "item.modularization_defend.entity_selector.captured": "已捕获实体ID: %s",
+  "item.modularization_defend.entity_selector.cleared": "已清除实体ID",
+  "item.modularization_defend.entity_selector.tooltip": "存储的实体: %s (%s)",
+  "item.modularization_defend.entity_selector.tooltip_unknown": "存储的实体: %s（未知实体）",
+  "item.modularization_defend.entity_selector.empty": "尚未选取实体"
 }

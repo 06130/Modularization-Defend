@@ -69,9 +69,8 @@ public class GhostMultiblockBlock extends Block implements EntityBlock {
     public GhostMultiblockBlock() {
         super(BlockBehaviour.Properties.of()
                 .mapColor(MapColor.COLOR_LIGHT_BLUE)
-                .strength(3.5F, 6.0F)
-                .noOcclusion()
-                .requiresCorrectToolForDrops());
+                .strength(3.5F, 3600000.0F)
+                .noOcclusion());
     }
 
     @Override

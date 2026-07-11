@@ -44,8 +44,7 @@ public class BoundingBlock extends Block implements EntityBlock {
 
     public BoundingBlock() {
         super(BlockBehaviour.Properties.of()
-                .strength(3.5F, 4.8F)
-                .requiresCorrectToolForDrops()
+                .strength(3.5F, 3600000.0F)
                 .dynamicShape()
                 .noOcclusion()
                 .pushReaction(PushReaction.BLOCK));
@@ -138,9 +137,10 @@ public class BoundingBlock extends Block implements EntityBlock {
         if (mainPos != null) {
             BlockState mainState = level.getBlockState(mainPos);
             if (!mainState.isAir()) {
-                // 代理到主方块处理破坏逻辑（如掉落物品）
+                // 触发主方块的 pre-destruction 逻辑
                 mainState.getBlock().playerWillDestroy(level, mainPos, mainState, player);
-                return state;
+                // 返回主方块的 state，使原版 Block.destroy() 使用主方块的 loot table 生成掉落物
+                return mainState;
             }
         }
         return super.playerWillDestroy(level, pos, state, player);
