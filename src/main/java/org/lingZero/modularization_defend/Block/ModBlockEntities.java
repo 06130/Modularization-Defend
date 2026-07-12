@@ -39,4 +39,16 @@ public class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlueDoorBlockEntity>> BLUE_DOOR =
             BLOCK_ENTITIES.register("bluedoor",
                     () -> BlockEntityType.Builder.of(BlueDoorBlockEntity::new, ModBlocks.BLUE_DOOR.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DeployableZoneBlockEntity>> DEPLOYABLE_ZONE =
+            BLOCK_ENTITIES.register("deployable_zone",
+                    () -> BlockEntityType.Builder.of(DeployableZoneBlockEntity::new, ModBlocks.DEPLOYABLE_ZONE.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DeployableZoneHighBlockEntity>> DEPLOYABLE_ZONE_HIGH =
+            BLOCK_ENTITIES.register("deployable_zone_high",
+                    () -> BlockEntityType.Builder.of(DeployableZoneHighBlockEntity::new, ModBlocks.DEPLOYABLE_ZONE_HIGH.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RedDoorBlockEntity>> RED_DOOR =
+            BLOCK_ENTITIES.register("reddoor",
+                    () -> BlockEntityType.Builder.of(RedDoorBlockEntity::new, ModBlocks.RED_DOOR.get()).build(null));
 }

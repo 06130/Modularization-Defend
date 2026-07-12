@@ -10,6 +10,7 @@ import org.lingZero.modularization_defend.Block.example.BlueDoorBlock;
 import org.lingZero.modularization_defend.Block.example.CombatConsoleBlock;
 import org.lingZero.modularization_defend.Block.example.RedDoorBlock;
 import org.lingZero.modularization_defend.Block.example.DeployableZoneHighBlock;
+import org.lingZero.modularization_defend.Block.DeployableZoneBlock;
 
 /**
  * 模组方块注册中心，统一管理本模组所有方块的注册定义。
@@ -42,4 +43,13 @@ public class ModBlocks {
      */
     public static final DeferredBlock<BlueDoorBlock> BLUE_DOOR = BLOCKS.register("bluedoor",
             BlueDoorBlock::new);
+
+    public static final DeferredBlock<DeployableZoneBlock> DEPLOYABLE_ZONE = BLOCKS.register("deployable_zone",
+            DeployableZoneBlock::new);
+
+    public static final DeferredBlock<DeployableZoneHighBlock> DEPLOYABLE_ZONE_HIGH = BLOCKS.register("deployable_zone_high",
+            DeployableZoneHighBlock::new);
+
+    public static final DeferredBlock<RedDoorBlock> RED_DOOR = BLOCKS.register("reddoor",
+            RedDoorBlock::new);
 }
