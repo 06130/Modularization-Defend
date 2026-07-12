@@ -17,6 +17,8 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.lingZero.modularization_defend.Block.ModBlockEntities;
 import org.lingZero.modularization_defend.Block.ModBlocks;
 import org.lingZero.modularization_defend.Block.render.bluedoor.BlueDoorRenderer;
@@ -25,6 +27,9 @@ import org.lingZero.modularization_defend.CreativeTab.ModCreativeTabs;
 import org.lingZero.modularization_defend.DataComponents.ModDataComponents;
 import org.lingZero.modularization_defend.Event.EntitySelectorHandler;
 import org.lingZero.modularization_defend.Item.ModItems;
+import org.lingZero.modularization_defend.nodegraph.NodeGraphCommand;
+import org.lingZero.modularization_defend.nodegraph.network.OpenGraphEditorPacket;
+import org.lingZero.modularization_defend.nodegraph.network.SaveCardGraphPacket;
 import org.lingZero.modularization_defend.trait.ModTraits;
 import org.lingZero.modularization_defend.trait.TraitCommand;
 import org.lingZero.modularization_defend.util.DebugDumpComponentsCommand;
@@ -65,6 +70,21 @@ public class modularization_defend {
 
         // 注册模组配置文件
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+
+        // 注册网络数据包处理器
+        modEventBus.addListener(RegisterPayloadHandlersEvent.class, event -> {
+            PayloadRegistrar registrar = event.registrar("1");
+            registrar.playToClient(
+                    OpenGraphEditorPacket.TYPE,
+                    OpenGraphEditorPacket.STREAM_CODEC,
+                    OpenGraphEditorPacket::handleClient
+            );
+            registrar.playToServer(
+                    SaveCardGraphPacket.TYPE,
+                    SaveCardGraphPacket.STREAM_CODEC,
+                    SaveCardGraphPacket::handleServer
+            );
+        });
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
@@ -87,6 +107,7 @@ public class modularization_defend {
     public void onRegisterCommands(RegisterCommandsEvent event) {
         DebugDumpComponentsCommand.register(event.getDispatcher());
         TraitCommand.register(event.getDispatcher());
+        NodeGraphCommand.register(event.getDispatcher());
     }
 
     // 自动注册内部所有 @SubscribeEvent 静态方法（仅客户端侧）

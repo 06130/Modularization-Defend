@@ -32,6 +32,7 @@ public class ModCreativeTabs {
                         output.accept(ModItems.RED_DOOR_ITEM.get());
                         output.accept(ModItems.ENTITY_SELECTOR.get());
                         output.accept(ModItems.PLAYER_ID_CARD.get());
+                        output.accept(ModItems.PROGRAM_STORAGE_CARD.get());
                     }).build());
 
     /**

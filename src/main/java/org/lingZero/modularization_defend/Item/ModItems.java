@@ -51,4 +51,8 @@ public class ModItems {
     // 玩家ID卡——潜行+右键写入/清除玩家信息
     public static final DeferredItem<PlayerIdCardItem> PLAYER_ID_CARD = ITEMS.registerItem("player_id_card",
             PlayerIdCardItem::new);
+
+    // 程序存储卡——潜行+右键打开节点图编辑器
+    public static final DeferredItem<ProgramStorageCardItem> PROGRAM_STORAGE_CARD = ITEMS.registerItem(
+            "program_storage_card", ProgramStorageCardItem::new);
 }
