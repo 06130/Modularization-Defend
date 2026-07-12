@@ -7,6 +7,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import org.lingZero.modularization_defend.Block.bounding.BoundingBlockEntity;
 import org.lingZero.modularization_defend.Block.example.BlueDoorBlockEntity;
 import org.lingZero.modularization_defend.Block.example.CombatConsoleBlockEntity;
+import org.lingZero.modularization_defend.Block.example.RedDoorBlockEntity;
 
 /**
  * 模组 BlockEntity 类型注册中心。
@@ -36,4 +37,11 @@ public class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BlueDoorBlockEntity>> BLUE_DOOR =
             BLOCK_ENTITIES.register("bluedoor",
                     () -> BlockEntityType.Builder.of(BlueDoorBlockEntity::new, ModBlocks.BLUE_DOOR.get()).build(null));
+
+    /**
+     * 红门多方块结构的 BlockEntity 类型。
+     */
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RedDoorBlockEntity>> RED_DOOR =
+            BLOCK_ENTITIES.register("reddoor",
+                    () -> BlockEntityType.Builder.of(RedDoorBlockEntity::new, ModBlocks.RED_DOOR.get()).build(null));
 }

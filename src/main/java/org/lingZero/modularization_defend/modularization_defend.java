@@ -20,6 +20,7 @@ import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.lingZero.modularization_defend.Block.ModBlockEntities;
 import org.lingZero.modularization_defend.Block.ModBlocks;
 import org.lingZero.modularization_defend.Block.render.bluedoor.BlueDoorRenderer;
+import org.lingZero.modularization_defend.Block.render.reddoor.RedDoorRenderer;
 import org.lingZero.modularization_defend.CreativeTab.ModCreativeTabs;
 import org.lingZero.modularization_defend.DataComponents.ModDataComponents;
 import org.lingZero.modularization_defend.Event.EntitySelectorHandler;
@@ -106,6 +107,10 @@ public class modularization_defend {
             event.registerBlockEntityRenderer(
                     ModBlockEntities.BLUE_DOOR.get(),
                     context -> new BlueDoorRenderer()
+            );
+            event.registerBlockEntityRenderer(
+                    ModBlockEntities.RED_DOOR.get(),
+                    context -> new RedDoorRenderer()
             );
         }
     }

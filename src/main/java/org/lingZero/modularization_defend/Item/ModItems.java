@@ -27,6 +27,10 @@ public class ModItems {
     public static final DeferredItem<BlockItem> BLUE_DOOR_ITEM = ITEMS.registerSimpleBlockItem("bluedoor",
             ModBlocks.BLUE_DOOR);
 
+    // 红门多方块结构的方块物品
+    public static final DeferredItem<BlockItem> RED_DOOR_ITEM = ITEMS.registerSimpleBlockItem("reddoor",
+            ModBlocks.RED_DOOR);
+
     // 示例食物物品，ID 为 "modularization_defend:example_item"，始终可食用，营养值 1，饱和度 2
     public static final DeferredItem<Item> EXAMPLE_ITEM = ITEMS.registerSimpleItem("example_item",
             new Item.Properties().food(new FoodProperties.Builder()

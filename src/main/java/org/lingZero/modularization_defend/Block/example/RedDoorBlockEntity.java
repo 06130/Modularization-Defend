@@ -27,33 +27,29 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 蓝门多方块结构的BlockEntity。
- * 实现GeoBlockEntity以提供GeckoLib动画视觉效果，灵感来源于明日方舟"蓝门"。
- * 维护一个实体类型ID集合，结构范围内的匹配实体将被定期清除。
+ * 红门多方块结构的BlockEntity。
+ * 实现GeoBlockEntity以提供GeckoLib渲染（无动画），
+ * 维护实体类型ID集合，结构范围内的匹配实体将被定期清除。
  */
-public class BlueDoorBlockEntity extends BlockEntity implements IBoundingBlock, GeoBlockEntity {
+public class RedDoorBlockEntity extends BlockEntity implements IBoundingBlock, GeoBlockEntity {
 
-    /** 结构范围（3x3x3，主方块在底面中心） */
     private static final AABB STRUCTURE_AABB = new AABB(-1, 0, -1, 2, 3, 2);
-
-    /** 实体扫描间隔（tick） */
     private static final int SCAN_INTERVAL = 10;
 
-    /** GeckoLib动画实例缓存（客户端侧自动管理） */
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     private final Set<ResourceLocation> entityIds = new HashSet<>();
     private int tickCounter;
 
-    public BlueDoorBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.BLUE_DOOR.get(), pos, state);
+    public RedDoorBlockEntity(BlockPos pos, BlockState state) {
+        super(ModBlockEntities.RED_DOOR.get(), pos, state);
     }
 
     // ==================== GeckoLib（无动画） ====================
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        // 蓝门不使用呼吸动画
+        // 红门不使用呼吸动画
     }
 
     @Override
@@ -63,19 +59,14 @@ public class BlueDoorBlockEntity extends BlockEntity implements IBoundingBlock, 
 
     // ==================== 服务端Tick ====================
 
-    public static void serverTick(Level level, BlockPos pos, BlockState state, BlueDoorBlockEntity be) {
-        if (be.entityIds.isEmpty()) {
-            return;
-        }
+    public static void serverTick(Level level, BlockPos pos, BlockState state, RedDoorBlockEntity be) {
+        if (be.entityIds.isEmpty()) return;
         be.tickCounter++;
-        if (be.tickCounter < SCAN_INTERVAL) {
-            return;
-        }
+        if (be.tickCounter < SCAN_INTERVAL) return;
         be.tickCounter = 0;
         be.scanAndRemoveEntities(level, pos);
     }
 
-    /** 扫描结构范围内的实体，匹配到的直接移除 */
     private void scanAndRemoveEntities(Level level, BlockPos pos) {
         AABB worldBounds = STRUCTURE_AABB.move(pos);
         List<Entity> entities = level.getEntities((Entity) null, worldBounds, e -> !(e instanceof Player));
@@ -87,26 +78,19 @@ public class BlueDoorBlockEntity extends BlockEntity implements IBoundingBlock, 
         }
     }
 
-    // ==================== 实体ID列表管理 ====================
-
-    /** 获取已存储的实体 ID 集合（只读） */
     public Set<ResourceLocation> getEntityIds() {
         return Collections.unmodifiableSet(entityIds);
     }
 
-    /** 向实体列表中添加一个实体 ID */
     public void addEntityId(ResourceLocation entityId) {
         entityIds.add(entityId);
         setChanged();
     }
 
-    /** 清空实体列表 */
     public void clearEntityIds() {
         entityIds.clear();
         setChanged();
     }
-
-    // ==================== NBT持久化 ====================
 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
