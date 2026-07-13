@@ -9,6 +9,7 @@ import org.lingZero.modularization_defend.Block.example.BlueDoorBlockEntity;
 import org.lingZero.modularization_defend.Block.example.CombatConsoleBlockEntity;
 import org.lingZero.modularization_defend.Block.DeployableZoneBlockEntity;
 import org.lingZero.modularization_defend.Block.example.DeployableZoneHighBlockEntity;
+import org.lingZero.modularization_defend.Block.example.LevelEditorBlockEntity;
 import org.lingZero.modularization_defend.Block.example.RedDoorBlockEntity;
 
 /**
@@ -51,4 +52,11 @@ public class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RedDoorBlockEntity>> RED_DOOR =
             BLOCK_ENTITIES.register("reddoor",
                     () -> BlockEntityType.Builder.of(RedDoorBlockEntity::new, ModBlocks.RED_DOOR.get()).build(null));
+
+    /**
+     * 关卡编辑器的 BlockEntity 类型。
+     */
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LevelEditorBlockEntity>> LEVEL_EDITOR =
+            BLOCK_ENTITIES.register("level_editor",
+                    () -> BlockEntityType.Builder.of(LevelEditorBlockEntity::new, ModBlocks.LEVEL_EDITOR.get()).build(null));
 }

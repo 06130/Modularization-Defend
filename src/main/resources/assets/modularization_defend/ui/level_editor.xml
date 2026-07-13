@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ldlib2-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/Low-Drag-MC/LDLib2/refs/heads/1.21/ldlib2-ui.xsd">
+
+    <style>
+        .col { flex-direction: column; }
+        .row { flex-direction: row; }
+        .grow { flex: 1; }
+        .divider { width: 100%; }
+        .sec-label text { font-size: 10; text-color: #FF2563EB; }
+        .info-row {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .info-label text { font-size: 10; text-color: #FF64748B; }
+        .info-value text { font-size: 10; text-color: #FF1E293B; }
+        .btn {
+            flex: 1;
+            padding-vertical: 5;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn text { font-size: 11; }
+    </style>
+
+    <root id="root" class="col"
+          style="width: 220; padding-all: 12; gap-all: 8; background: rect(#FFF8FAFC, 4);">
+
+        <!-- 标题 -->
+        <element class="row" style="align-items: flex-end; justify-content: space-between;">
+            <text style="font-size: 15; text-color: #FF2563EB;">关卡编辑器</text>
+            <text style="font-size: 10; text-color: #FF94A3B8;">Level Editor</text>
+        </element>
+
+        <!-- 分隔线 -->
+        <element class="divider" style="height: 2px; background: #FF2563EB;"/>
+
+        <!-- 区域信息 -->
+        <element class="col" style="gap-all: 3;">
+            <text class="sec-label">区域信息</text>
+            <element class="info-row">
+                <text class="info-label">区域尺寸</text>
+                <text class="info-value" id="zone-size-text">15 x 15 x 15</text>
+            </element>
+            <element class="info-row">
+                <text class="info-label">区域坐标</text>
+                <text class="info-value" id="zone-pos-text">-</text>
+            </element>
+            <element class="info-row">
+                <text class="info-label">方块总数</text>
+                <text class="info-value" id="block-count-text">-</text>
+            </element>
+        </element>
+
+        <!-- 分隔线 -->
+        <element class="divider" style="height: 1px; background: #FFE2E8F0;"/>
+
+        <!-- 操作按钮 -->
+        <element class="col" style="gap-all: 3;">
+            <text class="sec-label">操作</text>
+            <element class="row" style="gap-all: 4;">
+                <button id="btn-save" class="btn"
+                        text="保存关卡"
+                        style="padding-horizontal: 8; background: rect(#FF2563EB, 4);">
+                    <button.text style="text-color: #FFFFFFFF;"/>
+                </button>
+                <button id="btn-load" class="btn"
+                        text="加载关卡"
+                        style="padding-horizontal: 8; background: rect(#FFE2E8F0, 4, 1, #FFCBD5E1);">
+                    <button.text style="text-color: #FF475569;"/>
+                </button>
+            </element>
+            <button id="btn-clear" class="btn"
+                    text="清空区域"
+                    style="padding-horizontal: 8; background: rect(#FFFEE2E2, 4, 1, #FFFECACA);">
+                <button.text style="text-color: #FFDC2626;"/>
+            </button>
+        </element>
+
+    </root>
+</ldlib2-ui>

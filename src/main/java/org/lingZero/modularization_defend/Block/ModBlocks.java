@@ -8,6 +8,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import org.lingZero.modularization_defend.Block.bounding.BoundingBlock;
 import org.lingZero.modularization_defend.Block.example.BlueDoorBlock;
 import org.lingZero.modularization_defend.Block.example.CombatConsoleBlock;
+import org.lingZero.modularization_defend.Block.example.LevelEditorBlock;
 import org.lingZero.modularization_defend.Block.example.RedDoorBlock;
 import org.lingZero.modularization_defend.Block.example.DeployableZoneHighBlock;
 import org.lingZero.modularization_defend.Block.DeployableZoneBlock;
@@ -52,4 +53,10 @@ public class ModBlocks {
 
     public static final DeferredBlock<RedDoorBlock> RED_DOOR = BLOCKS.register("reddoor",
             RedDoorBlock::new);
+
+    /**
+     * 关卡编辑器——放置后在其上方创建 15x15x15 的可建造区域。
+     */
+    public static final DeferredBlock<LevelEditorBlock> LEVEL_EDITOR = BLOCKS.register("level_editor",
+            LevelEditorBlock::new);
 }

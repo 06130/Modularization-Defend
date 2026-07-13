@@ -30,6 +30,7 @@ public class ModCreativeTabs {
                         output.accept(ModItems.DEPLOYABLE_ZONE_ITEM.get());
                         output.accept(ModItems.DEPLOYABLE_ZONE_HIGH_ITEM.get());
                         output.accept(ModItems.RED_DOOR_ITEM.get());
+                        output.accept(ModItems.LEVEL_EDITOR_ITEM.get());
                         output.accept(ModItems.ENTITY_SELECTOR.get());
                         output.accept(ModItems.PLAYER_ID_CARD.get());
                         output.accept(ModItems.PROGRAM_STORAGE_CARD.get());
