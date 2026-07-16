@@ -30,8 +30,10 @@ import org.lingZero.modularization_defend.Event.EntitySelectorHandler;
 import org.lingZero.modularization_defend.Item.ModItems;
 import org.lingZero.modularization_defend.nodegraph.NodeGraphCommand;
 import org.lingZero.modularization_defend.nodegraph.eval.NodeEvaluators;
+import org.lingZero.modularization_defend.nodegraph.exec.LevelNodeExecutors;
 import org.lingZero.modularization_defend.nodegraph.network.OpenGraphEditorPacket;
 import org.lingZero.modularization_defend.nodegraph.network.SaveCardGraphPacket;
+import org.lingZero.modularization_defend.nodegraph.network.SaveControllerGraphPacket;
 import org.lingZero.modularization_defend.trait.ModTraits;
 import org.lingZero.modularization_defend.trait.TraitCommand;
 import org.lingZero.modularization_defend.util.DebugDumpComponentsCommand;
@@ -86,10 +88,16 @@ public class modularization_defend {
                     SaveCardGraphPacket.STREAM_CODEC,
                     SaveCardGraphPacket::handleServer
             );
+            registrar.playToServer(
+                    SaveControllerGraphPacket.TYPE,
+                    SaveControllerGraphPacket.STREAM_CODEC,
+                    SaveControllerGraphPacket::handleServer
+            );
         });
 
-        // 注册节点图求值器
+        // 注册节点图求值器与关卡执行流节点
         NodeEvaluators.init();
+        LevelNodeExecutors.init();
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

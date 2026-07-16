@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -145,6 +146,21 @@ public class RedDoorBlock extends Block implements EntityBlock {
                     "block.modularization_defend.reddoor.entities_cleared"));
         }
         return ItemInteractionResult.sidedSuccess(false);
+    }
+
+    /** 潜行空手右键：循环切换关卡门 ID（1~9） */
+    @NotNull
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
+                                               Player player, BlockHitResult hitResult) {
+        if (!player.isShiftKeyDown()) {
+            return super.useWithoutItem(state, level, pos, player, hitResult);
+        }
+        if (!level.isClientSide && level.getBlockEntity(pos) instanceof RedDoorBlockEntity be) {
+            player.sendSystemMessage(Component.translatable(
+                    "block.modularization_defend.reddoor.door_id", be.cycleDoorId()));
+        }
+        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @NotNull

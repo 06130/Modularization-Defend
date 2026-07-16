@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import org.lingZero.modularization_defend.Block.ModBlockEntities;
 import org.lingZero.modularization_defend.Block.bounding.IBoundingBlock;
+import org.lingZero.modularization_defend.level.DoorRegistry;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -34,7 +35,7 @@ import java.util.Set;
 public class BlueDoorBlockEntity extends BlockEntity implements IBoundingBlock, GeoBlockEntity {
 
     /** 结构范围（3x3x3，主方块在底面中心） */
-    private static final AABB STRUCTURE_AABB = new AABB(-1, 0, -1, 2, 3, 2);
+    public static final AABB STRUCTURE_AABB = new AABB(-1, 0, -1, 2, 3, 2);
 
     /** 实体扫描间隔（tick） */
     private static final int SCAN_INTERVAL = 10;
@@ -44,6 +45,8 @@ public class BlueDoorBlockEntity extends BlockEntity implements IBoundingBlock, 
 
     private final Set<ResourceLocation> entityIds = new HashSet<>();
     private int tickCounter;
+    /** 关卡门 ID（1~9），关卡节点图通过它引用此门 */
+    private int doorId = 1;
 
     public BlueDoorBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.BLUE_DOOR.get(), pos, state);
@@ -87,6 +90,35 @@ public class BlueDoorBlockEntity extends BlockEntity implements IBoundingBlock, 
         }
     }
 
+    // ==================== 关卡门 ID ====================
+
+    public int getDoorId() {
+        return doorId;
+    }
+
+    /** 循环切换门 ID（1→9→1），返回新 ID */
+    public int cycleDoorId() {
+        doorId = doorId % 9 + 1;
+        setChanged();
+        return doorId;
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if (level != null && !level.isClientSide) {
+            DoorRegistry.register(level, DoorRegistry.DoorType.BLUE, worldPosition);
+        }
+    }
+
+    @Override
+    public void setRemoved() {
+        if (level != null && !level.isClientSide) {
+            DoorRegistry.unregister(level, DoorRegistry.DoorType.BLUE, worldPosition);
+        }
+        super.setRemoved();
+    }
+
     // ==================== 实体ID列表管理 ====================
 
     /** 获取已存储的实体 ID 集合（只读） */
@@ -112,6 +144,7 @@ public class BlueDoorBlockEntity extends BlockEntity implements IBoundingBlock, 
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.saveAdditional(tag, provider);
         tag.putInt("TickCounter", tickCounter);
+        tag.putInt("DoorId", doorId);
         ListTag list = new ListTag();
         for (ResourceLocation id : entityIds) {
             list.add(StringTag.valueOf(id.toString()));
@@ -123,6 +156,8 @@ public class BlueDoorBlockEntity extends BlockEntity implements IBoundingBlock, 
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.loadAdditional(tag, provider);
         tickCounter = tag.getInt("TickCounter");
+        doorId = tag.getInt("DoorId");
+        if (doorId <= 0) doorId = 1;
         entityIds.clear();
         ListTag list = tag.getList("EntityIds", Tag.TAG_STRING);
         for (int i = 0; i < list.size(); i++) {

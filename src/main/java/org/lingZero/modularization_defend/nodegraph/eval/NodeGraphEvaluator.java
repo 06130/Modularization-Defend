@@ -118,8 +118,13 @@ public class NodeGraphEvaluator {
             var option = iop.getNodeOptionById(optionId);
             if (option != null) {
                 var type = option.getDataType();
-                if (type instanceof Class<?> clazz) {
-                    var r = option.tryGetValue(clazz);
+                // NodeOption.getDataType() 恒返回 null，需从其底层端口模型解析实际类型
+                if (type == null && option instanceof NodeOption no
+                        && no.getPortModel() != null && no.getPortModel().getDataTypeHandle() != null) {
+                    type = no.getPortModel().getDataTypeHandle().resolve();
+                }
+                if (type != null) {
+                    var r = option.tryGetValue(type);
                     if (r.result().isPresent()) return (T) r.result().get();
                 }
             }

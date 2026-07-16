@@ -43,6 +43,10 @@ public class ModItems {
     public static final DeferredItem<BlockItem> LEVEL_EDITOR_ITEM = ITEMS.registerSimpleBlockItem("level_editor",
             ModBlocks.LEVEL_EDITOR);
 
+    // 关卡控制器的方块物品
+    public static final DeferredItem<BlockItem> LEVEL_CONTROLLER_ITEM = ITEMS.registerSimpleBlockItem("level_controller",
+            ModBlocks.LEVEL_CONTROLLER);
+
     // 示例食物物品，ID 为 "modularization_defend:example_item"，始终可食用，营养值 1，饱和度 2
     public static final DeferredItem<Item> EXAMPLE_ITEM = ITEMS.registerSimpleItem("example_item",
             new Item.Properties().food(new FoodProperties.Builder()

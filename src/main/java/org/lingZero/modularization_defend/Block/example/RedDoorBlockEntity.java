@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import org.lingZero.modularization_defend.Block.ModBlockEntities;
 import org.lingZero.modularization_defend.Block.bounding.IBoundingBlock;
+import org.lingZero.modularization_defend.level.DoorRegistry;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -40,6 +41,8 @@ public class RedDoorBlockEntity extends BlockEntity implements IBoundingBlock, G
 
     private final Set<ResourceLocation> entityIds = new HashSet<>();
     private int tickCounter;
+    /** 关卡门 ID（1~9），关卡节点图通过它引用此门 */
+    private int doorId = 1;
 
     public RedDoorBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.RED_DOOR.get(), pos, state);
@@ -78,6 +81,35 @@ public class RedDoorBlockEntity extends BlockEntity implements IBoundingBlock, G
         }
     }
 
+    // ==================== 关卡门 ID ====================
+
+    public int getDoorId() {
+        return doorId;
+    }
+
+    /** 循环切换门 ID（1→9→1），返回新 ID */
+    public int cycleDoorId() {
+        doorId = doorId % 9 + 1;
+        setChanged();
+        return doorId;
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if (level != null && !level.isClientSide) {
+            DoorRegistry.register(level, DoorRegistry.DoorType.RED, worldPosition);
+        }
+    }
+
+    @Override
+    public void setRemoved() {
+        if (level != null && !level.isClientSide) {
+            DoorRegistry.unregister(level, DoorRegistry.DoorType.RED, worldPosition);
+        }
+        super.setRemoved();
+    }
+
     public Set<ResourceLocation> getEntityIds() {
         return Collections.unmodifiableSet(entityIds);
     }
@@ -96,6 +128,7 @@ public class RedDoorBlockEntity extends BlockEntity implements IBoundingBlock, G
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.saveAdditional(tag, provider);
         tag.putInt("TickCounter", tickCounter);
+        tag.putInt("DoorId", doorId);
         ListTag list = new ListTag();
         for (ResourceLocation id : entityIds) {
             list.add(StringTag.valueOf(id.toString()));
@@ -107,6 +140,8 @@ public class RedDoorBlockEntity extends BlockEntity implements IBoundingBlock, G
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.loadAdditional(tag, provider);
         tickCounter = tag.getInt("TickCounter");
+        doorId = tag.getInt("DoorId");
+        if (doorId <= 0) doorId = 1;
         entityIds.clear();
         ListTag list = tag.getList("EntityIds", Tag.TAG_STRING);
         for (int i = 0; i < list.size(); i++) {

@@ -11,8 +11,10 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
+import net.minecraft.core.BlockPos;
 import org.joml.Vector2f;
 import org.lingZero.modularization_defend.nodegraph.network.SaveCardGraphPacket;
+import org.lingZero.modularization_defend.nodegraph.network.SaveControllerGraphPacket;
 
 /**
  * 客户端辅助类——用于在独立屏幕中打开节点图编辑器。
@@ -51,6 +53,22 @@ public final class GraphEditorOpener {
             // 保存回调：将图数据发送回服务端写入卡片
             PacketDistributor.sendToServer(new SaveCardGraphPacket(savedTag, mainHand));
         });
+    }
+
+    /**
+     * 打开关卡控制器方块的节点图编辑器。
+     *
+     * @param graphTag 方块中存储的图 NBT（空则创建新图）
+     * @param pos      关卡控制器的方块位置（用于保存）
+     */
+    public static void openControllerEditor(CompoundTag graphTag, BlockPos pos) {
+        var graph = new TurretLogicGraph();
+        if (!graphTag.isEmpty()) {
+            graph.graphModel.deserializeNBT(Minecraft.getInstance().level.registryAccess(), graphTag);
+        }
+
+        openEditor(graph, "turret_logic_controller", savedTag ->
+                PacketDistributor.sendToServer(new SaveControllerGraphPacket(pos, savedTag)));
     }
 
     /** 内部通用方法：用指定图和标题创建一个编辑器屏幕并打开 */

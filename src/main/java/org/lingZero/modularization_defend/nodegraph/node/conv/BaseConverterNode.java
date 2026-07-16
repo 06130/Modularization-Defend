@@ -1,4 +1,4 @@
-package org.lingZero.modularization_defend.nodegraph.conv;
+package org.lingZero.modularization_defend.nodegraph.node.conv;
 
 import com.lowdragmc.lowdraglib2.nodegraphtookit.api.node.Node;
 import com.lowdragmc.lowdraglib2.nodegraphtookit.model.Capabilities;

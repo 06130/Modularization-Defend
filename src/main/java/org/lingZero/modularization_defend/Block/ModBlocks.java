@@ -12,6 +12,7 @@ import org.lingZero.modularization_defend.Block.example.LevelEditorBlock;
 import org.lingZero.modularization_defend.Block.example.RedDoorBlock;
 import org.lingZero.modularization_defend.Block.example.DeployableZoneHighBlock;
 import org.lingZero.modularization_defend.Block.DeployableZoneBlock;
+import org.lingZero.modularization_defend.level.LevelControllerBlock;
 
 /**
  * 模组方块注册中心，统一管理本模组所有方块的注册定义。
@@ -59,4 +60,10 @@ public class ModBlocks {
      */
     public static final DeferredBlock<LevelEditorBlock> LEVEL_EDITOR = BLOCKS.register("level_editor",
             LevelEditorBlock::new);
+
+    /**
+     * 关卡控制器——存储关卡节点图并驱动关卡流程（启动/波次/胜负判定）。
+     */
+    public static final DeferredBlock<LevelControllerBlock> LEVEL_CONTROLLER = BLOCKS.register("level_controller",
+            LevelControllerBlock::new);
 }

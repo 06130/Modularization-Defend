@@ -11,6 +11,7 @@ import org.lingZero.modularization_defend.Block.DeployableZoneBlockEntity;
 import org.lingZero.modularization_defend.Block.example.DeployableZoneHighBlockEntity;
 import org.lingZero.modularization_defend.Block.example.LevelEditorBlockEntity;
 import org.lingZero.modularization_defend.Block.example.RedDoorBlockEntity;
+import org.lingZero.modularization_defend.level.LevelControllerBlockEntity;
 
 /**
  * 模组 BlockEntity 类型注册中心。
@@ -59,4 +60,11 @@ public class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LevelEditorBlockEntity>> LEVEL_EDITOR =
             BLOCK_ENTITIES.register("level_editor",
                     () -> BlockEntityType.Builder.of(LevelEditorBlockEntity::new, ModBlocks.LEVEL_EDITOR.get()).build(null));
+
+    /**
+     * 关卡控制器的 BlockEntity 类型。
+     */
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LevelControllerBlockEntity>> LEVEL_CONTROLLER =
+            BLOCK_ENTITIES.register("level_controller",
+                    () -> BlockEntityType.Builder.of(LevelControllerBlockEntity::new, ModBlocks.LEVEL_CONTROLLER.get()).build(null));
 }
