@@ -29,6 +29,7 @@ import org.lingZero.modularization_defend.DataComponents.ModDataComponents;
 import org.lingZero.modularization_defend.Event.EntitySelectorHandler;
 import org.lingZero.modularization_defend.Item.ModItems;
 import org.lingZero.modularization_defend.nodegraph.NodeGraphCommand;
+import org.lingZero.modularization_defend.nodegraph.eval.NodeEvaluators;
 import org.lingZero.modularization_defend.nodegraph.network.OpenGraphEditorPacket;
 import org.lingZero.modularization_defend.nodegraph.network.SaveCardGraphPacket;
 import org.lingZero.modularization_defend.trait.ModTraits;
@@ -86,6 +87,9 @@ public class modularization_defend {
                     SaveCardGraphPacket::handleServer
             );
         });
+
+        // 注册节点图求值器
+        NodeEvaluators.init();
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

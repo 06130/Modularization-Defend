@@ -10,35 +10,26 @@ import net.minecraft.network.chat.Component;
 import org.lingZero.modularization_defend.nodegraph.TurretLogicGraph;
 
 /**
- * 目标计数节点——输出范围内检测到的目标数量。
+ * 整数值节点——输出一个可配置的整型常量值。
  *
- * <p>这是一个"源"节点：只有输出端口，没有输入端口。
- * 通过"range"选项控制检测半径。</p>
+ * <p>这是一个"源"节点：没有输入端口，仅输出一个整数值。</p>
  *
  * <h3>端口</h3>
  * <ul>
- *   <li><b>输出 count (int)</b> — 范围内的目标数量</li>
+ *   <li><b>输出 value (int)</b> — 配置的整数值</li>
  * </ul>
  *
  * <h3>选项</h3>
  * <ul>
- *   <li><b>range (float)</b> — 检测半径，默认 10.0</li>
+ *   <li><b>value (int)</b> — 输出值，默认 0</li>
  * </ul>
  */
-@NodeAttribute(name = "目标计数", group = "检测", graphTypes = {TurretLogicGraph.class})
+@NodeAttribute(name = "整数值", group = "常量", graphTypes = {TurretLogicGraph.class})
 public class TargetCountNode extends Node {
 
     @Override
     public Component getDisplayName() {
-        return Component.translatable("node.modularization_defend.target_count");
-    }
-
-    @Override
-    public void onDefineOptions(IOptionDefinitionContext context) {
-        super.onDefineOptions(context);
-        context.addOption("range", Float.class)
-                .withDisplayName(Component.translatable("node.modularization_defend.range"))
-                .withDefaultValue(10.0f);
+        return Component.translatable("node.modularization_defend.int_value");
     }
 
     @Override
@@ -48,10 +39,18 @@ public class TargetCountNode extends Node {
     }
 
     @Override
+    public void onDefineOptions(IOptionDefinitionContext context) {
+        super.onDefineOptions(context);
+        context.addOption("value", Integer.class)
+                .withDisplayName(Component.translatable("node.modularization_defend.int_value_option"))
+                .withDefaultValue(0);
+    }
+
+    @Override
     public void onDefinePorts(IPortDefinitionContext context) {
         super.onDefinePorts(context);
-        context.addOutputPort("count", Integer.class)
-                .withDisplayName(Component.translatable("node.modularization_defend.target_count_port"))
+        context.addOutputPort("value", Integer.class)
+                .withDisplayName(Component.translatable("node.modularization_defend.int_value"))
                 .build();
     }
 }

@@ -10,15 +10,12 @@ import net.minecraft.network.chat.Component;
 import org.lingZero.modularization_defend.nodegraph.TurretLogicGraph;
 
 /**
- * 阈值门节点——当输入值超过阈值时输出 true。
- *
- * <p>这是一个"处理"节点：既有输入端口，也有输出端口。
- * 通过"threshold"选项控制门限值。</p>
+ * 阈值门节点——当输入值超过设定阈值时输出 true。
  *
  * <h3>端口</h3>
  * <ul>
- *   <li><b>输入 count (int)</b> — 目标计数值</li>
- *   <li><b>输出 shouldFire (boolean)</b> — 是否达到开火条件</li>
+ *   <li><b>输入 value (int)</b> — 待比较的数值</li>
+ *   <li><b>输出 result (bool)</b> — 是否超过阈值</li>
  * </ul>
  *
  * <h3>选项</h3>
@@ -35,6 +32,12 @@ public class ThresholdGateNode extends Node {
     }
 
     @Override
+    public void setImplementation(NodeModel nodeModel) {
+        super.setImplementation(nodeModel);
+        nodeModel.setCapability(Capabilities.RENAMABLE, true);
+    }
+
+    @Override
     public void onDefineOptions(IOptionDefinitionContext context) {
         super.onDefineOptions(context);
         context.addOption("threshold", Integer.class)
@@ -43,19 +46,13 @@ public class ThresholdGateNode extends Node {
     }
 
     @Override
-    public void setImplementation(NodeModel nodeModel) {
-        super.setImplementation(nodeModel);
-        nodeModel.setCapability(Capabilities.RENAMABLE, true);
-    }
-
-    @Override
     public void onDefinePorts(IPortDefinitionContext context) {
         super.onDefinePorts(context);
-        context.addInputPort("count", Integer.class)
-                .withDisplayName(Component.translatable("node.modularization_defend.target_count_port"))
+        context.addInputPort("value", Integer.class)
+                .withDisplayName(Component.translatable("node.modularization_defend.input_value"))
                 .build();
-        context.addOutputPort("shouldFire", Boolean.class)
-                .withDisplayName(Component.translatable("node.modularization_defend.should_fire"))
+        context.addOutputPort("result", Boolean.class)
+                .withDisplayName(Component.translatable("node.modularization_defend.result"))
                 .build();
     }
 }
