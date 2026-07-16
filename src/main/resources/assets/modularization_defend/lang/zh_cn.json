@@ -92,5 +92,17 @@
   "node.modularization_defend.cmp.ge": "大于等于 (A >= B)",
   "node.modularization_defend.cmp.le": "小于等于 (A <= B)",
   "node.modularization_defend.cmp.eq": "等于 (A == B)",
-  "node.modularization_defend.cmp.ne": "不等于 (A != B)"
+  "node.modularization_defend.cmp.ne": "不等于 (A != B)",
+  "node.modularization_defend.type_converter": "类型转换",
+  "node.modularization_defend.conv_from": "来源类型",
+  "node.modularization_defend.conv_target": "目标类型",
+  "node.modularization_defend.conv.int": "整数 (Int)",
+  "node.modularization_defend.conv.long": "长整数 (Long)",
+  "node.modularization_defend.conv.float": "浮点数 (Float)",
+  "node.modularization_defend.conv.double": "双精度 (Double)",
+  "node.modularization_defend.conv.string": "字符串 (String)",
+  "node.modularization_defend.conv.float_to": "Float 转目标",
+  "node.modularization_defend.conv.int_to": "Int 转目标",
+  "node.modularization_defend.conv.bool_to": "Bool 转目标",
+  "node.modularization_defend.conv.string_to": "String 转目标"
 }

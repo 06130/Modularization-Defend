@@ -92,5 +92,17 @@
   "node.modularization_defend.cmp.ge": "Greater or Equal (A >= B)",
   "node.modularization_defend.cmp.le": "Less or Equal (A <= B)",
   "node.modularization_defend.cmp.eq": "Equal (A == B)",
-  "node.modularization_defend.cmp.ne": "Not Equal (A != B)"
+  "node.modularization_defend.cmp.ne": "Not Equal (A != B)",
+  "node.modularization_defend.type_converter": "Type Converter",
+  "node.modularization_defend.conv_from": "From Type",
+  "node.modularization_defend.conv_target": "To Type",
+  "node.modularization_defend.conv.int": "Integer",
+  "node.modularization_defend.conv.long": "Long",
+  "node.modularization_defend.conv.float": "Float",
+  "node.modularization_defend.conv.double": "Double",
+  "node.modularization_defend.conv.string": "String",
+  "node.modularization_defend.conv.float_to": "Float to Target",
+  "node.modularization_defend.conv.int_to": "Int to Target",
+  "node.modularization_defend.conv.bool_to": "Bool to Target",
+  "node.modularization_defend.conv.string_to": "String to Target"
 }

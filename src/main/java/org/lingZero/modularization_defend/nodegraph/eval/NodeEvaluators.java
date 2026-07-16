@@ -1,8 +1,9 @@
 package org.lingZero.modularization_defend.nodegraph.eval;
 
 import org.lingZero.modularization_defend.nodegraph.eval.NodeGraphEvaluator.EvalCtx;
-import org.lingZero.modularization_defend.nodegraph.node.MathFunction;
 import org.lingZero.modularization_defend.nodegraph.node.CompareFunction;
+import org.lingZero.modularization_defend.nodegraph.node.ConversionTarget;
+import org.lingZero.modularization_defend.nodegraph.node.MathFunction;
 
 /**
  * 为所有自定义节点注册求值逻辑。在模组初始化时调用 {@link #init()}。
@@ -26,6 +27,7 @@ public final class NodeEvaluators {
         registerComparator();
         registerTimer();
         registerDataStore();
+        registerTypeConverter();
     }
 
     private static void registerIntegerValue() {
@@ -183,5 +185,48 @@ public final class NodeEvaluators {
 
     private static float toFloat(Object val) {
         return val instanceof Number n ? n.floatValue() : 0f;
+    }
+
+    // ==================== 类型转换 ====================
+    private static void registerTypeConverter() {
+        registerConverter("Float→目标");
+        registerConverter("Int→目标");
+        registerConverter("Bool→目标");
+        registerConverter("String→目标");
+    }
+
+    private static void registerConverter(String nodeName) {
+        NodeGraphEvaluator.registerEvaluator(nodeName, ctx -> {
+            if (!"result".equals(ctx.portId())) return null;
+            double val = toDouble(ctx.evaluator().getInputPortValue(ctx.node(), "value"));
+            ConversionTarget target = getConversionTarget(ctx, "target", ConversionTarget.INT);
+            return convertValue(val, target);
+        });
+    }
+
+    private static ConversionTarget getConversionTarget(EvalCtx ctx, String optionId, ConversionTarget fallback) {
+        Object opt = ctx.evaluator().getOptionValue(ctx.node(), optionId);
+        if (opt instanceof ConversionTarget ct) return ct;
+        if (opt instanceof String s) { try { return ConversionTarget.valueOf(s); } catch (Exception ignored) {} }
+        return fallback;
+    }
+
+    private static Object convertValue(double num, ConversionTarget target) {
+        return switch (target) {
+            case INT -> (int) num;
+            case LONG -> (long) num;
+            case FLOAT -> (float) num;
+            case DOUBLE -> num;
+            case STRING -> String.valueOf(num);
+        };
+    }
+
+    private static double toDouble(Object val) {
+        if (val instanceof Number n) return n.doubleValue();
+        if (val instanceof Boolean b) return b ? 1.0 : 0.0;
+        if (val instanceof String s) {
+            try { return Double.parseDouble(s); } catch (NumberFormatException ignored) {}
+        }
+        return 0.0;
     }
 }
