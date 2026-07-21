@@ -85,13 +85,37 @@
 
         <!-- 干员编队 -->
         <element class="col grow" style="gap-all: 3;">
-            <text class="sec-label">干员编队 2/6</text>
-            <element class="row" style="gap-all: 3;">
+            <text class="sec-label">干员编队 2/12</text>
+            <element class="row" style="gap-all: 3; flex-wrap: wrap;">
                 <element class="squad-box" style="background: rect(#FF2563EB, 4);">
                     <text style="font-size: 12; text-color: #FFFFFFFF;">A</text>
                 </element>
                 <element class="squad-box" style="background: rect(#FF2563EB, 4);">
                     <text style="font-size: 12; text-color: #FFFFFFFF;">B</text>
+                </element>
+                <element class="squad-box"
+                        style="background: rect(#FFF8FAFC, 4, 1, #FFCBD5E1);">
+                    <text style="font-size: 16; text-color: #FF94A3B8;">+</text>
+                </element>
+                <element class="squad-box"
+                        style="background: rect(#FFF8FAFC, 4, 1, #FFCBD5E1);">
+                    <text style="font-size: 16; text-color: #FF94A3B8;">+</text>
+                </element>
+                <element class="squad-box"
+                        style="background: rect(#FFF8FAFC, 4, 1, #FFCBD5E1);">
+                    <text style="font-size: 16; text-color: #FF94A3B8;">+</text>
+                </element>
+                <element class="squad-box"
+                        style="background: rect(#FFF8FAFC, 4, 1, #FFCBD5E1);">
+                    <text style="font-size: 16; text-color: #FF94A3B8;">+</text>
+                </element>
+                <element class="squad-box"
+                        style="background: rect(#FFF8FAFC, 4, 1, #FFCBD5E1);">
+                    <text style="font-size: 16; text-color: #FF94A3B8;">+</text>
+                </element>
+                <element class="squad-box"
+                        style="background: rect(#FFF8FAFC, 4, 1, #FFCBD5E1);">
+                    <text style="font-size: 16; text-color: #FF94A3B8;">+</text>
                 </element>
                 <element class="squad-box"
                         style="background: rect(#FFF8FAFC, 4, 1, #FFCBD5E1);">

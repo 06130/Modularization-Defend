@@ -116,6 +116,8 @@
   "block.modularization_defend.level_controller.card_empty": "§cThis program storage card has no graph data.",
   "block.modularization_defend.level_controller.invalid_entity": "§cInvalid entity ID: %s",
   "screen.turret_logic_controller": "Level Controller - Logic Editor",
+  "turret_logic": "Turret Logic Graph",
+  "modularization_defend.graph_editor": "Graph Resource Editor",
 
   "node.modularization_defend.exec_in": "▶ Exec",
   "node.modularization_defend.exec_then": "Then ▶",

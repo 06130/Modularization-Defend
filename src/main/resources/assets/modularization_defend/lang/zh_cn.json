@@ -116,6 +116,8 @@
   "block.modularization_defend.level_controller.card_empty": "§c该程序存储卡没有存储图数据。",
   "block.modularization_defend.level_controller.invalid_entity": "§c无效的实体 ID：%s",
   "screen.turret_logic_controller": "关卡控制器 - 逻辑图编辑器",
+  "turret_logic": "炮塔逻辑图",
+  "modularization_defend.graph_editor": "图资源编辑器",
 
   "node.modularization_defend.exec_in": "▶ 执行",
   "node.modularization_defend.exec_then": "然后 ▶",

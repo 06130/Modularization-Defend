@@ -29,6 +29,7 @@ import org.lingZero.modularization_defend.DataComponents.ModDataComponents;
 import org.lingZero.modularization_defend.Event.EntitySelectorHandler;
 import org.lingZero.modularization_defend.Item.ModItems;
 import org.lingZero.modularization_defend.nodegraph.NodeGraphCommand;
+import org.lingZero.modularization_defend.nodegraph.TurretLogicEditor;
 import org.lingZero.modularization_defend.nodegraph.eval.NodeEvaluators;
 import org.lingZero.modularization_defend.nodegraph.exec.LevelNodeExecutors;
 import org.lingZero.modularization_defend.nodegraph.network.OpenGraphEditorPacket;
@@ -98,6 +99,9 @@ public class modularization_defend {
         // 注册节点图求值器与关卡执行流节点
         NodeEvaluators.init();
         LevelNodeExecutors.init();
+
+        // 注册图资源编辑器窗口（/nodegraph editor 打开）
+        TurretLogicEditor.registerWindow();
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
